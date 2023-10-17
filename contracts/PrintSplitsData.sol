@@ -1,4 +1,4 @@
-// // SPDX-License-Identifier: UNLICENSE
+// SPDX-License-Identifier: UNLICENSE
 
 pragma solidity ^0.8.16;
 
@@ -7,6 +7,8 @@ import "./PrintLibrary.sol";
 
 contract PrintSplitsData {
     PrintAccessControl public printAccessControl;
+    address[] private _allCurrencies;
+
     mapping(address => mapping(PrintLibrary.PrintType => uint256))
         private _designerSplits;
     mapping(address => mapping(PrintLibrary.PrintType => uint256))
@@ -15,13 +17,15 @@ contract PrintSplitsData {
         private _treasurySplits;
     mapping(address => mapping(PrintLibrary.PrintType => uint256))
         private _fulfillerBases;
+    mapping(address => uint256) private _currencyIndex;
     mapping(address => bool) private _currencies;
-    mapping(address => uint256) private _addressToRate;
+    mapping(address => uint256) private _weiConversion;
+    mapping(address => uint256) private _currencyToRate;
 
-    error addressNotAdmin();
-    error existingCurrency();
-    error currencyDoesntExist();
-    error invalidCurrency();
+    error AddressNotAdmin();
+    error ExistingCurrency();
+    error CurrencyDoesntExist();
+    error InvalidCurrency();
 
     event FulfillerSplitSet(
         address fulfiller,
@@ -49,7 +53,7 @@ contract PrintSplitsData {
 
     modifier onlyAdmin() {
         if (!printAccessControl.isAdmin(msg.sender)) {
-            revert addressNotAdmin();
+            revert AddressNotAdmin();
         }
         _;
     }
@@ -95,19 +99,32 @@ contract PrintSplitsData {
         emit TreasurySplitSet(_address, _printType, _amount);
     }
 
-    function addCurrency(address _currency) external onlyAdmin {
+    function addCurrency(
+        address _currency,
+        uint256 _weiAmount
+    ) external onlyAdmin {
         if (_currencies[_currency]) {
-            revert existingCurrency();
+            revert ExistingCurrency();
         }
         _currencies[_currency] = true;
+        _weiConversion[_currency] = _weiAmount;
+        _allCurrencies.push(_currency);
+        _currencyIndex[_currency] = _allCurrencies.length - 1;
         emit CurrencyAdded(_currency);
     }
 
     function removeCurrency(address _currency) external onlyAdmin {
         if (!_currencies[_currency]) {
-            revert currencyDoesntExist();
+            revert CurrencyDoesntExist();
         }
+        uint256 index = _currencyIndex[_currency];
+        address lastCurrency = _allCurrencies[_allCurrencies.length - 1];
+        _allCurrencies[index] = lastCurrency;
+        _currencyIndex[lastCurrency] = index;
+        _allCurrencies.pop();
+        delete _currencyIndex[_currency];
         _currencies[_currency] = false;
+        _weiConversion[_currency] = 0;
         emit CurrencyRemoved(_currency);
     }
 
@@ -116,10 +133,10 @@ contract PrintSplitsData {
         uint256 _rate
     ) public onlyAdmin {
         if (!_currencies[_currencyAddress]) {
-            revert invalidCurrency();
+            revert InvalidCurrency();
         }
 
-        _addressToRate[_currencyAddress] = _rate;
+        _currencyToRate[_currencyAddress] = _rate;
         emit OracleUpdated(_currencyAddress, _rate);
     }
 
@@ -161,9 +178,17 @@ contract PrintSplitsData {
         return _currencies[_address];
     }
 
-    function getRateByAddress(
-        address _tokenAddress
+    function getRateByCurrency(
+        address _currency
     ) public view returns (uint256) {
-        return _addressToRate[_tokenAddress];
+        return _currencyToRate[_currency];
+    }
+
+    function getWeiByCurrency(address _currency) public view returns (uint256) {
+        return _weiConversion[_currency];
+    }
+
+    function getAllCurrencies() public view returns (address[] memory) {
+        return _allCurrencies;
     }
 }

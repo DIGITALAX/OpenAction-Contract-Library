@@ -13,10 +13,10 @@ contract PrintOrderData {
     uint256 private _subOrderSupply;
     mapping(uint256 => PrintLibrary.Order) private _orders;
     mapping(uint256 => PrintLibrary.SubOrder) private _subOrders;
-    mapping(string => uint256[]) private _addressToOrderIds;
+    mapping(address => uint256[]) private _addressToOrderIds;
 
-    error invalidAddress();
-    error invalidFulfiller();
+    error InvalidAddress();
+    error InvalidFulfiller();
 
     event UpdateSubOrderStatus(
         uint256 indexed subOrderId,
@@ -27,7 +27,6 @@ contract PrintOrderData {
     event OrderCreated(
         uint256 orderId,
         uint256 totalPrice,
-        uint256 level,
         address currency,
         uint256 pubId,
         uint256 profileId,
@@ -37,19 +36,19 @@ contract PrintOrderData {
 
     modifier onlyAdmin() {
         if (!printAccessControl.isAdmin(msg.sender)) {
-            revert invalidAddress();
+            revert InvalidAddress();
         }
         _;
     }
     modifier onlyMarketContract() {
         if (msg.sender != address(marketCreator)) {
-            revert invalidAddress();
+            revert InvalidAddress();
         }
         _;
     }
     modifier onlyFulfiller(address _fulfiller) {
         if (_fulfiller == msg.sender) {
-            revert invalidFulfiller();
+            revert InvalidFulfiller();
         }
         _;
     }
@@ -62,7 +61,7 @@ contract PrintOrderData {
             }
         }
         if (!isFulfiller) {
-            revert invalidFulfiller();
+            revert InvalidFulfiller();
         }
         _;
     }
@@ -151,7 +150,7 @@ contract PrintOrderData {
         string memory _newDetails
     ) external {
         if (_orders[_orderId].buyer != msg.sender) {
-            revert invalidAddress();
+            revert InvalidAddress();
         }
         _orders[_orderId].details = _newDetails;
         emit UpdateOrderDetails(_orderId, _newDetails);

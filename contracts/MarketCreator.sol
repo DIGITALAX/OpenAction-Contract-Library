@@ -15,11 +15,11 @@ contract MarketCreator {
     PrintSplitsData public printSplitsData;
     PrintDesignData public printDesignData;
 
-    error invalidAddress();
+    error InvalidAddress();
 
     modifier onlyAdmin() {
         if (!printAccessControl.isAdmin(msg.sender)) {
-            revert invalidAddress();
+            revert InvalidAddress();
         }
         _;
     }
@@ -70,7 +70,7 @@ contract MarketCreator {
 
     function buyTokens(PrintLibrary.BuyTokensParams memory _params) external {
         if (!printAccessControl.isOpenAction(msg.sender)) {
-            revert invalidAddress();
+            revert InvalidAddress();
         }
 
         uint256[] memory _prices = new uint256[](_params.collectionIds.length);
@@ -97,12 +97,17 @@ contract MarketCreator {
                 ];
             }
 
-            uint256 _price = _params.collectionPrices[i] *
-                _params.collectionAmounts[i];
+            uint256 _price = printDesignData.getCollectionPrices(
+                _params.collectionIds[i]
+            )[_params.collectionIndexes[i]] * _params.collectionAmounts[i];
+
+            address _fulfiller = printDesignData.getCollectionFulfiller(
+                _params.collectionIds[i]
+            );
 
             printOrderData.createSubOrder(
                 _tokenIdsOrder,
-                _params.fulfillers[i],
+                _fulfiller,
                 _params.collectionAmounts[i],
                 printOrderData.getOrderSupply() + 1,
                 _price

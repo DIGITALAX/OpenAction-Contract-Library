@@ -14,13 +14,13 @@ contract NFTCreator is ERC721Enumerable {
     PrintAccessControl public printAccessControl;
 
     error OnlyCollectionCreator();
-    error addressNotAdmin();
+    error AddressNotAdmin();
 
     event BatchTokenMinted(address indexed to, uint256[] tokenIds);
 
     modifier onlyAdmin() {
         if (!printAccessControl.isAdmin(msg.sender)) {
-            revert addressNotAdmin();
+            revert AddressNotAdmin();
         }
         _;
     }

@@ -20,13 +20,13 @@ contract PrintAccessControl {
     event PKPAdded(address indexed pkp);
     event PKPRemoved(address indexed pkp);
 
-    error addressInvalid();
-    error existing();
-    error cantRemoveSelf();
+    error AddressInvalid();
+    error Existing();
+    error CantRemoveSelf();
 
     modifier onlyAdmin() {
         if (!_admins[msg.sender]) {
-            revert addressInvalid();
+            revert AddressInvalid();
         }
         _;
     }
@@ -37,7 +37,7 @@ contract PrintAccessControl {
 
     function addAdmin(address _admin) external onlyAdmin {
         if (_admins[_admin] || _admin == msg.sender) {
-            revert existing();
+            revert Existing();
         }
         _admins[_admin] = true;
         emit AdminAdded(_admin);
@@ -45,10 +45,10 @@ contract PrintAccessControl {
 
     function removeAdmin(address _admin) external onlyAdmin {
         if (_admin == msg.sender) {
-            revert cantRemoveSelf();
+            revert CantRemoveSelf();
         }
         if (!_admins[_admin]) {
-            revert addressInvalid();
+            revert AddressInvalid();
         }
         _admins[_admin] = false;
         emit AdminRemoved(_admin);
@@ -56,7 +56,7 @@ contract PrintAccessControl {
 
     function addDesigner(address _designer) external onlyAdmin {
         if (_designers[_designer]) {
-            revert existing();
+            revert Existing();
         }
         _designers[_designer] = true;
         emit DesignerAdded(_designer);
@@ -64,7 +64,7 @@ contract PrintAccessControl {
 
     function removeDesigner(address _designer) external onlyAdmin {
         if (!_designers[_designer]) {
-            revert addressInvalid();
+            revert AddressInvalid();
         }
         _designers[_designer] = false;
         emit DesignerRemoved(_designer);
@@ -72,7 +72,7 @@ contract PrintAccessControl {
 
     function addOpenAction(address _openAction) external onlyAdmin {
         if (_openActions[_openAction]) {
-            revert existing();
+            revert Existing();
         }
         _openActions[_openAction] = true;
         emit OpenActionAdded(_openAction);
@@ -80,7 +80,7 @@ contract PrintAccessControl {
 
     function removeOpenAction(address _openAction) external onlyAdmin {
         if (!_openActions[_openAction]) {
-            revert addressInvalid();
+            revert AddressInvalid();
         }
         _openActions[_openAction] = false;
         emit OpenActionRemoved(_openAction);
@@ -88,7 +88,7 @@ contract PrintAccessControl {
 
     function addFulfiller(address _fulfiller) external onlyAdmin {
         if (_fulfillers[_fulfiller]) {
-            revert existing();
+            revert Existing();
         }
         _fulfillers[_fulfiller] = true;
         emit FulfillerAdded(_fulfiller);
@@ -96,7 +96,7 @@ contract PrintAccessControl {
 
     function removeFulfiller(address _fulfiller) external onlyAdmin {
         if (!_fulfillers[_fulfiller]) {
-            revert addressInvalid();
+            revert AddressInvalid();
         }
         _fulfillers[_fulfiller] = false;
         emit FulfillerRemoved(_fulfiller);
@@ -104,7 +104,7 @@ contract PrintAccessControl {
 
     function addPKP(address _pkp) external onlyAdmin {
         if (_pkps[_pkp]) {
-            revert existing();
+            revert Existing();
         }
         _pkps[_pkp] = true;
         emit PKPAdded(_pkp);
@@ -112,7 +112,7 @@ contract PrintAccessControl {
 
     function removePKP(address _pkp) external onlyAdmin {
         if (!_pkps[_pkp]) {
-            revert addressInvalid();
+            revert AddressInvalid();
         }
         _pkps[_pkp] = false;
         emit PKPRemoved(_pkp);

@@ -17,7 +17,7 @@ contract PrintDesignData {
     mapping(uint256 => PrintLibrary.Collection) private _collections;
     mapping(uint256 => PrintLibrary.Token) private _tokens;
 
-    error invalidAddress();
+    error InvalidAddress();
 
     event TokensMinted(uint256 indexed tokenId, uint256 collectionId);
     event CollectionCreated(
@@ -38,19 +38,19 @@ contract PrintDesignData {
 
     modifier onlyCollectionCreator() {
         if (msg.sender != address(collectionCreator)) {
-            revert invalidAddress();
+            revert InvalidAddress();
         }
         _;
     }
     modifier onlyNFTCreator() {
         if (msg.sender != address(nftCreator)) {
-            revert invalidAddress();
+            revert InvalidAddress();
         }
         _;
     }
     modifier onlyAdmin() {
         if (!printAccessControl.isAdmin(msg.sender)) {
-            revert invalidAddress();
+            revert InvalidAddress();
         }
         _;
     }
