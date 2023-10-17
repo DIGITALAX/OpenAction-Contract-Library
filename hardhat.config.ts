@@ -2,7 +2,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 require("dotenv").config({ path: ".env" });
 import "@nomiclabs/hardhat-etherscan";
-
+  
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [

@@ -2,212 +2,323 @@
 
 pragma solidity ^0.8.16;
 
-import {HubRestricted} from "./lens/v2/base/HubRestricted.sol";
-import {Types} from "./lens/v2/libraries/constants/Types.sol";
+import {HubRestricted} from "./../lens/v2/base/HubRestricted.sol";
+import {Types} from "./../lens/v2/libraries/constants/Types.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {IPublicationActionModule} from "./lens/v2/interfaces/IPublicationActionModule.sol";
-import {IModuleGlobals} from "./lens/v2/interfaces/IModuleGlobals.sol";
-import "./CollectionCreator.sol";
-import "./GrantRegister.sol";
-
-// handle all the erc20 transfers in here!!
+import {IPublicationActionModule} from "./../lens/v2/interfaces/IPublicationActionModule.sol";
+import {IModuleGlobals} from "./../lens/v2/interfaces/IModuleGlobals.sol";
+import "./../MarketCreator.sol";
+import "./../legend/LegendRegister.sol";
+import "./../PrintAccessControl.sol";
+import "./../PrintSplitsData.sol";
+import "./../PrintDesignData.sol";
 
 contract LegendOpenAction is HubRestricted, IPublicationActionModule {
-    GrantCollection public grantCollection;
-    GrantRegister public grantRegister;
+    MarketCreator public marketCreator;
+    PrintAccessControl public printAccessControl;
+    PrintSplitsData public printSplitsData;
+    PrintDesignData public printDesignData;
+    LegendRegister public legendRegister;
     address public grantMilestoneClaim;
 
-    uint256 BPS_MAX = 10000;
-
     error CurrencyNotWhitelisted();
+    error InvalidAddress();
+    error InvalidAmounts();
+
+    modifier onlyAdmin() {
+        if (!printAccessControl.isAdmin(msg.sender)) {
+            revert InvalidAddress();
+        }
+        _;
+    }
 
     struct LevelInfo {
         uint256[] collectionIds;
         uint256[] amounts;
         uint256[] indexes;
-        uint256 totalPrice;
     }
 
     IModuleGlobals public immutable MODULE_GLOBALS;
-
-    mapping(address => mapping(uint256 => mapping(uint256 => bool))) _verifiedDisputer;
     mapping(uint256 => mapping(uint256 => mapping(uint256 => LevelInfo))) _grantLevelInfo;
     mapping(uint256 => mapping(uint256 => address)) _granteeReceiver;
 
+    event GrantContributed(
+        address granteeAddress,
+        uint256 level,
+        uint256 pubId,
+        uint256 profileId,
+        uint256 amount
+    );
+
     constructor(
-        address hub,
-        address moduleGlobals,
-        address grantCollectionAddress,
-        address grantMilestoneClaimAddress,
-        address grantRegisterAddress,
-        address fulfiller,
-        address designer,
-        uint256 gp,
-        uint256 dp,
-        uint256 fp
-    ) HubRestricted(hub) {
-        MODULE_GLOBALS = IModuleGlobals(moduleGlobals);
-        grantCollection = GrantCollection(grantCollectionAddress);
-        grantMilestoneClaim = grantMilestoneClaimAddress;
-        grantRegister = GrantRegister(grantRegisterAddress);
-        fulfillerAddress = fulfiller;
-        designerAddress = designer;
-        grantPercent = gp;
-        designerPercent = dp;
-        fulfillerPercent = fp;
-     
+        address _hub,
+        address _moduleGlobals,
+        address _printAccessControlAddress,
+        address _printSplitsDataAddress,
+        address _printDesignDataAddress,
+        address _marketCreatorAddress,
+        address _grantMilestoneClaimAddress,
+        address _legendRegisterAddress
+    ) HubRestricted(_hub) {
+        MODULE_GLOBALS = IModuleGlobals(_moduleGlobals);
+        marketCreator = MarketCreator(_marketCreatorAddress);
+        printAccessControl = PrintAccessControl(_printAccessControlAddress);
+        printSplitsData = PrintSplitsData(_printSplitsDataAddress);
+        printDesignData = PrintDesignData(_printDesignDataAddress);
+        legendRegister = LegendRegister(_legendRegisterAddress);
+        grantMilestoneClaim = _grantMilestoneClaimAddress;
     }
 
     function initializePublicationAction(
-        uint256 profileId,
-        uint256 pubId,
-        address granteeReceiver /* transactionExecutor */,
-        bytes calldata data
+        uint256 _profileId,
+        uint256 _pubId,
+        address _granteeAddress,
+        bytes calldata _data
     ) external override onlyHub returns (bytes memory) {
-        LevelInfo[6] memory _levelInfo = abi.decode(data, (LevelInfo[6]));
+        if (legendRegister.getGrantIdentifier(_granteeAddress) == bytes32(0)) {
+            revert InvalidAddress();
+        }
 
-        _grantLevelInfo[profileId][pubId][0] = _levelInfo[0];
-        _grantLevelInfo[profileId][pubId][1] = _levelInfo[1];
-        _grantLevelInfo[profileId][pubId][2] = _levelInfo[2];
-        _grantLevelInfo[profileId][pubId][3] = _levelInfo[3];
-        _grantLevelInfo[profileId][pubId][4] = _levelInfo[4];
-        _grantLevelInfo[profileId][pubId][5] = _levelInfo[5];
+        LevelInfo[6] memory _levelInfo = abi.decode(_data, (LevelInfo[6]));
 
-        _granteeReceiver[profileId][pubId] = granteeReceiver;
+        _grantLevelInfo[_profileId][_pubId][2] = _levelInfo[0];
+        _grantLevelInfo[_profileId][_pubId][3] = _levelInfo[1];
+        _grantLevelInfo[_profileId][_pubId][4] = _levelInfo[2];
+        _grantLevelInfo[_profileId][_pubId][5] = _levelInfo[3];
+        _grantLevelInfo[_profileId][_pubId][6] = _levelInfo[4];
+        _grantLevelInfo[_profileId][_pubId][7] = _levelInfo[5];
 
-        return data;
+        _granteeReceiver[_profileId][_pubId] = _granteeAddress;
+
+        return _data;
     }
 
     function processPublicationAction(
-        Types.ProcessActionParams calldata params
+        Types.ProcessActionParams calldata _params
     ) external override onlyHub returns (bytes memory) {
         (
-            address currency,
-            uint256 level,
-            string memory encryptedFulfillment
-        ) = abi.decode(params.actionModuleData, (address, uint256, string));
-        uint256 _totalAmount = 0;
+            uint256[] memory _chosenIndexes,
+            address _currency,
+            uint256 _level,
+            string memory _encryptedFulfillment
+        ) = abi.decode(
+                _params.actionModuleData,
+                (uint256[], address, uint256, string)
+            );
 
         address _granteeReceiverAddress = _granteeReceiver[
-            params.publicationActedProfileId
-        ][params.publicationActedId];
+            _params.publicationActedProfileId
+        ][_params.publicationActedId];
 
-        if (!MODULE_GLOBALS.isCurrencyWhitelisted(currency)) {
+        if (
+            !MODULE_GLOBALS.isCurrencyWhitelisted(_currency) ||
+            !printSplitsData.getIsCurrency(_currency)
+        ) {
             revert CurrencyNotWhitelisted();
         }
 
-        if (level == 1) {
-            IERC20(currency).transferFrom(
-                params.transactionExecutor,
-                grantMilestoneClaim,
-                1
+        uint256 _grantAmount = 0;
+
+        if (_level != 1) {
+            _grantAmount = _transferTokens(
+                _grantLevelInfo[_params.publicationActedProfileId][
+                    _params.publicationActedId
+                ][_level].collectionIds,
+                _chosenIndexes,
+                _currency,
+                _params.transactionExecutor
             );
-            _totalAmount = 1;
+
+            PrintLibrary.BuyTokensParams memory _buyTokensParams = PrintLibrary
+                .BuyTokensParams({
+                    collectionIds: _grantLevelInfo[
+                        _params.publicationActedProfileId
+                    ][_params.publicationActedId][_level].collectionIds,
+                    collectionAmounts: _grantLevelInfo[
+                        _params.publicationActedProfileId
+                    ][_params.publicationActedId][_level].amounts,
+                    collectionIndexes: _grantLevelInfo[
+                        _params.publicationActedProfileId
+                    ][_params.publicationActedId][_level].indexes,
+                    details: _encryptedFulfillment,
+                    buyerAddress: _params.transactionExecutor,
+                    chosenCurrency: _currency,
+                    pubId: _params.publicationActedId,
+                    profileId: _params.publicationActedProfileId
+                });
+
+            marketCreator.buyTokens(_buyTokensParams);
         } else {
-            _verifiedDisputer[params.transactionExecutor][
-                params.publicationActedProfileId
-            ][params.publicationActedId] = true;
-
-            _totalAmount = _grantLevelInfo[params.publicationActedProfileId][
-                params.publicationActedId
-            ][level - 2].totalPrice;
-
-            IERC20(currency).transferFrom(
-                params.transactionExecutor,
-                grantMilestoneClaim,
-                _totalAmount * grantPercent
-            );
-            IERC20(currency).transferFrom(
-                params.transactionExecutor,
-                fulfillerAddress,
-                _totalAmount * fulfillerPercent
-            );
-            IERC20(currency).transferFrom(
-                params.transactionExecutor,
-                designerAddress,
-                _totalAmount * designerPercent
-            );
-
-            grantRegister.setGrantAmountFunded(
-                _granteeReceiverAddress,
-                params.publicationActedId,
-                _totalAmount * grantPercent
-            );
-
-            grantCollection.purchaseAndMintToken(
-                _grantLevelInfo[params.publicationActedProfileId][
-                    params.publicationActedId
-                ][level].collectionIds,
-                _grantLevelInfo[params.publicationActedProfileId][
-                    params.publicationActedId
-                ][level].amounts,
-                _grantLevelInfo[params.publicationActedProfileId][
-                    params.publicationActedId
-                ][level].indexes,
-                params.transactionExecutor,
-                currency
-            );
-
-            _orderSupply++;
-
-            _addressToOrder[params.transactionExecutor][
-                params.publicationActedProfileId
-            ][params.publicationActedId] = Order({
-                orderId: _orderSupply,
-                grantPubId: params.publicationActedId,
-                grantProfileId: params.publicationActedProfileId,
-                level: level,
-                details: encryptedFulfillment,
-                buyer: params.transactionExecutor,
-                chosenAddress: currency
-            });
-
-            emit OrderCreated(
-                _orderSupply,
-                _totalAmount,
-                level,
-                currency,
-                params.publicationActedId,
-                params.publicationActedProfileId,
-                params.transactionExecutor
-            );
+            _grantAmount = printSplitsData.getWeiByCurrency(_currency) * 1;
         }
+
+        IERC20(_currency).transferFrom(
+            _params.transactionExecutor,
+            grantMilestoneClaim,
+            _grantAmount
+        );
+
+        legendRegister.setGrantAmountFunded(
+            _granteeReceiverAddress,
+            _currency,
+            _params.publicationActedId,
+            _grantAmount
+        );
+
+        emit GrantContributed(
+            _granteeReceiverAddress,
+            _level,
+            _params.publicationActedId,
+            _params.publicationActedProfileId,
+            _grantAmount
+        );
 
         return
             abi.encode(
-                _grantLevelInfo[params.publicationActedProfileId][
-                    params.publicationActedId
-                ][level].collectionIds,
-                currency,
-                _grantLevelInfo[params.publicationActedProfileId][
-                    params.publicationActedId
-                ][level].amounts,
-                _grantLevelInfo[params.publicationActedProfileId][
-                    params.publicationActedId
-                ][level].indexes
+                _grantLevelInfo[_params.publicationActedProfileId][
+                    _params.publicationActedId
+                ][_level].collectionIds,
+                _currency,
+                _grantLevelInfo[_params.publicationActedProfileId][
+                    _params.publicationActedId
+                ][_level].amounts,
+                _chosenIndexes
             );
     }
 
-    function getVerifiedMilestoneDisputer(
-        address _disputerAddress,
-        uint256 _profileId,
-        uint256 _pubId
-    ) public view returns (bool) {
-        return _verifiedDisputer[_disputerAddress][_profileId][_pubId];
+    function _transferTokens(
+        uint256[] memory _collectionIds,
+        uint256[] memory _collectionIndexes,
+        address _chosenCurrency,
+        address _buyer
+    ) internal returns (uint256) {
+        uint256 _grantAmount = 0;
+
+        for (uint256 i = 0; i < _collectionIds.length; i++) {
+            address _fulfiller = printDesignData.getCollectionFulfiller(
+                _collectionIds[i]
+            );
+            address _designer = printDesignData.getCollectionCreator(
+                _collectionIds[i]
+            );
+
+            uint256 _fulfillerBase = printSplitsData.getFulfillerBase(
+                _fulfiller,
+                printDesignData.getCollectionPrintType(_collectionIds[i])
+            );
+            uint256 _fulfillerSplit = printSplitsData.getFulfillerSplit(
+                _fulfiller,
+                printDesignData.getCollectionPrintType(_collectionIds[i])
+            );
+            uint256 _designerSplit = printSplitsData.getDesignerSplit(
+                _designer,
+                printDesignData.getCollectionPrintType(_collectionIds[i])
+            );
+
+            uint256 _totalPrice = printDesignData.getCollectionPrices(
+                _collectionIds[i]
+            )[_collectionIndexes[i]];
+
+            IERC20(_chosenCurrency).transferFrom(
+                _buyer,
+                _fulfiller,
+                _calculateAmount(
+                    _chosenCurrency,
+                    _fulfillerBase + (_totalPrice * _fulfillerSplit)
+                )
+            );
+            IERC20(_chosenCurrency).transferFrom(
+                _buyer,
+                _designer,
+                _calculateAmount(_chosenCurrency, _totalPrice * _designerSplit)
+            );
+
+            _grantAmount += _calculateAmount(
+                _chosenCurrency,
+                (_totalPrice -
+                    (_totalPrice * _fulfillerSplit) -
+                    (_totalPrice * _designerSplit) -
+                    _fulfillerBase)
+            );
+        }
+
+        return _grantAmount;
     }
 
-    function getGrantLevelInfo(
+    function getGrantLevelCollectionIds(
         uint256 _pubId,
         uint256 _profileId,
         uint256 _level
-    ) public view returns (LevelInfo memory) {
-        return _grantLevelInfo[_profileId][_pubId][_level - 2];
+    ) public view returns (uint256[] memory) {
+        return _grantLevelInfo[_profileId][_pubId][_level].collectionIds;
     }
 
-    function getGranteeReceiver(
+    function getGrantLevelCollectionIndexes(
+        uint256 _pubId,
+        uint256 _profileId,
+        uint256 _level
+    ) public view returns (uint256[] memory) {
+        return _grantLevelInfo[_profileId][_pubId][_level].indexes;
+    }
+
+    function getGrantLevelCollectionAmounts(
+        uint256 _pubId,
+        uint256 _profileId,
+        uint256 _level
+    ) public view returns (uint256[] memory) {
+        return _grantLevelInfo[_profileId][_pubId][_level].amounts;
+    }
+
+    function getGranteeReceiverAddress(
         uint256 _pubId,
         uint256 _profileId
     ) public view returns (address) {
         return _granteeReceiver[_profileId][_pubId];
+    }
+
+    function setPrintDesignDataAddress(
+        address _newPrintDesignDataAddress
+    ) public onlyAdmin {
+        printDesignData = PrintDesignData(_newPrintDesignDataAddress);
+    }
+
+    function setPrintAccessControlAddress(
+        address _newPrintAccessControlAddress
+    ) public onlyAdmin {
+        printAccessControl = PrintAccessControl(_newPrintAccessControlAddress);
+    }
+
+    function setMarketCreatorAddress(
+        address _newMarketCreatorAddress
+    ) public onlyAdmin {
+        marketCreator = MarketCreator(_newMarketCreatorAddress);
+    }
+
+    function setLegendRegisterAddress(
+        address _newLegendRegisterAddress
+    ) public onlyAdmin {
+        legendRegister = LegendRegister(_newLegendRegisterAddress);
+    }
+
+    function setGrantMilestoneClaimAddress(
+        address _newGrantMilestoneClaimAddress
+    ) public onlyAdmin {
+        grantMilestoneClaim = (_newGrantMilestoneClaimAddress);
+    }
+
+    function _calculateAmount(
+        address _currency,
+        uint256 _amountInWei
+    ) internal view returns (uint256) {
+        if (_amountInWei == 0) {
+            revert InvalidAmounts();
+        }
+
+        uint256 _exchangeRate = printSplitsData.getRateByCurrency(_currency);
+        uint256 _weiDivisor = printSplitsData.getWeiByCurrency(_currency);
+
+        uint256 _tokenAmount = (_amountInWei * _weiDivisor) / _exchangeRate;
+
+        return _tokenAmount;
     }
 }

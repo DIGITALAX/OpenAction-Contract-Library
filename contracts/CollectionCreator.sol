@@ -13,13 +13,13 @@ contract CollectionCreator {
     NFTCreator public nftCreator;
     address public marketCreator;
 
-    error addressNotMarket();
-    error addressNotDesigner();
-    error addressNotAdmin();
+    error AddressNotMarket();
+    error AddressNotDesigner();
+    error AddressNotAdmin();
 
     modifier onlyAdmin() {
         if (!printAccessControl.isAdmin(msg.sender)) {
-            revert addressNotAdmin();
+            revert AddressNotAdmin();
         }
         _;
     }
@@ -38,7 +38,7 @@ contract CollectionCreator {
 
     function createCollection(PrintLibrary.MintParams memory _params) external {
         if (!printAccessControl.isDesigner(msg.sender)) {
-            revert addressNotDesigner();
+            revert AddressNotDesigner();
         }
         uint256 _amount = _params.amount;
         if (_params.unlimited) {
@@ -68,7 +68,7 @@ contract CollectionCreator {
         address _chosenCurrency
     ) external {
         if (msg.sender != marketCreator) {
-            revert addressNotMarket();
+            revert AddressNotMarket();
         }
         uint256 _initialSupply = printData.getTokenSupply();
 

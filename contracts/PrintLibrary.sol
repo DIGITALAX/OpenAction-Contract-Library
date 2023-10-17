@@ -1,4 +1,4 @@
-// // SPDX-License-Identifier: UNLICENSE
+// SPDX-License-Identifier: UNLICENSE
 
 pragma solidity ^0.8.16;
 
@@ -71,8 +71,6 @@ contract PrintLibrary {
         uint256[] collectionIds;
         uint256[] collectionAmounts;
         uint256[] collectionIndexes;
-        uint256[] collectionPrices;
-        address[] fulfillers;
         string details;
         address buyerAddress;
         address chosenCurrency;
