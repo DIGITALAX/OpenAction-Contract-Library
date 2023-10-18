@@ -27,11 +27,9 @@ contract NFTCreator is ERC721Enumerable {
 
     constructor(
         address _printDataAddress,
-        address _collectionCreatorAddress,
         address _printAccessControlAddress
     ) ERC721("NFTCreator", "NFTC") {
         printData = PrintDesignData(_printDataAddress);
-        collectionCreator = CollectionCreator(_collectionCreatorAddress);
         printAccessControl = PrintAccessControl(_printAccessControlAddress);
     }
 

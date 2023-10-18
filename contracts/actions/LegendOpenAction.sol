@@ -13,13 +13,37 @@ import "./../PrintAccessControl.sol";
 import "./../PrintSplitsData.sol";
 import "./../PrintDesignData.sol";
 
+library LegendOpenActionLibrary {
+    struct TransferTokens {
+        PrintLibrary.PrintType printType;
+        uint256 collectionId;
+        uint256 chosenIndex;
+        uint256 designerSplit;
+        uint256 fulfillerSplit;
+        uint256 fulfillerBase;
+        address fulfiller;
+        address designer;
+        address chosenCurrency;
+        address buyer;
+    }
+
+    struct SenderInfo {
+        address fulfiller;
+        address designer;
+        PrintLibrary.PrintType print;
+        uint256 fBase;
+        uint256 fSplit;
+        uint256 dSplit;
+    }
+}
+
 contract LegendOpenAction is HubRestricted, IPublicationActionModule {
     MarketCreator public marketCreator;
     PrintAccessControl public printAccessControl;
     PrintSplitsData public printSplitsData;
     PrintDesignData public printDesignData;
     LegendRegister public legendRegister;
-    address public grantMilestoneClaim;
+    address public legendMilestone;
 
     error CurrencyNotWhitelisted();
     error InvalidAddress();
@@ -35,7 +59,6 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
     struct LevelInfo {
         uint256[] collectionIds;
         uint256[] amounts;
-        uint256[] indexes;
     }
 
     IModuleGlobals public immutable MODULE_GLOBALS;
@@ -57,7 +80,7 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
         address _printSplitsDataAddress,
         address _printDesignDataAddress,
         address _marketCreatorAddress,
-        address _grantMilestoneClaimAddress,
+        address _legendMilestoneAddress,
         address _legendRegisterAddress
     ) HubRestricted(_hub) {
         MODULE_GLOBALS = IModuleGlobals(_moduleGlobals);
@@ -66,7 +89,7 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
         printSplitsData = PrintSplitsData(_printSplitsDataAddress);
         printDesignData = PrintDesignData(_printDesignDataAddress);
         legendRegister = LegendRegister(_legendRegisterAddress);
-        grantMilestoneClaim = _grantMilestoneClaimAddress;
+        legendMilestone = _legendMilestoneAddress;
     }
 
     function initializePublicationAction(
@@ -120,14 +143,18 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
         uint256 _grantAmount = 0;
 
         if (_level != 1) {
-            _grantAmount = _transferTokens(
-                _grantLevelInfo[_params.publicationActedProfileId][
-                    _params.publicationActedId
-                ][_level].collectionIds,
-                _chosenIndexes,
-                _currency,
-                _params.transactionExecutor
-            );
+            uint256[] memory _collectionIds = _grantLevelInfo[
+                _params.publicationActedProfileId
+            ][_params.publicationActedId][_level].collectionIds;
+
+            for (uint256 i = 0; i < _collectionIds.length; i++) {
+                _grantAmount += _processLevel(
+                    _collectionIds[i],
+                    _chosenIndexes[i],
+                    _currency,
+                    _params.transactionExecutor
+                );
+            }
 
             PrintLibrary.BuyTokensParams memory _buyTokensParams = PrintLibrary
                 .BuyTokensParams({
@@ -137,9 +164,7 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
                     collectionAmounts: _grantLevelInfo[
                         _params.publicationActedProfileId
                     ][_params.publicationActedId][_level].amounts,
-                    collectionIndexes: _grantLevelInfo[
-                        _params.publicationActedProfileId
-                    ][_params.publicationActedId][_level].indexes,
+                    collectionIndexes: _chosenIndexes,
                     details: _encryptedFulfillment,
                     buyerAddress: _params.transactionExecutor,
                     chosenCurrency: _currency,
@@ -154,7 +179,7 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
 
         IERC20(_currency).transferFrom(
             _params.transactionExecutor,
-            grantMilestoneClaim,
+            legendMilestone,
             _grantAmount
         );
 
@@ -186,63 +211,105 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
             );
     }
 
-    function _transferTokens(
-        uint256[] memory _collectionIds,
-        uint256[] memory _collectionIndexes,
-        address _chosenCurrency,
+    function _processLevel(
+        uint256 _collectionId,
+        uint256 _chosenIndex,
+        address _currency,
         address _buyer
     ) internal returns (uint256) {
-        uint256 _grantAmount = 0;
+        LegendOpenActionLibrary.SenderInfo memory _info = _getSenderInfo(
+            _collectionId
+        );
 
-        for (uint256 i = 0; i < _collectionIds.length; i++) {
-            address _fulfiller = printDesignData.getCollectionFulfiller(
-                _collectionIds[i]
+        return
+            _transferTokens(
+                LegendOpenActionLibrary.TransferTokens({
+                    printType: _info.print,
+                    collectionId: _collectionId,
+                    chosenIndex: _chosenIndex,
+                    designerSplit: _info.dSplit,
+                    fulfillerSplit: _info.fSplit,
+                    fulfillerBase: _info.fBase,
+                    fulfiller: _info.fulfiller,
+                    designer: _info.designer,
+                    chosenCurrency: _currency,
+                    buyer: _buyer
+                })
             );
-            address _designer = printDesignData.getCollectionCreator(
-                _collectionIds[i]
-            );
+    }
 
-            uint256 _fulfillerBase = printSplitsData.getFulfillerBase(
-                _fulfiller,
-                printDesignData.getCollectionPrintType(_collectionIds[i])
-            );
-            uint256 _fulfillerSplit = printSplitsData.getFulfillerSplit(
-                _fulfiller,
-                printDesignData.getCollectionPrintType(_collectionIds[i])
-            );
-            uint256 _designerSplit = printSplitsData.getDesignerSplit(
-                _designer,
-                printDesignData.getCollectionPrintType(_collectionIds[i])
-            );
+    function _transferTokens(
+        LegendOpenActionLibrary.TransferTokens memory _params
+    ) internal returns (uint256) {
+        uint256 _totalPrice = printDesignData.getCollectionPrices(
+            _params.collectionId
+        )[_params.chosenIndex];
 
-            uint256 _totalPrice = printDesignData.getCollectionPrices(
-                _collectionIds[i]
-            )[_collectionIndexes[i]];
+        IERC20(_params.chosenCurrency).transferFrom(
+            _params.buyer,
+            _params.fulfiller,
+            _calculateAmount(
+                _params.chosenCurrency,
+                _params.fulfillerBase + (_totalPrice * _params.fulfillerSplit)
+            )
+        );
+        IERC20(_params.chosenCurrency).transferFrom(
+            _params.buyer,
+            _params.designer,
+            _calculateAmount(
+                _params.chosenCurrency,
+                _totalPrice *
+                    printSplitsData.getDesignerSplit(
+                        _params.designer,
+                        _params.printType
+                    )
+            )
+        );
 
-            IERC20(_chosenCurrency).transferFrom(
-                _buyer,
-                _fulfiller,
-                _calculateAmount(
-                    _chosenCurrency,
-                    _fulfillerBase + (_totalPrice * _fulfillerSplit)
-                )
-            );
-            IERC20(_chosenCurrency).transferFrom(
-                _buyer,
-                _designer,
-                _calculateAmount(_chosenCurrency, _totalPrice * _designerSplit)
-            );
-
-            _grantAmount += _calculateAmount(
-                _chosenCurrency,
+        return
+            _calculateAmount(
+                _params.chosenCurrency,
                 (_totalPrice -
-                    (_totalPrice * _fulfillerSplit) -
-                    (_totalPrice * _designerSplit) -
-                    _fulfillerBase)
+                    (_totalPrice * _params.fulfillerSplit) -
+                    (_totalPrice * _params.designerSplit) -
+                    _params.fulfillerBase)
             );
-        }
+    }
 
-        return _grantAmount;
+    function _getSenderInfo(
+        uint256 _collectionIds
+    ) internal view returns (LegendOpenActionLibrary.SenderInfo memory) {
+        address _fulfiller = printDesignData.getCollectionFulfiller(
+            _collectionIds
+        );
+        address _designer = printDesignData.getCollectionCreator(
+            _collectionIds
+        );
+        PrintLibrary.PrintType _printType = printDesignData
+            .getCollectionPrintType(_collectionIds);
+        uint256 _fulfillerBase = printSplitsData.getFulfillerBase(
+            _fulfiller,
+            _printType
+        );
+        uint256 _fulfillerSplit = printSplitsData.getFulfillerSplit(
+            _fulfiller,
+            _printType
+        );
+        uint256 _designerSplit = printSplitsData.getDesignerSplit(
+            _fulfiller,
+            _printType
+        );
+
+        return (
+            LegendOpenActionLibrary.SenderInfo({
+                fulfiller: _fulfiller,
+                designer: _designer,
+                print: _printType,
+                fBase: _fulfillerBase,
+                fSplit: _fulfillerSplit,
+                dSplit: _designerSplit
+            })
+        );
     }
 
     function getGrantLevelCollectionIds(
@@ -251,14 +318,6 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
         uint256 _level
     ) public view returns (uint256[] memory) {
         return _grantLevelInfo[_profileId][_pubId][_level].collectionIds;
-    }
-
-    function getGrantLevelCollectionIndexes(
-        uint256 _pubId,
-        uint256 _profileId,
-        uint256 _level
-    ) public view returns (uint256[] memory) {
-        return _grantLevelInfo[_profileId][_pubId][_level].indexes;
     }
 
     function getGrantLevelCollectionAmounts(
@@ -300,10 +359,10 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
         legendRegister = LegendRegister(_newLegendRegisterAddress);
     }
 
-    function setGrantMilestoneClaimAddress(
-        address _newGrantMilestoneClaimAddress
+    function setLegendMilestoneAddress(
+        address _newLegendMilestoneAddress
     ) public onlyAdmin {
-        grantMilestoneClaim = (_newGrantMilestoneClaimAddress);
+        legendMilestone = (_newLegendMilestoneAddress);
     }
 
     function _calculateAmount(

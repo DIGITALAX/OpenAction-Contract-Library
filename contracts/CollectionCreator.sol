@@ -27,13 +27,11 @@ contract CollectionCreator {
     constructor(
         address _nftCreatorAddress,
         address _printDataAddress,
-        address _printAccessControlAddress,
-        address _marketCreatorAddress
+        address _printAccessControlAddress
     ) {
         nftCreator = NFTCreator(_nftCreatorAddress);
         printData = PrintDesignData(_printDataAddress);
         printAccessControl = PrintAccessControl(_printAccessControlAddress);
-        marketCreator = _marketCreatorAddress;
     }
 
     function createCollection(PrintLibrary.MintParams memory _params) external {
