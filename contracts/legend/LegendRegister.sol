@@ -23,7 +23,7 @@ library LegendRegisterLibrary {
 contract LegendRegister {
     PrintAccessControl public printAccessControl;
     address public legendOpenAction;
-    address public legendMilestoneClaim;
+    address public legendMilestone;
     uint256 private _grantSupply;
 
     struct Milestone {
@@ -45,7 +45,7 @@ contract LegendRegister {
     error InvalidAddress();
 
     modifier onlyGranteeMilestoneClaim() {
-        if (msg.sender != legendMilestoneClaim) {
+        if (msg.sender != legendMilestone) {
             revert InvalidAddress();
         }
         _;
@@ -122,7 +122,7 @@ contract LegendRegister {
             profileId: _params.profileId
         });
 
-        for (uint256 j; j < 3; j++) {
+        for (uint256 j = 0; j < 3; j++) {
             _grantToMilestone[_grantSupply][j + 1] = Milestone({
                 status: MilestoneStatus.NotClaimed,
                 amount: _params.amounts[j],
@@ -154,7 +154,7 @@ contract LegendRegister {
         _grantToMilestone[
             _identifierToGrant[_addressToIdentifier[_granteeAddress]][_pubId]
                 .grantId
-        ][_milestoneId].status == _status;
+        ][_milestoneId].status = _status;
 
         emit MilestoneClaimUpdated(
             _granteeAddress,
@@ -186,10 +186,10 @@ contract LegendRegister {
     }
 
     function setGrantAddresses(
-        address _grantMilestoneClaimAddress,
+        address _legendMilestoneAddress,
         address _grantOpenActionAddress
     ) public onlyAdmin {
-        legendMilestoneClaim = _grantMilestoneClaimAddress;
+        legendMilestone = _legendMilestoneAddress;
         legendOpenAction = _grantOpenActionAddress;
     }
 

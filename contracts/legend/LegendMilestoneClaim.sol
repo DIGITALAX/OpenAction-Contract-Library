@@ -9,7 +9,7 @@ import "./../PrintAccessControl.sol";
 import "./../PrintSplitsData.sol";
 import "./LegendRegister.sol";
 
-contract LegendMilestoneClaim {
+contract LegendMilestone {
     using Strings for uint256;
     PrintAccessControl public printAccessControl;
     PrintSplitsData public printSplitsData;
@@ -21,7 +21,7 @@ contract LegendMilestoneClaim {
     error AddressNotAdmin();
 
     modifier onlyGrantee(uint256 _pubId) {
-        if (legendRegister.getGranteeSplitAmount(msg.sender, _pubId) != 0) {
+        if (legendRegister.getGranteeSplitAmount(msg.sender, _pubId) == 0) {
             revert GranteeNotRegistered();
         }
         _;
@@ -60,7 +60,6 @@ contract LegendMilestoneClaim {
         ) {
             revert InvalidClaim();
         }
-
         if (
             legendRegister.getGranteeClaimedMilestone(
                 msg.sender,
@@ -86,7 +85,7 @@ contract LegendMilestoneClaim {
                     IERC20(_currencies[i]).transferFrom(
                         address(this),
                         msg.sender,
-                        _amount * _splitAmount
+                        (_amount * _splitAmount) / 10000
                     );
                 }
             }
