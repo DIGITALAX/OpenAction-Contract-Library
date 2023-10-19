@@ -72,6 +72,7 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
         uint256 profileId,
         uint256 amount
     );
+    event LevelsAdded(uint256 profileId, uint256 pubId, address granteeAddress);
 
     constructor(
         address _hub,
@@ -112,6 +113,8 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
         _grantLevelInfo[_profileId][_pubId][7] = _levelInfo[5];
 
         _granteeReceiver[_profileId][_pubId] = _granteeAddress;
+
+        emit LevelsAdded(_profileId, _pubId, _granteeAddress);
 
         return _data;
     }
