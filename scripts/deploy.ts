@@ -61,15 +61,15 @@ const main = async () => {
     // const legendOpenAction = await LegendOpenAction.deploy(
     //   HUB,
     //   MODULE,
-    //   printAccessControl.address,
-    //   printSplitsData.address,
-    //   printDesignData.address,
-    //   marketCreator.address,
-    //   legendMilestone.address,
-    //   legendRegister.address
+    //   "0x8489b67f528De6270173ad261B53dFdd533D7419",
+    //   "0x6603eE13D851Fa4A74A99854dc17cD7192e0A21E",
+    //   "0x8562907F56E7Af91afb23D13E9DCBCEFbB89cE50",
+    //   "0x543c3556970eb140C61Af964Dd6454811b65cDa7",
+    //   "0xa6931B10156721F55e6bd7D8A980254952A78BaA",
+    //  "0xDCA5f61037d77188439D519117261ACbC14c3D7D"
     // );
 
-    // const WAIT_BLOCK_CONFIRMATIONS = 20;
+    const WAIT_BLOCK_CONFIRMATIONS = 20;
     // printAccessControl.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // printDesignData.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // printLibrary.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
@@ -129,30 +129,30 @@ const main = async () => {
     //     "0x8489b67f528De6270173ad261B53dFdd533D7419",
     //   ],
     // });
-     await run(`verify:verify`, {
-      address: "0x543c3556970eb140C61Af964Dd6454811b65cDa7",
-      constructorArguments: [
-        "0x8489b67f528De6270173ad261B53dFdd533D7419",
-        "0x6603eE13D851Fa4A74A99854dc17cD7192e0A21E",
-        "0xF7f852c6fB32b780A75B5D965F7D52aF2F560F12",
-        "0x37d93046Bf2b1D2fEC8F2559f421682491d8C7Ba",
-        "0x8562907F56E7Af91afb23D13E9DCBCEFbB89cE50",
-      ],
-    });
+    //  await run(`verify:verify`, {
+    //   address: "0x543c3556970eb140C61Af964Dd6454811b65cDa7",
+    //   constructorArguments: [
+    //     "0x8489b67f528De6270173ad261B53dFdd533D7419",
+    //     "0x6603eE13D851Fa4A74A99854dc17cD7192e0A21E",
+    //     "0xF7f852c6fB32b780A75B5D965F7D52aF2F560F12",
+    //     "0x37d93046Bf2b1D2fEC8F2559f421682491d8C7Ba",
+    //     "0x8562907F56E7Af91afb23D13E9DCBCEFbB89cE50",
+    //   ],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0xDCA5f61037d77188439D519117261ACbC14c3D7D",
+    //   constructorArguments: ["0x8489b67f528De6270173ad261B53dFdd533D7419"],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0xa6931B10156721F55e6bd7D8A980254952A78BaA",
+    //   constructorArguments: [
+    //     "0xDCA5f61037d77188439D519117261ACbC14c3D7D",
+    //     "0x8489b67f528De6270173ad261B53dFdd533D7419",
+    //     "0x6603eE13D851Fa4A74A99854dc17cD7192e0A21E",
+    //   ],
+    // });
     await run(`verify:verify`, {
-      address: "0xDCA5f61037d77188439D519117261ACbC14c3D7D",
-      constructorArguments: ["0x8489b67f528De6270173ad261B53dFdd533D7419"],
-    });
-    await run(`verify:verify`, {
-      address: "0xa6931B10156721F55e6bd7D8A980254952A78BaA",
-      constructorArguments: [
-        "0xDCA5f61037d77188439D519117261ACbC14c3D7D",
-        "0x8489b67f528De6270173ad261B53dFdd533D7419",
-        "0x6603eE13D851Fa4A74A99854dc17cD7192e0A21E",
-      ],
-    });
-    await run(`verify:verify`, {
-      address: "0x86179F3Df6713011FB9220bc57940a12f67731EA",
+      address: "0xAD4b61776F60E4696eb540d395B45E5C31cf36eE",
       constructorArguments: [
         HUB,
         MODULE,
