@@ -103,14 +103,49 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
             revert InvalidAddress();
         }
 
-        LevelInfo[6] memory _levelInfo = abi.decode(_data, (LevelInfo[6]));
+        (
+            uint256[][2] memory _level2,
+            uint256[][2] memory _level3,
+            uint256[][2] memory _level4,
+            uint256[][2] memory _level5,
+            uint256[][2] memory _level6,
+            uint256[][2] memory _level7
+        ) = abi.decode(
+                _data,
+                (
+                    uint256[][2],
+                    uint256[][2],
+                    uint256[][2],
+                    uint256[][2],
+                    uint256[][2],
+                    uint256[][2]
+                )
+            );
 
-        _grantLevelInfo[_profileId][_pubId][2] = _levelInfo[0];
-        _grantLevelInfo[_profileId][_pubId][3] = _levelInfo[1];
-        _grantLevelInfo[_profileId][_pubId][4] = _levelInfo[2];
-        _grantLevelInfo[_profileId][_pubId][5] = _levelInfo[3];
-        _grantLevelInfo[_profileId][_pubId][6] = _levelInfo[4];
-        _grantLevelInfo[_profileId][_pubId][7] = _levelInfo[5];
+        _grantLevelInfo[_profileId][_pubId][2] = LevelInfo({
+            collectionIds: _level2[0],
+            amounts: _level2[1]
+        });
+        _grantLevelInfo[_profileId][_pubId][3] = LevelInfo({
+            collectionIds: _level3[0],
+            amounts: _level3[1]
+        });
+        _grantLevelInfo[_profileId][_pubId][4] = LevelInfo({
+            collectionIds: _level4[0],
+            amounts: _level4[1]
+        });
+        _grantLevelInfo[_profileId][_pubId][5] = LevelInfo({
+            collectionIds: _level5[0],
+            amounts: _level5[1]
+        });
+        _grantLevelInfo[_profileId][_pubId][6] = LevelInfo({
+            collectionIds: _level6[0],
+            amounts: _level6[1]
+        });
+        _grantLevelInfo[_profileId][_pubId][7] = LevelInfo({
+            collectionIds: _level7[0],
+            amounts: _level7[1]
+        });
 
         _granteeReceiver[_profileId][_pubId] = _granteeAddress;
 
@@ -172,7 +207,8 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
                     buyerAddress: _params.transactionExecutor,
                     chosenCurrency: _currency,
                     pubId: _params.publicationActedId,
-                    profileId: _params.publicationActedProfileId
+                    profileId: _params.publicationActedProfileId,
+                    buyerProfileId: _params.actorProfileId
                 });
 
             marketCreator.buyTokens(_buyTokensParams);
@@ -205,11 +241,8 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
             abi.encode(
                 _grantLevelInfo[_params.publicationActedProfileId][
                     _params.publicationActedId
-                ][_level].collectionIds,
+                ][_level],
                 _currency,
-                _grantLevelInfo[_params.publicationActedProfileId][
-                    _params.publicationActedId
-                ][_level].amounts,
                 _chosenIndexes
             );
     }
@@ -323,7 +356,7 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
         return _grantLevelInfo[_profileId][_pubId][_level].collectionIds;
     }
 
-    function getGrantLevelCollectionAmounts(
+    function getGrantLevelAmounts(
         uint256 _pubId,
         uint256 _profileId,
         uint256 _level

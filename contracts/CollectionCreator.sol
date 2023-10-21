@@ -34,8 +34,13 @@ contract CollectionCreator {
         printAccessControl = PrintAccessControl(_printAccessControlAddress);
     }
 
-    function createCollection(PrintLibrary.MintParams memory _params) external {
-        if (!printAccessControl.isDesigner(msg.sender)) {
+    function createCollection(
+        PrintLibrary.MintParams memory _params
+    ) external returns (uint256) {
+        if (
+            !printAccessControl.isDesigner(msg.sender) ||
+            !printAccessControl.isOpenAction(msg.sender)
+        ) {
             revert AddressNotDesigner();
         }
         uint256 _amount = _params.amount;
@@ -46,16 +51,21 @@ contract CollectionCreator {
             collectionId: printData.getCollectionSupply() + 1,
             prices: _params.prices,
             amount: _amount,
+            pubId: _params.pubId,
+            profileId: _params.profileId,
             tokenIds: new uint256[](0),
             mintedTokens: 0,
             fulfiller: _params.fulfiller,
-            creator: msg.sender,
+            creator: _params.creator,
             uri: _params.uri,
             printType: _params.printType,
+            origin: _params.origin,
             unlimited: _params.unlimited
         });
 
-        printData.setCollection(newCollection);
+        uint256 _collectionId = printData.setCollection(newCollection);
+
+        return _collectionId;
     }
 
     function purchaseAndMintToken(

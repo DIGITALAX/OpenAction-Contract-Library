@@ -136,6 +136,48 @@ contract MarketCreator {
             _params.buyerAddress,
             _params.pubId,
             _params.profileId,
+            _params.buyerProfileId,
+            _totalPrice
+        );
+    }
+
+    function buyTokensOnlyNFT(
+        PrintLibrary.BuyTokensOnlyNFTParams memory _params
+    ) external {
+        if (!printAccessControl.isOpenAction(msg.sender)) {
+            revert InvalidAddress();
+        }
+
+        uint256[] memory _prices = new uint256[](_params.collectionIds.length);
+
+        collectionCreator.purchaseAndMintToken(
+            _params.collectionIds,
+            _params.collectionAmounts,
+            new uint256[](_params.collectionIds.length),
+            _params.buyerAddress,
+            _params.chosenCurrency
+        );
+
+        for (uint256 i = 0; i < _params.collectionIds.length; i++) {
+            uint256 _price = printDesignData.getCollectionPrices(
+                _params.collectionIds[i]
+            )[0] * _params.collectionAmounts[i];
+
+            _prices[i] = _price;
+        }
+
+        uint256 _totalPrice = 0;
+
+        for (uint256 i = 0; i < _prices.length; i++) {
+            _totalPrice += _prices[i];
+        }
+
+        printOrderData.createNFTOnlyOrder(
+            _params.chosenCurrency,
+            _params.buyerAddress,
+            _params.pubId,
+            _params.profileId,
+            _params.buyerProfileId,
             _totalPrice
         );
     }
