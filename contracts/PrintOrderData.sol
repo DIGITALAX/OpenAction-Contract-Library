@@ -10,10 +10,13 @@ contract PrintOrderData {
     PrintAccessControl public printAccessControl;
     MarketCreator public marketCreator;
     uint256 private _orderSupply;
+    uint256 private _nftOnlyOrderSupply;
     uint256 private _subOrderSupply;
+    mapping(uint256 => PrintLibrary.NFTOnlyOrder) private _nftOnlyOrders;
     mapping(uint256 => PrintLibrary.Order) private _orders;
     mapping(uint256 => PrintLibrary.SubOrder) private _subOrders;
     mapping(address => uint256[]) private _addressToOrderIds;
+    mapping(address => uint256[]) private _addressToNFTOnlyOrderIds;
 
     error InvalidAddress();
     error InvalidFulfiller();
@@ -25,6 +28,14 @@ contract PrintOrderData {
     event UpdateOrderDetails(uint256 indexed orderId, string newOrderDetails);
     event SubOrderIsFulfilled(uint256 indexed subOrderId);
     event OrderCreated(
+        uint256 orderId,
+        uint256 totalPrice,
+        address currency,
+        uint256 pubId,
+        uint256 profileId,
+        address buyer
+    );
+    event NFTOnlyOrderCreated(
         uint256 orderId,
         uint256 totalPrice,
         address currency,
@@ -70,6 +81,7 @@ contract PrintOrderData {
         printAccessControl = PrintAccessControl(_printAccessControlAddress);
         _orderSupply = 0;
         _subOrderSupply = 0;
+        _nftOnlyOrderSupply = 0;
     }
 
     function createOrder(
@@ -79,6 +91,7 @@ contract PrintOrderData {
         address _buyer,
         uint256 _pubId,
         uint256 _profileId,
+        uint256 _buyerProfileId,
         uint256 _totalPrice
     ) external onlyMarketContract {
         _orderSupply++;
@@ -86,6 +99,7 @@ contract PrintOrderData {
             orderId: _orderSupply,
             pubId: _pubId,
             profileId: _profileId,
+            buyerProfileId: _buyerProfileId,
             subOrderIds: _subOrderIds,
             details: _details,
             buyer: _buyer,
@@ -100,6 +114,40 @@ contract PrintOrderData {
 
         emit OrderCreated(
             _orderSupply,
+            _totalPrice,
+            _chosenCurrency,
+            _pubId,
+            _profileId,
+            _buyer
+        );
+    }
+
+    function createNFTOnlyOrder(
+        address _chosenCurrency,
+        address _buyer,
+        uint256 _pubId,
+        uint256 _profileId,
+        uint256 _buyerProfileId,
+        uint256 _totalPrice
+    ) external onlyMarketContract {
+        _nftOnlyOrderSupply++;
+        PrintLibrary.NFTOnlyOrder memory newOrder = PrintLibrary.NFTOnlyOrder({
+            orderId: _nftOnlyOrderSupply,
+            pubId: _pubId,
+            profileId: _profileId,
+            buyerProfileId: _buyerProfileId,
+            buyer: _buyer,
+            chosenCurrency: _chosenCurrency,
+            timestamp: block.timestamp,
+            messages: new string[](0),
+            totalPrice: _totalPrice
+        });
+
+        _nftOnlyOrders[_nftOnlyOrderSupply] = newOrder;
+        _addressToNFTOnlyOrderIds[_buyer].push(_orderSupply);
+
+        emit NFTOnlyOrderCreated(
+            _nftOnlyOrderSupply,
             _totalPrice,
             _chosenCurrency,
             _pubId,
@@ -256,6 +304,10 @@ contract PrintOrderData {
 
     function getSubOrderSupply() public view returns (uint256) {
         return _subOrderSupply;
+    }
+
+    function getNFTOnlyOrderSupply() public view returns (uint256) {
+        return _nftOnlyOrderSupply;
     }
 
     function getAddressToOrderIds(

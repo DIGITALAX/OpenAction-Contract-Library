@@ -38,12 +38,12 @@ contract PrintSplitsData {
         uint256 split
     );
     event DesignerSplitSet(
-        address fulfiller,
+        address designer,
         PrintLibrary.PrintType printType,
         uint256 split
     );
     event TreasurySplitSet(
-        address fulfiller,
+        address treasury,
         PrintLibrary.PrintType printType,
         uint256 split
     );

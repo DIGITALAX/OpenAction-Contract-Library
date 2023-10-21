@@ -2,7 +2,6 @@ import { ethers, run } from "hardhat";
 
 const HUB = "0xC1E77eE73403B8a7478884915aA599932A677870";
 const MODULE = "0x8834aE494ADD3C56d274Fe88243526DBAB15dEF8";
-
 const main = async () => {
   try {
     // const PrintAccessControl = await ethers.getContractFactory(
@@ -26,7 +25,7 @@ const main = async () => {
     // const printAccessControl = await PrintAccessControl.deploy();
     // const printLibrary = await PrintLibrary.deploy();
     // const printDesignData = await PrintDesignData.deploy(
-    //   printAccessControl.address
+    //   "0x8489b67f528De6270173ad261B53dFdd533D7419"
     // );
     // const printOrderData = await PrintOrderData.deploy(
     //   printAccessControl.address
@@ -63,7 +62,7 @@ const main = async () => {
     //   MODULE,
     //   "0x8489b67f528De6270173ad261B53dFdd533D7419",
     //   "0x6603eE13D851Fa4A74A99854dc17cD7192e0A21E",
-    //   "0x8562907F56E7Af91afb23D13E9DCBCEFbB89cE50",
+    //   "0xfC043AB048b9C1b359857C89E8aE1a9eeac6c8E2",
     //   "0x543c3556970eb140C61Af964Dd6454811b65cDa7",
     //   "0xa6931B10156721F55e6bd7D8A980254952A78BaA",
     //  "0xDCA5f61037d77188439D519117261ACbC14c3D7D"
@@ -103,7 +102,7 @@ const main = async () => {
     //   address: "0xD45d47eAb081BBbE07cE4836D48bc768b442E86C",
     // });
     // await run(`verify:verify`, {
-    //   address: "0x8562907F56E7Af91afb23D13E9DCBCEFbB89cE50",
+    //   address: "0xfC043AB048b9C1b359857C89E8aE1a9eeac6c8E2",
     //   constructorArguments: ["0x8489b67f528De6270173ad261B53dFdd533D7419"],
     // });
     // await run(`verify:verify`, {
@@ -152,13 +151,13 @@ const main = async () => {
     //   ],
     // });
     await run(`verify:verify`, {
-      address: "0xAD4b61776F60E4696eb540d395B45E5C31cf36eE",
+      address: "0xe023Eb3aF31B9cDd05fE6bf8eDeC32af2C69CEd8",
       constructorArguments: [
         HUB,
         MODULE,
         "0x8489b67f528De6270173ad261B53dFdd533D7419",
         "0x6603eE13D851Fa4A74A99854dc17cD7192e0A21E",
-        "0x8562907F56E7Af91afb23D13E9DCBCEFbB89cE50",
+        "0xfC043AB048b9C1b359857C89E8aE1a9eeac6c8E2",
         "0x543c3556970eb140C61Af964Dd6454811b65cDa7",
         "0xa6931B10156721F55e6bd7D8A980254952A78BaA",
         "0xDCA5f61037d77188439D519117261ACbC14c3D7D",

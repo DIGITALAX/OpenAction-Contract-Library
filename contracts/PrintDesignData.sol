@@ -22,6 +22,8 @@ contract PrintDesignData {
     event TokensMinted(uint256 indexed tokenId, uint256 collectionId);
     event CollectionCreated(
         uint256 indexed collectionId,
+        uint256 pubId,
+        uint256 profileId,
         string uri,
         uint256 amount,
         address owner
@@ -63,17 +65,21 @@ contract PrintDesignData {
 
     function setCollection(
         PrintLibrary.Collection memory _collectionData
-    ) external onlyCollectionCreator {
+    ) external onlyCollectionCreator returns (uint256) {
         _collectionSupply++;
 
         _collections[_collectionSupply] = _collectionData;
 
         emit CollectionCreated(
             _collectionData.collectionId,
+            _collectionData.pubId,
+            _collectionData.profileId,
             _collectionData.uri,
             _collectionData.amount,
             _collectionData.creator
         );
+
+        return _collectionSupply;
     }
 
     function setCollectionMintedTokens(
@@ -118,6 +124,7 @@ contract PrintDesignData {
 
         _currentCollection.prices = _params.prices;
         _currentCollection.amount = _amount;
+        _currentCollection.creator = _params.creator;
         _currentCollection.unlimited = _params.unlimited;
         _currentCollection.uri = _params.uri;
         _currentCollection.printType = _params.printType;
@@ -141,6 +148,12 @@ contract PrintDesignData {
         uint256 _collectionId
     ) public view returns (address) {
         return _collections[_collectionId].creator;
+    }
+
+    function getCollectionOrigin(
+        uint256 _collectionId
+    ) public view returns (PrintLibrary.Origin) {
+        return _collections[_collectionId].origin;
     }
 
     function getCollectionURI(
@@ -167,6 +180,18 @@ contract PrintDesignData {
         return _collections[_collectionId].fulfiller;
     }
 
+    function getCollectionAmount(
+        uint256 _collectionId
+    ) public view returns (uint256) {
+        return _collections[_collectionId].amount;
+    }
+
+    function getCollectionUnlimited(
+        uint256 _collectionId
+    ) public view returns (bool) {
+        return _collections[_collectionId].unlimited;
+    }
+
     function getCollectionTokenIds(
         uint256 _collectionId
     ) public view returns (uint256[] memory) {
@@ -177,6 +202,18 @@ contract PrintDesignData {
         uint256 _collectionId
     ) public view returns (uint256) {
         return _collections[_collectionId].mintedTokens;
+    }
+
+    function getCollectionProfileId(
+        uint256 _collectionId
+    ) public view returns (uint256) {
+        return _collections[_collectionId].profileId;
+    }
+
+    function getCollectionPubId(
+        uint256 _collectionId
+    ) public view returns (uint256) {
+        return _collections[_collectionId].pubId;
     }
 
     function getCollectionSupply() public view returns (uint256) {
