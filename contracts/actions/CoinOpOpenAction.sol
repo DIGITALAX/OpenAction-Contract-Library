@@ -177,7 +177,9 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
                 chosenCurrency: _currency,
                 pubId: _params.publicationActedId,
                 profileId: _params.publicationActedProfileId,
-                buyerProfileId: _params.actorProfileId
+                buyerProfileId: _params.actorProfileId,
+                pkpAddress: address(0),
+                withPKP: false
             });
 
         marketCreator.buyTokens(_buyTokensParams);

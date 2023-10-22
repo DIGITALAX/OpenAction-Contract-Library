@@ -59,6 +59,7 @@ contract PrintLibrary {
         uint256 buyerProfileId;
         uint256 timestamp;
         uint256 totalPrice;
+        bool withPKP;
     }
     struct NFTOnlyOrder {
         string[] messages;
@@ -101,9 +102,11 @@ contract PrintLibrary {
         string details;
         address buyerAddress;
         address chosenCurrency;
+        address pkpAddress;
         uint256 pubId;
         uint256 profileId;
         uint256 buyerProfileId;
+        bool withPKP;
     }
     struct BuyTokensOnlyNFTParams {
         uint256[] collectionIds;
@@ -114,7 +117,7 @@ contract PrintLibrary {
         uint256 profileId;
         uint256 buyerProfileId;
     }
-      struct CollectionValuesParams {
+    struct CollectionValuesParams {
         uint256[][] prices;
         string[] uris;
         address[] fulfillers;

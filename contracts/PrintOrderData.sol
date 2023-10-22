@@ -92,7 +92,8 @@ contract PrintOrderData {
         uint256 _pubId,
         uint256 _profileId,
         uint256 _buyerProfileId,
-        uint256 _totalPrice
+        uint256 _totalPrice,
+        bool _withPKP
     ) external onlyMarketContract {
         _orderSupply++;
         PrintLibrary.Order memory newOrder = PrintLibrary.Order({
@@ -106,7 +107,8 @@ contract PrintOrderData {
             chosenCurrency: _chosenCurrency,
             timestamp: block.timestamp,
             messages: new string[](0),
-            totalPrice: _totalPrice
+            totalPrice: _totalPrice,
+            withPKP: _withPKP
         });
 
         _orders[_orderSupply] = newOrder;
@@ -250,6 +252,10 @@ contract PrintOrderData {
         uint256 _orderId
     ) public view returns (address) {
         return _orders[_orderId].chosenCurrency;
+    }
+
+    function getOrderWithPKP(uint256 _orderId) public view returns (bool) {
+        return _orders[_orderId].withPKP;
     }
 
     function getOrderTimestamp(uint256 _orderId) public view returns (uint256) {
