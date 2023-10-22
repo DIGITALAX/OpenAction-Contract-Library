@@ -14,6 +14,7 @@ contract MarketCreator {
     CollectionCreator public collectionCreator;
     PrintSplitsData public printSplitsData;
     PrintDesignData public printDesignData;
+    address public fiatPKPAddress;
 
     error InvalidAddress();
 
@@ -29,13 +30,15 @@ contract MarketCreator {
         address _printSplitsDataAddress,
         address _printOrderDataAddress,
         address _collectionCreatorAddress,
-        address _printDesignDataAddress
+        address _printDesignDataAddress,
+        address _fiatPKPAddress
     ) {
         printAccessControl = PrintAccessControl(_printAccessControlAddress);
         printOrderData = PrintOrderData(_printOrderDataAddress);
         collectionCreator = CollectionCreator(_collectionCreatorAddress);
         printSplitsData = PrintSplitsData(_printSplitsDataAddress);
         printDesignData = PrintDesignData(_printDesignDataAddress);
+        fiatPKPAddress = _fiatPKPAddress;
     }
 
     function setPrintAccessControlAddress(
@@ -62,6 +65,10 @@ contract MarketCreator {
         collectionCreator = CollectionCreator(_newCollectionCreatorAddress);
     }
 
+    function setFiatPKPAddress(address _newFiatPKPAddress) public onlyAdmin {
+        fiatPKPAddress = _newFiatPKPAddress;
+    }
+
     function setPrintSplitsDataAddress(
         address _newPrintSplitsDataAddress
     ) public onlyAdmin {
@@ -69,17 +76,25 @@ contract MarketCreator {
     }
 
     function buyTokens(PrintLibrary.BuyTokensParams memory _params) external {
-        if (!printAccessControl.isOpenAction(msg.sender)) {
+        if (
+            !printAccessControl.isOpenAction(msg.sender) &&
+            msg.sender != fiatPKPAddress
+        ) {
             revert InvalidAddress();
         }
 
         uint256[] memory _prices = new uint256[](_params.collectionIds.length);
 
+        address _buyerAddress = _params.buyerAddress;
+        if (msg.sender != fiatPKPAddress) {
+            _buyerAddress = _params.pkpAddress;
+        }
+
         collectionCreator.purchaseAndMintToken(
             _params.collectionIds,
             _params.collectionAmounts,
             _params.collectionIndexes,
-            _params.buyerAddress,
+            _buyerAddress,
             _params.chosenCurrency
         );
 
@@ -133,11 +148,12 @@ contract MarketCreator {
             _subOrderIds,
             _params.details,
             _params.chosenCurrency,
-            _params.buyerAddress,
+            _buyerAddress,
             _params.pubId,
             _params.profileId,
             _params.buyerProfileId,
-            _totalPrice
+            _totalPrice,
+            _params.withPKP
         );
     }
 
