@@ -114,4 +114,11 @@ contract PrintLibrary {
         uint256 profileId;
         uint256 buyerProfileId;
     }
+      struct CollectionValuesParams {
+        uint256[][] prices;
+        string[] uris;
+        address[] fulfillers;
+        uint256[] amounts;
+        bool[] unlimiteds;
+    }
 }

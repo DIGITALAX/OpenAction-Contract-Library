@@ -12,16 +12,6 @@ import "./../CollectionCreator.sol";
 import "./../PrintAccessControl.sol";
 import "./../PrintDesignData.sol";
 
-library CoinOpOpenActionLibrary {
-    struct CollectionValues {
-        uint256[][] prices;
-        string[] uris;
-        address[] fulfillers;
-        uint256[] amounts;
-        bool[] unlimiteds;
-    }
-}
-
 contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
     MarketCreator public marketCreator;
     CollectionCreator public collectionCreator;
@@ -91,16 +81,22 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
             revert InvalidAddress();
         }
 
-        CoinOpOpenActionLibrary.CollectionValues memory _collectionCreator = abi
-            .decode(_data, (CoinOpOpenActionLibrary.CollectionValues));
+        (
+            PrintLibrary.CollectionValuesParams memory _collectionCreator,
+            PrintLibrary.PrintType[] memory _printTypes
+        ) = abi.decode(
+                _data,
+                (PrintLibrary.CollectionValuesParams, PrintLibrary.PrintType[])
+            );
 
         if (
             _collectionCreator.prices.length !=
-            _collectionCreator.uris.length &&
+            _collectionCreator.uris.length ||
             _collectionCreator.fulfillers.length !=
-            _collectionCreator.amounts.length &&
+            _collectionCreator.amounts.length ||
             _collectionCreator.unlimiteds.length !=
-            _collectionCreator.prices.length
+            _collectionCreator.prices.length ||
+            _collectionCreator.fulfillers.length != _printTypes.length
         ) {
             revert InvalidAmounts();
         }
@@ -110,6 +106,7 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
             _collectionCreator.fulfillers,
             _collectionCreator.prices,
             _collectionCreator.amounts,
+            _printTypes,
             _collectionCreator.unlimiteds,
             _creatorAddress,
             _pubId,
@@ -249,6 +246,7 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
         address[] memory _fulfillers,
         uint256[][] memory _prices,
         uint256[] memory _amounts,
+        PrintLibrary.PrintType[] memory _printTypes,
         bool[] memory _unlimiteds,
         address _creatorAddress,
         uint256 _pubId,
@@ -265,8 +263,8 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
                     pubId: _pubId,
                     profileId: _profileId,
                     creator: _creatorAddress,
-                    printType: PrintLibrary.PrintType.NFTOnly,
-                    origin: PrintLibrary.Origin.Chromadin,
+                    printType: _printTypes[i],
+                    origin: PrintLibrary.Origin.CoinOp,
                     amount: _amounts[i],
                     unlimited: _unlimiteds[i]
                 })
