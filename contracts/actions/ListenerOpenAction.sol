@@ -134,9 +134,13 @@ contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
     ) external override onlyHub returns (bytes memory) {
         (
             uint256[] memory _chosenIndexes,
+            string memory _encryptedFulfillment,
             address _currency,
-            string memory _encryptedFulfillment
-        ) = abi.decode(_params.actionModuleData, (uint256[], address, string));
+            bool _fiat
+        ) = abi.decode(
+                _params.actionModuleData,
+                (uint256[], string, address, bool)
+            );
 
         if (
             !MODULE_GLOBALS.isCurrencyWhitelisted(_currency) ||
@@ -151,18 +155,29 @@ contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
 
         uint256 _grandTotal = 0;
 
+        bool _isVerified = false;
+
+        if (_fiat) {
+            _isVerified = printAccessControl.isVerifiedFiat(
+                _params.transactionExecutor,
+                _params.publicationActedProfileId,
+                _params.publicationActedId
+            );
+        }
+
         for (uint256 i; i < _collectionIds.length; i++) {
             address _designer = printDesignData.getCollectionCreator(
                 _collectionIds[i]
             );
-
-            _grandTotal += _transferTokens(
-                _collectionIds[i],
-                _chosenIndexes[i],
-                _designer,
-                _currency,
-                _params.transactionExecutor
-            );
+            if (!_isVerified) {
+                _grandTotal += _transferTokens(
+                    _collectionIds[i],
+                    _chosenIndexes[i],
+                    _designer,
+                    _currency,
+                    _params.transactionExecutor
+                );
+            }
         }
 
         PrintLibrary.BuyTokensParams memory _buyTokensParams = PrintLibrary
@@ -179,7 +194,7 @@ contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
                 profileId: _params.publicationActedProfileId,
                 buyerProfileId: _params.actorProfileId,
                 pkpAddress: address(0),
-                withPKP: false
+                withPKP: _isVerified
             });
 
         marketCreator.buyTokens(_buyTokensParams);
