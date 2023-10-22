@@ -12,17 +12,7 @@ import "./../CollectionCreator.sol";
 import "./../PrintAccessControl.sol";
 import "./../PrintDesignData.sol";
 
-library ChromadinOpenActionLibrary {
-    struct CollectionValues {
-        uint256[][] prices;
-        string[] uris;
-        address[] fulfillers;
-        uint256[] amounts;
-        bool[] unlimiteds;
-    }
-}
-
-contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
+contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
     MarketCreator public marketCreator;
     CollectionCreator public collectionCreator;
     PrintAccessControl public printAccessControl;
@@ -49,14 +39,14 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
 
     IModuleGlobals public immutable MODULE_GLOBALS;
 
-    event ChromadinPurchased(
+    event ListenerPurchased(
         address buyerAddress,
         uint256[] collectionIds,
         uint256 pubId,
         uint256 profileId,
         uint256 totalAmount
     );
-    event ChromadinInitialized(
+    event ListenerInitialized(
         uint256[] collectionIds,
         uint256 profileId,
         uint256 pubId,
@@ -91,8 +81,13 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
             revert InvalidAddress();
         }
 
-        PrintLibrary.CollectionValuesParams memory _collectionCreator = abi
-            .decode(_data, (PrintLibrary.CollectionValuesParams));
+        (
+            PrintLibrary.CollectionValuesParams memory _collectionCreator,
+            PrintLibrary.PrintType[] memory _printTypes
+        ) = abi.decode(
+                _data,
+                (PrintLibrary.CollectionValuesParams, PrintLibrary.PrintType[])
+            );
 
         if (
             _collectionCreator.prices.length !=
@@ -100,7 +95,8 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
             _collectionCreator.fulfillers.length !=
             _collectionCreator.amounts.length ||
             _collectionCreator.unlimiteds.length !=
-            _collectionCreator.prices.length
+            _collectionCreator.prices.length ||
+            _collectionCreator.fulfillers.length != _printTypes.length
         ) {
             revert InvalidAmounts();
         }
@@ -110,6 +106,7 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
             _collectionCreator.fulfillers,
             _collectionCreator.prices,
             _collectionCreator.amounts,
+            _printTypes,
             _collectionCreator.unlimiteds,
             _creatorAddress,
             _pubId,
@@ -121,7 +118,7 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
             amounts: _collectionCreator.amounts
         });
 
-        emit ChromadinInitialized(
+        emit ListenerInitialized(
             _collectionIds,
             _profileId,
             _pubId,
@@ -135,7 +132,11 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
     function processPublicationAction(
         Types.ProcessActionParams calldata _params
     ) external override onlyHub returns (bytes memory) {
-        address _currency = abi.decode(_params.actionModuleData, (address));
+        (
+            uint256[] memory _chosenIndexes,
+            address _currency,
+            string memory _encryptedFulfillment
+        ) = abi.decode(_params.actionModuleData, (uint256[], address, string));
 
         if (
             !MODULE_GLOBALS.isCurrencyWhitelisted(_currency) ||
@@ -157,18 +158,21 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
 
             _grandTotal += _transferTokens(
                 _collectionIds[i],
+                _chosenIndexes[i],
                 _designer,
                 _currency,
                 _params.transactionExecutor
             );
         }
 
-        PrintLibrary.BuyTokensOnlyNFTParams
-            memory _buyTokensParams = PrintLibrary.BuyTokensOnlyNFTParams({
+        PrintLibrary.BuyTokensParams memory _buyTokensParams = PrintLibrary
+            .BuyTokensParams({
                 collectionIds: _collectionIds,
                 collectionAmounts: _collectionGroups[
                     _params.publicationActedProfileId
                 ][_params.publicationActedId].amounts,
+                collectionIndexes: _chosenIndexes,
+                details: _encryptedFulfillment,
                 buyerAddress: _params.transactionExecutor,
                 chosenCurrency: _currency,
                 pubId: _params.publicationActedId,
@@ -176,9 +180,9 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
                 buyerProfileId: _params.actorProfileId
             });
 
-        marketCreator.buyTokensOnlyNFT(_buyTokensParams);
+        marketCreator.buyTokens(_buyTokensParams);
 
-        emit ChromadinPurchased(
+        emit ListenerPurchased(
             _params.transactionExecutor,
             _collectionIds,
             _params.publicationActedId,
@@ -186,18 +190,19 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
             _grandTotal
         );
 
-        return abi.encode(_collectionIds, _currency);
+        return abi.encode(_collectionIds, _currency, _chosenIndexes);
     }
 
     function _transferTokens(
         uint256 _collectionId,
+        uint256 _chosenIndex,
         address _chosenCurrency,
         address _designer,
         address _buyer
     ) internal returns (uint256) {
         uint256 _totalPrice = printDesignData.getCollectionPrices(
             _collectionId
-        )[0];
+        )[_chosenIndex];
         uint256 _calculatedPrice = _calculateAmount(
             _chosenCurrency,
             _totalPrice
@@ -241,6 +246,7 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
         address[] memory _fulfillers,
         uint256[][] memory _prices,
         uint256[] memory _amounts,
+        PrintLibrary.PrintType[] memory _printTypes,
         bool[] memory _unlimiteds,
         address _creatorAddress,
         uint256 _pubId,
@@ -257,8 +263,8 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
                     pubId: _pubId,
                     profileId: _profileId,
                     creator: _creatorAddress,
-                    printType: PrintLibrary.PrintType.NFTOnly,
-                    origin: PrintLibrary.Origin.Chromadin,
+                    printType: _printTypes[i],
+                    origin: PrintLibrary.Origin.Listener,
                     amount: _amounts[i],
                     unlimited: _unlimiteds[i]
                 })
