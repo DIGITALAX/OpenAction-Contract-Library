@@ -3,11 +3,14 @@
 pragma solidity ^0.8.16;
 
 contract PrintAccessControl {
+    address public fiatPKPAddress;
+
     mapping(address => bool) private _admins;
     mapping(address => bool) private _designers;
     mapping(address => bool) private _openActions;
     mapping(address => bool) private _fulfillers;
     mapping(address => bool) private _pkps;
+    mapping(address => mapping(uint256 => mapping(uint256 => bool))) _verifiedFiat;
 
     event AdminAdded(address indexed admin);
     event AdminRemoved(address indexed admin);
@@ -19,6 +22,8 @@ contract PrintAccessControl {
     event FulfillerRemoved(address indexed fulfiller);
     event PKPAdded(address indexed pkp);
     event PKPRemoved(address indexed pkp);
+    event VerifiedFiatAdded(address indexed verified);
+    event VerifiedFiatRemoved(address indexed verified);
 
     error AddressInvalid();
     error Existing();
@@ -26,6 +31,13 @@ contract PrintAccessControl {
 
     modifier onlyAdmin() {
         if (!_admins[msg.sender]) {
+            revert AddressInvalid();
+        }
+        _;
+    }
+
+    modifier pkpOrAdmin() {
+        if (!_admins[msg.sender] && msg.sender != fiatPKPAddress) {
             revert AddressInvalid();
         }
         _;
@@ -118,6 +130,34 @@ contract PrintAccessControl {
         emit PKPRemoved(_pkp);
     }
 
+    function addVerifiedFiat(
+        address _verified,
+        uint256 _pubId,
+        uint256 _profileId
+    ) external pkpOrAdmin {
+        if (_verifiedFiat[_verified][_profileId][_pubId]) {
+            revert Existing();
+        }
+        _verifiedFiat[_verified][_profileId][_pubId] = true;
+        emit VerifiedFiatAdded(_verified);
+    }
+
+    function removeVerifiedFiat(
+        address _verified,
+        uint256 _pubId,
+        uint256 _profileId
+    ) external pkpOrAdmin {
+        if (!_verifiedFiat[_verified][_profileId][_pubId]) {
+            revert AddressInvalid();
+        }
+        _verifiedFiat[_verified][_profileId][_pubId] = false;
+        emit VerifiedFiatRemoved(_verified);
+    }
+
+    function setFiatPKPAddress(address _newFiatPKPAddress) public onlyAdmin {
+        fiatPKPAddress = _newFiatPKPAddress;
+    }
+
     function isAdmin(address _address) public view returns (bool) {
         return _admins[_address];
     }
@@ -136,5 +176,13 @@ contract PrintAccessControl {
 
     function isPKP(address _address) public view returns (bool) {
         return _pkps[_address];
+    }
+
+    function isVerifiedFiat(
+        address _address,
+        uint256 _profileId,
+        uint256 _pubId
+    ) public view returns (bool) {
+        return _verifiedFiat[_address][_profileId][_pubId];
     }
 }
