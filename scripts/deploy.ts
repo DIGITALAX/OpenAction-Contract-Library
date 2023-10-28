@@ -65,7 +65,7 @@ const main = async () => {
     //   "0xfC043AB048b9C1b359857C89E8aE1a9eeac6c8E2",
     //   "0x543c3556970eb140C61Af964Dd6454811b65cDa7",
     //   "0xa6931B10156721F55e6bd7D8A980254952A78BaA",
-    //  "0xDCA5f61037d77188439D519117261ACbC14c3D7D"
+    //   "0xDCA5f61037d77188439D519117261ACbC14c3D7D"
     // );
 
     const WAIT_BLOCK_CONFIRMATIONS = 20;
@@ -151,7 +151,7 @@ const main = async () => {
     //   ],
     // });
     await run(`verify:verify`, {
-      address: "0xe023Eb3aF31B9cDd05fE6bf8eDeC32af2C69CEd8",
+      address: "0x0eb82Cc9df6DB90fb05aD515B53eC9C5222A08F0",
       constructorArguments: [
         HUB,
         MODULE,

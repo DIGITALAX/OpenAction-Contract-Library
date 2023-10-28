@@ -123,5 +123,6 @@ contract PrintLibrary {
         address[] fulfillers;
         uint256[] amounts;
         bool[] unlimiteds;
+        address creatorAddress;
     }
 }
