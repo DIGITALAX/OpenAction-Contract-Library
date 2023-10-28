@@ -74,13 +74,9 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
     function initializePublicationAction(
         uint256 _profileId,
         uint256 _pubId,
-        address _creatorAddress,
+        address _executor,
         bytes calldata _data
     ) external override onlyHub returns (bytes memory) {
-        if (!printAccessControl.isDesigner(_creatorAddress)) {
-            revert InvalidAddress();
-        }
-
         (
             PrintLibrary.CollectionValuesParams memory _collectionCreator,
             PrintLibrary.PrintType[] memory _printTypes
@@ -88,6 +84,10 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
                 _data,
                 (PrintLibrary.CollectionValuesParams, PrintLibrary.PrintType[])
             );
+
+        if (!printAccessControl.isDesigner(_collectionCreator.creatorAddress)) {
+            revert InvalidAddress();
+        }
 
         if (
             _collectionCreator.prices.length !=
@@ -102,13 +102,8 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
         }
 
         uint256[] memory _collectionIds = _configureCollection(
-            _collectionCreator.uris,
-            _collectionCreator.fulfillers,
-            _collectionCreator.prices,
-            _collectionCreator.amounts,
+            _collectionCreator,
             _printTypes,
-            _collectionCreator.unlimiteds,
-            _creatorAddress,
             _pubId,
             _profileId
         );
@@ -122,7 +117,7 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
             _collectionIds,
             _profileId,
             _pubId,
-            _creatorAddress,
+            _collectionCreator.creatorAddress,
             _collectionCreator.prices.length
         );
 
@@ -159,7 +154,7 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
 
         if (_fiat) {
             _isVerified = printAccessControl.isVerifiedFiat(
-                _params.transactionExecutor,
+                _params.actorProfileOwner,
                 _params.publicationActedProfileId,
                 _params.publicationActedId
             );
@@ -176,7 +171,7 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
                     _chosenIndexes[i],
                     _designer,
                     _currency,
-                    _params.transactionExecutor
+                    _params.actorProfileOwner
                 );
             }
         }
@@ -189,7 +184,7 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
                 ][_params.publicationActedId].amounts,
                 collectionIndexes: _chosenIndexes,
                 details: _encryptedFulfillment,
-                buyerAddress: _params.transactionExecutor,
+                buyerAddress: _params.actorProfileOwner,
                 chosenCurrency: _currency,
                 pubId: _params.publicationActedId,
                 profileId: _params.publicationActedProfileId,
@@ -201,7 +196,7 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
         marketCreator.buyTokens(_buyTokensParams);
 
         emit CoinOpPurchased(
-            _params.transactionExecutor,
+            _params.actorProfileOwner,
             _collectionIds,
             _params.publicationActedId,
             _params.publicationActedProfileId,
@@ -260,31 +255,28 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
     }
 
     function _configureCollection(
-        string[] memory _uris,
-        address[] memory _fulfillers,
-        uint256[][] memory _prices,
-        uint256[] memory _amounts,
+        PrintLibrary.CollectionValuesParams memory _collectionCreator,
         PrintLibrary.PrintType[] memory _printTypes,
-        bool[] memory _unlimiteds,
-        address _creatorAddress,
         uint256 _pubId,
         uint256 _profileId
     ) internal returns (uint256[] memory) {
-        uint256[] memory _collectionIds = new uint256[](_uris.length);
+        uint256[] memory _collectionIds = new uint256[](
+            _collectionCreator.uris.length
+        );
 
-        for (uint256 i = 0; i < _uris.length; i++) {
+        for (uint256 i = 0; i < _collectionCreator.uris.length; i++) {
             uint256 _id = collectionCreator.createCollection(
                 PrintLibrary.MintParams({
-                    prices: _prices[i],
-                    uri: _uris[i],
-                    fulfiller: _fulfillers[i],
+                    prices: _collectionCreator.prices[i],
+                    uri: _collectionCreator.uris[i],
+                    fulfiller: _collectionCreator.fulfillers[i],
                     pubId: _pubId,
                     profileId: _profileId,
-                    creator: _creatorAddress,
+                    creator: _collectionCreator.creatorAddress,
                     printType: _printTypes[i],
                     origin: PrintLibrary.Origin.CoinOp,
-                    amount: _amounts[i],
-                    unlimited: _unlimiteds[i]
+                    amount: _collectionCreator.amounts[i],
+                    unlimited: _collectionCreator.unlimiteds[i]
                 })
             );
             _collectionIds[i] = _id;

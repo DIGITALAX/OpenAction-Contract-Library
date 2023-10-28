@@ -96,20 +96,17 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
     function initializePublicationAction(
         uint256 _profileId,
         uint256 _pubId,
-        address _granteeAddress,
+        address _executor,
         bytes calldata _data
     ) external override onlyHub returns (bytes memory) {
-        if (legendRegister.getGrantIdentifier(_granteeAddress) == bytes32(0)) {
-            revert InvalidAddress();
-        }
-
         (
             uint256[][2] memory _level2,
             uint256[][2] memory _level3,
             uint256[][2] memory _level4,
             uint256[][2] memory _level5,
             uint256[][2] memory _level6,
-            uint256[][2] memory _level7
+            uint256[][2] memory _level7,
+            address _granteeAddress
         ) = abi.decode(
                 _data,
                 (
@@ -118,9 +115,14 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
                     uint256[][2],
                     uint256[][2],
                     uint256[][2],
-                    uint256[][2]
+                    uint256[][2],
+                    address
                 )
             );
+
+        if (legendRegister.getGrantIdentifier(_granteeAddress) == bytes32(0)) {
+            revert InvalidAddress();
+        }
 
         _grantLevelInfo[_profileId][_pubId][2] = LevelInfo({
             collectionIds: _level2[0],
@@ -190,7 +192,7 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
                     _collectionIds[i],
                     _chosenIndexes[i],
                     _currency,
-                    _params.transactionExecutor
+                    _params.actorProfileOwner
                 );
             }
 
@@ -204,7 +206,7 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
                     ][_params.publicationActedId][_level].amounts,
                     collectionIndexes: _chosenIndexes,
                     details: _encryptedFulfillment,
-                    buyerAddress: _params.transactionExecutor,
+                    buyerAddress: _params.actorProfileOwner,
                     chosenCurrency: _currency,
                     pubId: _params.publicationActedId,
                     profileId: _params.publicationActedProfileId,
@@ -219,7 +221,7 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
         }
 
         IERC20(_currency).transferFrom(
-            _params.transactionExecutor,
+            _params.actorProfileOwner,
             legendMilestone,
             _grantAmount
         );

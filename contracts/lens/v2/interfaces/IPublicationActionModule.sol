@@ -24,7 +24,7 @@ interface IPublicationActionModule {
    *
    * @param profileId The profile ID of the author publishing the content with this Publication Action.
    * @param pubId The publication ID being published.
-   * @param transactionExecutor The address of the transaction executor (e.g. for any funds to transferFrom).
+   * @param actorProfileOwner The address of the transaction executor (e.g. for any funds to transferFrom).
    * @param data Arbitrary data passed from the user to be decoded by the Action Module during initialization.
    *
    * @return bytes Any custom ABI-encoded data. This will be a LensHub event params that can be used by
@@ -33,7 +33,7 @@ interface IPublicationActionModule {
   function initializePublicationAction(
     uint256 profileId,
     uint256 pubId,
-    address transactionExecutor,
+    address actorProfileOwner,
     bytes calldata data
   ) external returns (bytes memory);
 
