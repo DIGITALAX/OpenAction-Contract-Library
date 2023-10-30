@@ -7,6 +7,8 @@ import "./PrintLibrary.sol";
 
 contract PrintSplitsData {
     PrintAccessControl public printAccessControl;
+    string public symbol;
+    string public name;
     address[] private _allCurrencies;
 
     mapping(address => mapping(PrintLibrary.PrintType => uint256))
@@ -60,6 +62,8 @@ contract PrintSplitsData {
 
     constructor(address _printAccessControlAddress) {
         printAccessControl = PrintAccessControl(_printAccessControlAddress);
+        symbol = "PSD";
+        name = "PrintSplitsData";
     }
 
     function setFulfillerSplit(

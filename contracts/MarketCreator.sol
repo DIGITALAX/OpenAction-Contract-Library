@@ -14,6 +14,8 @@ contract MarketCreator {
     CollectionCreator public collectionCreator;
     PrintSplitsData public printSplitsData;
     PrintDesignData public printDesignData;
+    string public symbol;
+    string public name;
     address public fiatPKPAddress;
 
     error InvalidAddress();
@@ -39,6 +41,8 @@ contract MarketCreator {
         printSplitsData = PrintSplitsData(_printSplitsDataAddress);
         printDesignData = PrintDesignData(_printDesignDataAddress);
         fiatPKPAddress = _fiatPKPAddress;
+        symbol = "MCR";
+        name = "MarketCreator";
     }
 
     function setPrintAccessControlAddress(
@@ -123,6 +127,7 @@ contract MarketCreator {
             printOrderData.createSubOrder(
                 _tokenIdsOrder,
                 _fulfiller,
+                _buyerAddress,
                 _params.collectionAmounts[i],
                 printOrderData.getOrderSupply() + 1,
                 _price

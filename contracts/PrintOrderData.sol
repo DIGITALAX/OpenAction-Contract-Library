@@ -9,6 +9,8 @@ import "./MarketCreator.sol";
 contract PrintOrderData {
     PrintAccessControl public printAccessControl;
     MarketCreator public marketCreator;
+    string public symbol;
+    string public name;
     uint256 private _orderSupply;
     uint256 private _nftOnlyOrderSupply;
     uint256 private _subOrderSupply;
@@ -17,6 +19,7 @@ contract PrintOrderData {
     mapping(uint256 => PrintLibrary.SubOrder) private _subOrders;
     mapping(address => uint256[]) private _addressToOrderIds;
     mapping(address => uint256[]) private _addressToNFTOnlyOrderIds;
+    mapping(address => uint256[]) private _communityHelperAddressToTokenIds;
 
     error InvalidAddress();
     error InvalidFulfiller();
@@ -82,6 +85,8 @@ contract PrintOrderData {
         _orderSupply = 0;
         _subOrderSupply = 0;
         _nftOnlyOrderSupply = 0;
+        symbol = "POD";
+        name = "PrintOrderData";
     }
 
     function createOrder(
@@ -161,6 +166,7 @@ contract PrintOrderData {
     function createSubOrder(
         uint256[] memory _tokenIds,
         address _fullfiller,
+        address _buyer,
         uint256 _amount,
         uint256 _orderId,
         uint256 _price
@@ -178,6 +184,9 @@ contract PrintOrderData {
         });
 
         _subOrders[_subOrderSupply] = newSubOrder;
+        for (uint256 i = 0; i < _tokenIds.length; i++) {
+            _communityHelperAddressToTokenIds[_buyer].push(_tokenIds[i]);
+        }
     }
 
     function setSubOrderisFulfilled(
@@ -302,6 +311,12 @@ contract PrintOrderData {
         uint256 _orderId
     ) public view returns (uint256[] memory) {
         return _orders[_orderId].subOrderIds;
+    }
+
+    function getAddressToTokenIds(
+        address _address
+    ) public view returns (uint256[] memory) {
+        return _communityHelperAddressToTokenIds[_address];
     }
 
     function getOrderSupply() public view returns (uint256) {

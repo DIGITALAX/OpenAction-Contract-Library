@@ -8,14 +8,17 @@ import "./PrintAccessControl.sol";
 import "./PrintLibrary.sol";
 
 contract CollectionCreator {
-    PrintDesignData public printData;
+    PrintDesignData public printDesignData;
     PrintAccessControl public printAccessControl;
     NFTCreator public nftCreator;
+    string public symbol;
+    string public name;
     address public marketCreator;
 
     error AddressNotMarket();
     error AddressNotDesigner();
     error AddressNotAdmin();
+    error InvalidUpdate();
 
     modifier onlyAdmin() {
         if (!printAccessControl.isAdmin(msg.sender)) {
@@ -24,14 +27,29 @@ contract CollectionCreator {
         _;
     }
 
+    modifier onlyCreator(uint256[] memory _collectionIds) {
+        for (uint256 i = 0; i < _collectionIds.length; i++) {
+            if (
+                printDesignData.getCollectionCreator(_collectionIds[i]) !=
+                msg.sender
+            ) {
+                revert AddressNotDesigner();
+            }
+        }
+
+        _;
+    }
+
     constructor(
         address _nftCreatorAddress,
-        address _printDataAddress,
+        address _printDesignDataAddress,
         address _printAccessControlAddress
     ) {
         nftCreator = NFTCreator(_nftCreatorAddress);
-        printData = PrintDesignData(_printDataAddress);
+        printDesignData = PrintDesignData(_printDesignDataAddress);
         printAccessControl = PrintAccessControl(_printAccessControlAddress);
+        symbol = "CCR";
+        name = "CollectionCreator";
     }
 
     function createCollection(
@@ -48,8 +66,10 @@ contract CollectionCreator {
             _amount = type(uint256).max;
         }
         PrintLibrary.Collection memory newCollection = PrintLibrary.Collection({
-            collectionId: printData.getCollectionSupply() + 1,
+            collectionId: printDesignData.getCollectionSupply() + 1,
             prices: _params.prices,
+            acceptedTokens: _params.acceptedTokens,
+            communityIds: _params.communityIds,
             amount: _amount,
             pubId: _params.pubId,
             profileId: _params.profileId,
@@ -63,7 +83,7 @@ contract CollectionCreator {
             unlimited: _params.unlimited
         });
 
-        uint256 _collectionId = printData.setCollection(newCollection);
+        uint256 _collectionId = printDesignData.setCollection(newCollection);
 
         return _collectionId;
     }
@@ -78,11 +98,11 @@ contract CollectionCreator {
         if (msg.sender != marketCreator) {
             revert AddressNotMarket();
         }
-        uint256 _initialSupply = printData.getTokenSupply();
+        uint256 _initialSupply = printDesignData.getTokenSupply();
 
         for (uint256 i = 0; i < _collectionIds.length; i++) {
             nftCreator.mintBatch(
-                printData.getCollectionURI(_collectionIds[i]),
+                printDesignData.getCollectionURI(_collectionIds[i]),
                 _purchaserAddress,
                 _chosenCurrency,
                 _amounts[i],
@@ -98,18 +118,52 @@ contract CollectionCreator {
                 _mintedTokens++;
             }
 
-            printData.setCollectionMintedTokens(
+            printDesignData.setCollectionMintedTokens(
                 _collectionIds[i],
                 _mintedTokens
             );
-            printData.setCollectionTokenIds(_collectionIds[i], _newTokenIds);
+            printDesignData.setCollectionTokenIds(
+                _collectionIds[i],
+                _newTokenIds
+            );
         }
+    }
+
+    function createDrop(
+        uint256[] memory _collectionIds,
+        string memory _uri
+    ) public onlyCreator(_collectionIds) {
+        printDesignData.createDrop(_collectionIds, _uri, msg.sender);
+    }
+
+    function updateDrop(
+        uint256[] memory _collectionIds,
+        string memory _uri,
+        uint256 _dropId
+    ) public onlyCreator(_collectionIds) {
+        if (
+            printDesignData.getDropCollectionIds(_dropId).length < 1 ||
+            printDesignData.getDropCreator(_dropId) != msg.sender
+        ) {
+            revert InvalidUpdate();
+        }
+        printDesignData.modifyCollectionsInDrop(_collectionIds, _uri, _dropId);
+    }
+
+    function removeDrop(uint256 _dropId) public {
+        if (
+            printDesignData.getDropCollectionIds(_dropId).length < 1 ||
+            printDesignData.getDropCreator(_dropId) != msg.sender
+        ) {
+            revert InvalidUpdate();
+        }
+        printDesignData.deleteDrop(_dropId);
     }
 
     function setPrintDesignDataAddress(
         address _newPrintDesignDataAddress
     ) public onlyAdmin {
-        printData = PrintDesignData(_newPrintDesignDataAddress);
+        printDesignData = PrintDesignData(_newPrintDesignDataAddress);
     }
 
     function setPrintAccessControlAddress(

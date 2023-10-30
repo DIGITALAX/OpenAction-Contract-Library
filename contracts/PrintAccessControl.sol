@@ -3,6 +3,8 @@
 pragma solidity ^0.8.16;
 
 contract PrintAccessControl {
+    string public symbol;
+    string public name;
     address public fiatPKPAddress;
 
     mapping(address => bool) private _admins;
@@ -10,6 +12,7 @@ contract PrintAccessControl {
     mapping(address => bool) private _openActions;
     mapping(address => bool) private _fulfillers;
     mapping(address => bool) private _pkps;
+    mapping(address => bool) private _communityStewards;
     mapping(address => mapping(uint256 => mapping(uint256 => bool))) _verifiedFiat;
 
     event AdminAdded(address indexed admin);
@@ -22,6 +25,8 @@ contract PrintAccessControl {
     event FulfillerRemoved(address indexed fulfiller);
     event PKPAdded(address indexed pkp);
     event PKPRemoved(address indexed pkp);
+    event CommunityStewardAdded(address indexed pkp);
+    event CommunityStewardRemoved(address indexed pkp);
     event VerifiedFiatAdded(address indexed verified);
     event VerifiedFiatRemoved(address indexed verified);
 
@@ -45,6 +50,8 @@ contract PrintAccessControl {
 
     constructor() {
         _admins[msg.sender] = true;
+        symbol = "PAC";
+        name = "PrintAccessControl";
     }
 
     function addAdmin(address _admin) external onlyAdmin {
@@ -130,6 +137,24 @@ contract PrintAccessControl {
         emit PKPRemoved(_pkp);
     }
 
+    function addCommunitySteward(address _communitySteward) external onlyAdmin {
+        if (_communityStewards[_communitySteward]) {
+            revert Existing();
+        }
+        _communityStewards[_communitySteward] = true;
+        emit CommunityStewardAdded(_communitySteward);
+    }
+
+    function removeCommunitySteward(
+        address _communitySteward
+    ) external onlyAdmin {
+        if (!_communityStewards[_communitySteward]) {
+            revert AddressInvalid();
+        }
+        _communityStewards[_communitySteward] = false;
+        emit CommunityStewardRemoved(_communitySteward);
+    }
+
     function addVerifiedFiat(
         address _verified,
         uint256 _pubId,
@@ -176,6 +201,10 @@ contract PrintAccessControl {
 
     function isPKP(address _address) public view returns (bool) {
         return _pkps[_address];
+    }
+
+    function isCommunitySteward(address _address) public view returns (bool) {
+        return _communityStewards[_address];
     }
 
     function isVerifiedFiat(

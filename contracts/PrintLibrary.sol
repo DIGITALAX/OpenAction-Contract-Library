@@ -26,8 +26,10 @@ contract PrintLibrary {
     }
 
     struct Collection {
+        address[] acceptedTokens;
         uint256[] prices;
         uint256[] tokenIds;
+        uint256[] communityIds;
         string uri;
         address fulfiller;
         address creator;
@@ -39,6 +41,12 @@ contract PrintLibrary {
         Origin origin;
         PrintType printType;
         bool unlimited;
+    }
+    struct Drop {
+        uint256[] collectionIds;
+        string uri;
+        address creator;
+        uint256 dropId;
     }
     struct Token {
         string uri;
@@ -72,6 +80,24 @@ contract PrintLibrary {
         uint256 timestamp;
         uint256 totalPrice;
     }
+    struct Community {
+        address[] validCreatorKeys;
+        address[] valid20AddressKeys;
+        Origin[] validOriginKeys;
+        PrintType[] validPrintTypeKeys;
+        mapping(address => bool) validCreators;
+        mapping(Origin => bool) validOrigins;
+        mapping(PrintType => bool) validPrintTypes;
+        mapping(address => uint256) valid20Thresholds;
+        CommunityMember[] communityMembers;
+        string uri;
+        address steward;
+        uint256 communityId;
+    }
+    struct CommunityMember {
+        address memberAddress;
+        uint256 memberProfileId;
+    }
 
     struct SubOrder {
         uint256[] tokenIds;
@@ -84,7 +110,9 @@ contract PrintLibrary {
         bool isFulfilled;
     }
     struct MintParams {
+        address[] acceptedTokens;
         uint256[] prices;
+        uint256[] communityIds;
         string uri;
         address fulfiller;
         address creator;
@@ -94,6 +122,15 @@ contract PrintLibrary {
         uint256 pubId;
         uint256 profileId;
         bool unlimited;
+    }
+    struct CreateCommunityParams {
+        address[] validCreators;
+        Origin[] validOrigins;
+        PrintType[] validPrintTypes;
+        address[] valid20Addresses;
+        uint256[] valid20Thresholds;
+        string uri;
+        address steward;
     }
     struct BuyTokensParams {
         uint256[] collectionIds;
@@ -119,6 +156,8 @@ contract PrintLibrary {
     }
     struct CollectionValuesParams {
         uint256[][] prices;
+        uint256[][] communityIds;
+        address[][] acceptedTokens;
         string[] uris;
         address[] fulfillers;
         uint256[] amounts;
