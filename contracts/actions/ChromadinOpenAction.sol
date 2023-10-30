@@ -11,6 +11,7 @@ import "./../MarketCreator.sol";
 import "./../CollectionCreator.sol";
 import "./../PrintAccessControl.sol";
 import "./../PrintDesignData.sol";
+import "./../PrintCommunityData.sol";
 
 library ChromadinOpenActionLibrary {
     struct CollectionValues {
@@ -28,8 +29,10 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
     PrintAccessControl public printAccessControl;
     PrintSplitsData public printSplitsData;
     PrintDesignData public printDesignData;
+    PrintCommunityData public printCommunityData;
 
     error CurrencyNotWhitelisted();
+    error InvalidCommunityMember();
     error InvalidAddress();
     error InvalidAmounts();
 
@@ -71,7 +74,8 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
         address _printSplitsDataAddress,
         address _printDesignDataAddress,
         address _marketCreatorAddress,
-        address _collectionCreatorAddress
+        address _collectionCreatorAddress,
+        address _printCommunityDataAddress
     ) HubRestricted(_hub) {
         MODULE_GLOBALS = IModuleGlobals(_moduleGlobals);
         marketCreator = MarketCreator(_marketCreatorAddress);
@@ -79,6 +83,7 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
         printAccessControl = PrintAccessControl(_printAccessControlAddress);
         printSplitsData = PrintSplitsData(_printSplitsDataAddress);
         printDesignData = PrintDesignData(_printDesignDataAddress);
+        printCommunityData = PrintCommunityData(_printCommunityDataAddress);
     }
 
     function initializePublicationAction(
@@ -146,6 +151,19 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
         uint256 _grandTotal = 0;
 
         for (uint256 i; i < _collectionIds.length; i++) {
+            if (
+                !printDesignData.getIsCollectionTokenAccepted(
+                    _collectionIds[i],
+                    _currency
+                )
+            ) {
+                revert CurrencyNotWhitelisted();
+            }
+
+            if (!_checkCommunity(_collectionIds[i], _params.actorProfileId)) {
+                revert InvalidCommunityMember();
+            }
+
             address _designer = printDesignData.getCollectionCreator(
                 _collectionIds[i]
             );
@@ -213,6 +231,12 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
         printDesignData = PrintDesignData(_newPrintDesignDataAddress);
     }
 
+    function setPrintCommunityDataAddress(
+        address _newPrintCommunityDataAddress
+    ) public onlyAdmin {
+        printCommunityData = PrintCommunityData(_newPrintCommunityDataAddress);
+    }
+
     function setPrintAccessControlAddress(
         address _newPrintAccessControlAddress
     ) public onlyAdmin {
@@ -244,6 +268,8 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
             uint256 _id = collectionCreator.createCollection(
                 PrintLibrary.MintParams({
                     prices: _collectionCreator.prices[i],
+                    acceptedTokens: _collectionCreator.acceptedTokens[i],
+                    communityIds: _collectionCreator.communityIds[i],
                     uri: _collectionCreator.uris[i],
                     fulfiller: _collectionCreator.fulfillers[i],
                     pubId: _pubId,
@@ -259,6 +285,29 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
         }
 
         return _collectionIds;
+    }
+
+    function _checkCommunity(
+        uint256 _collectionId,
+        uint256 _profileId
+    ) internal view returns (bool) {
+        uint256[] memory _communityIds = printDesignData
+            .getCollectionCommunityIds(_collectionId);
+        bool _validMember = false;
+        if (_communityIds.length > 0) {
+            for (uint256 j = 0; j < _communityIds.length; j++) {
+                if (
+                    printCommunityData.getIsCommunityMember(
+                        _communityIds[j],
+                        _profileId
+                    )
+                ) {
+                    return _validMember = true;
+                }
+            }
+        }
+
+        return _validMember;
     }
 
     function _calculateAmount(

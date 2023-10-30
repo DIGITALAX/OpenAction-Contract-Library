@@ -188,6 +188,15 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
             ][_params.publicationActedId][_level].collectionIds;
 
             for (uint256 i = 0; i < _collectionIds.length; i++) {
+                if (
+                    !printDesignData.getIsCollectionTokenAccepted(
+                        _collectionIds[i],
+                        _currency
+                    )
+                ) {
+                    revert CurrencyNotWhitelisted();
+                }
+
                 _grantAmount += _processLevel(
                     _collectionIds[i],
                     _chosenIndexes[i],
