@@ -103,6 +103,7 @@ contract PrintLibrary {
         uint256[] tokenIds;
         address fulfiller;
         uint256 subOrderId;
+        uint256 collectionId;
         uint256 orderId;
         uint256 amount;
         uint256 price;

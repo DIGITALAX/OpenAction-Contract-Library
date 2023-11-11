@@ -103,6 +103,7 @@ contract MarketCreator {
         );
 
         for (uint256 i = 0; i < _params.collectionIds.length; i++) {
+            // does this update them before the tx ends or not?
             uint256[] memory _tokenIds = printDesignData.getCollectionTokenIds(
                 _params.collectionIds[i]
             );
@@ -130,7 +131,8 @@ contract MarketCreator {
                 _buyerAddress,
                 _params.collectionAmounts[i],
                 printOrderData.getOrderSupply() + 1,
-                _price
+                _price,
+                _params.collectionIds[i]
             );
 
             _prices[i] = _price;

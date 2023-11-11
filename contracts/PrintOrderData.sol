@@ -169,11 +169,13 @@ contract PrintOrderData {
         address _buyer,
         uint256 _amount,
         uint256 _orderId,
-        uint256 _price
+        uint256 _price,
+        uint256 _collectionId
     ) external onlyMarketContract {
         _subOrderSupply++;
         PrintLibrary.SubOrder memory newSubOrder = PrintLibrary.SubOrder({
             subOrderId: _subOrderSupply,
+            collectionId: _collectionId,
             tokenIds: _tokenIds,
             amount: _amount,
             orderId: _orderId,
@@ -293,6 +295,12 @@ contract PrintOrderData {
         uint256 _subOrderId
     ) public view returns (uint256) {
         return _subOrders[_subOrderId].orderId;
+    }
+
+    function getSubOrderCollectionId(
+        uint256 _subOrderId
+    ) public view returns (uint256) {
+        return _subOrders[_subOrderId].collectionId;
     }
 
     function getSubOrderAmount(
