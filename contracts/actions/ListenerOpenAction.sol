@@ -26,12 +26,7 @@ contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
     error InvalidAmounts();
     error InvalidCommunityMember();
 
-    struct CollectionInfo {
-        uint256[] collectionIds;
-        uint256[] amounts;
-    }
-
-    mapping(uint256 => mapping(uint256 => CollectionInfo)) _collectionGroups;
+    mapping(uint256 => mapping(uint256 => uint256)) _collectionGroups;
 
     modifier onlyAdmin() {
         if (!printAccessControl.isAdmin(msg.sender)) {
@@ -44,13 +39,13 @@ contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
 
     event ListenerPurchased(
         address buyerAddress,
-        uint256[] collectionIds,
+        uint256 collectionId,
         uint256 pubId,
         uint256 profileId,
         uint256 totalAmount
     );
     event ListenerInitialized(
-        uint256[] collectionIds,
+        uint256 collectionId,
         uint256 profileId,
         uint256 pubId,
         address creatorAddress,
@@ -84,42 +79,27 @@ contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
     ) external override onlyHub returns (bytes memory) {
         (
             PrintLibrary.CollectionValuesParams memory _collectionCreator,
-            PrintLibrary.PrintType[] memory _printTypes
+            PrintLibrary.PrintType _printType
         ) = abi.decode(
                 _data,
-                (PrintLibrary.CollectionValuesParams, PrintLibrary.PrintType[])
+                (PrintLibrary.CollectionValuesParams, PrintLibrary.PrintType)
             );
 
         if (!printAccessControl.isDesigner(_collectionCreator.creatorAddress)) {
             revert InvalidAddress();
         }
 
-        if (
-            _collectionCreator.prices.length !=
-            _collectionCreator.uris.length ||
-            _collectionCreator.fulfillers.length !=
-            _collectionCreator.amounts.length ||
-            _collectionCreator.unlimiteds.length !=
-            _collectionCreator.prices.length ||
-            _collectionCreator.fulfillers.length != _printTypes.length
-        ) {
-            revert InvalidAmounts();
-        }
-
-        uint256[] memory _collectionIds = _configureCollection(
+        uint256 _collectionId = _configureCollection(
             _collectionCreator,
-            _printTypes,
+            _printType,
             _pubId,
             _profileId
         );
 
-        _collectionGroups[_profileId][_pubId] = CollectionInfo({
-            collectionIds: _collectionIds,
-            amounts: _collectionCreator.amounts
-        });
+        _collectionGroups[_profileId][_pubId] = _collectionId;
 
         emit ListenerInitialized(
-            _collectionIds,
+            _collectionId,
             _profileId,
             _pubId,
             _collectionCreator.creatorAddress,
@@ -133,13 +113,14 @@ contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
         Types.ProcessActionParams calldata _params
     ) external override onlyHub returns (bytes memory) {
         (
-            uint256[] memory _chosenIndexes,
+            uint256 _chosenIndex,
+            uint256 _quantity,
             string memory _encryptedFulfillment,
             address _currency,
             bool _fiat
         ) = abi.decode(
                 _params.actionModuleData,
-                (uint256[], string, address, bool)
+                (uint256, uint256, string, address, bool)
             );
 
         if (
@@ -149,57 +130,30 @@ contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
             revert CurrencyNotWhitelisted();
         }
 
-        uint256[] memory _collectionIds = _collectionGroups[
+        uint256 _collectionId = _collectionGroups[
             _params.publicationActedProfileId
-        ][_params.publicationActedId].collectionIds;
+        ][_params.publicationActedId];
 
         uint256 _grandTotal = 0;
 
         bool _isVerified = false;
 
-        if (_fiat) {
-            _isVerified = printAccessControl.isVerifiedFiat(
-                _params.actorProfileOwner,
-                _params.publicationActedProfileId,
-                _params.publicationActedId
-            );
-        }
-
-        for (uint256 i; i < _collectionIds.length; i++) {
-            if (
-                !printDesignData.getIsCollectionTokenAccepted(
-                    _collectionIds[i],
-                    _currency
-                )
-            ) {
-                revert CurrencyNotWhitelisted();
-            }
-
-            if (!_checkCommunity(_collectionIds[i], _params.actorProfileId)) {
-                revert InvalidCommunityMember();
-            }
-
-            address _designer = printDesignData.getCollectionCreator(
-                _collectionIds[i]
-            );
-            if (!_isVerified) {
-                _grandTotal += _transferTokens(
-                    _collectionIds[i],
-                    _chosenIndexes[i],
-                    _designer,
-                    _currency,
-                    _params.actorProfileOwner
-                );
-            }
-        }
+        _managePurchase(
+            _params,
+            _chosenIndex,
+            _quantity,
+            _collectionId,
+            _currency,
+            _grandTotal,
+            _isVerified,
+            _fiat
+        );
 
         PrintLibrary.BuyTokensParams memory _buyTokensParams = PrintLibrary
             .BuyTokensParams({
-                collectionIds: _collectionIds,
-                collectionAmounts: _collectionGroups[
-                    _params.publicationActedProfileId
-                ][_params.publicationActedId].amounts,
-                collectionIndexes: _chosenIndexes,
+                collectionIds: _oneItem(_collectionId),
+                collectionAmounts: _oneItem(_quantity),
+                collectionIndexes: _oneItem(_chosenIndex),
                 details: _encryptedFulfillment,
                 buyerAddress: _params.actorProfileOwner,
                 chosenCurrency: _currency,
@@ -214,25 +168,26 @@ contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
 
         emit ListenerPurchased(
             _params.actorProfileOwner,
-            _collectionIds,
+            _collectionId,
             _params.publicationActedId,
             _params.publicationActedProfileId,
             _grandTotal
         );
 
-        return abi.encode(_collectionIds, _currency, _chosenIndexes);
+        return abi.encode(_collectionId, _currency, _chosenIndex);
     }
 
     function _transferTokens(
         uint256 _collectionId,
         uint256 _chosenIndex,
+        uint256 _chosenAmount,
         address _chosenCurrency,
         address _designer,
         address _buyer
     ) internal returns (uint256) {
         uint256 _totalPrice = printDesignData.getCollectionPrices(
             _collectionId
-        )[_chosenIndex];
+        )[_chosenIndex] * _chosenAmount;
         uint256 _calculatedPrice = _calculateAmount(
             _chosenCurrency,
             _totalPrice
@@ -279,35 +234,28 @@ contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
 
     function _configureCollection(
         PrintLibrary.CollectionValuesParams memory _collectionCreator,
-        PrintLibrary.PrintType[] memory _printTypes,
+        PrintLibrary.PrintType _printType,
         uint256 _pubId,
         uint256 _profileId
-    ) internal returns (uint256[] memory) {
-        uint256[] memory _collectionIds = new uint256[](
-            _collectionCreator.uris.length
+    ) internal returns (uint256) {
+        uint256 _collectionId = collectionCreator.createCollection(
+            PrintLibrary.MintParams({
+                prices: _collectionCreator.prices,
+                acceptedTokens: _collectionCreator.acceptedTokens,
+                communityIds: _collectionCreator.communityIds,
+                uri: _collectionCreator.uri,
+                fulfiller: _collectionCreator.fulfiller,
+                pubId: _pubId,
+                profileId: _profileId,
+                creator: _collectionCreator.creatorAddress,
+                printType: _printType,
+                origin: PrintLibrary.Origin.Listener,
+                amount: _collectionCreator.amount,
+                unlimited: _collectionCreator.unlimited
+            })
         );
 
-        for (uint256 i = 0; i < _collectionCreator.uris.length; i++) {
-            uint256 _id = collectionCreator.createCollection(
-                PrintLibrary.MintParams({
-                    prices: _collectionCreator.prices[i],
-                    acceptedTokens: _collectionCreator.acceptedTokens[i],
-                    communityIds: _collectionCreator.communityIds[i],
-                    uri: _collectionCreator.uris[i],
-                    fulfiller: _collectionCreator.fulfillers[i],
-                    pubId: _pubId,
-                    profileId: _profileId,
-                    creator: _collectionCreator.creatorAddress,
-                    printType: _printTypes[i],
-                    origin: PrintLibrary.Origin.Listener,
-                    amount: _collectionCreator.amounts[i],
-                    unlimited: _collectionCreator.unlimiteds[i]
-                })
-            );
-            _collectionIds[i] = _id;
-        }
-
-        return _collectionIds;
+        return _collectionId;
     }
 
     function _checkCommunity(
@@ -347,5 +295,77 @@ contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
         uint256 _tokenAmount = (_amountInWei * _weiDivisor) / _exchangeRate;
 
         return _tokenAmount;
+    }
+
+    function _checkAndSend(
+        address _currency,
+        address _buyer,
+        uint256 _quantity,
+        uint256 _chosenIndex,
+        uint256 _collectionId,
+        uint256 _grandTotal,
+        uint256 _profileId,
+        bool _isVerified
+    ) internal {
+        if (
+            !printDesignData.getIsCollectionTokenAccepted(
+                _collectionId,
+                _currency
+            )
+        ) {
+            revert CurrencyNotWhitelisted();
+        }
+
+        if (!_checkCommunity(_collectionId, _profileId)) {
+            revert InvalidCommunityMember();
+        }
+
+        if (!_isVerified) {
+            _grandTotal += _transferTokens(
+                _collectionId,
+                _chosenIndex,
+                _quantity,
+                printDesignData.getCollectionCreator(_collectionId),
+                _currency,
+                _buyer
+            );
+        }
+    }
+
+    function _managePurchase(
+        Types.ProcessActionParams calldata _params,
+        uint256 _chosenIndex,
+        uint256 _quantity,
+        uint256 _collectionId,
+        address _currency,
+        uint256 _grandTotal,
+        bool _isVerified,
+        bool _fiat
+    ) internal {
+        if (_fiat) {
+            _isVerified = printAccessControl.isVerifiedFiat(
+                _params.actorProfileOwner,
+                _params.publicationActedProfileId,
+                _params.publicationActedId
+            );
+        }
+
+        _checkAndSend(
+            _currency,
+            _params.actorProfileOwner,
+            _quantity,
+            _chosenIndex,
+            _collectionId,
+            _grandTotal,
+            _params.actorProfileId,
+            _isVerified
+        );
+    }
+
+    function _oneItem(uint256 _value) private pure returns (uint256[] memory) {
+        uint256[] memory _arr = new uint256[](1);
+        _arr[0] = _value;
+
+        return _arr;
     }
 }

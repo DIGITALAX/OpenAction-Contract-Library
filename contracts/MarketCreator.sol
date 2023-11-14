@@ -19,6 +19,7 @@ contract MarketCreator {
     address public fiatPKPAddress;
 
     error InvalidAddress();
+    error ExceedAmount();
 
     modifier onlyAdmin() {
         if (!printAccessControl.isAdmin(msg.sender)) {
@@ -103,7 +104,6 @@ contract MarketCreator {
         );
 
         for (uint256 i = 0; i < _params.collectionIds.length; i++) {
-            // does this update them before the tx ends or not?
             uint256[] memory _tokenIds = printDesignData.getCollectionTokenIds(
                 _params.collectionIds[i]
             );
@@ -171,29 +171,25 @@ contract MarketCreator {
             revert InvalidAddress();
         }
 
-        uint256[] memory _prices = new uint256[](_params.collectionIds.length);
+        if (
+            printDesignData.getCollectionTokensMinted(_params.collectionId) +
+                _params.quantity >=
+            printDesignData.getCollectionAmount(_params.collectionId)
+        ) {
+            revert ExceedAmount();
+        }
 
         collectionCreator.purchaseAndMintToken(
-            _params.collectionIds,
-            _params.collectionAmounts,
-            new uint256[](_params.collectionIds.length),
+            _oneItem(_params.collectionId),
+            _oneItem(_params.quantity),
+            new uint256[](1),
             _params.buyerAddress,
             _params.chosenCurrency
         );
 
-        for (uint256 i = 0; i < _params.collectionIds.length; i++) {
-            uint256 _price = printDesignData.getCollectionPrices(
-                _params.collectionIds[i]
-            )[0] * _params.collectionAmounts[i];
-
-            _prices[i] = _price;
-        }
-
-        uint256 _totalPrice = 0;
-
-        for (uint256 i = 0; i < _prices.length; i++) {
-            _totalPrice += _prices[i];
-        }
+        uint256 _price = printDesignData.getCollectionPrices(
+            _params.collectionId
+        )[0] * _params.quantity;
 
         printOrderData.createNFTOnlyOrder(
             _params.chosenCurrency,
@@ -201,7 +197,14 @@ contract MarketCreator {
             _params.pubId,
             _params.profileId,
             _params.buyerProfileId,
-            _totalPrice
+            _price
         );
+    }
+
+    function _oneItem(uint256 _value) private pure returns (uint256[] memory) {
+        uint256[] memory _arr = new uint256[](1);
+        _arr[0] = _value;
+
+        return _arr;
     }
 }

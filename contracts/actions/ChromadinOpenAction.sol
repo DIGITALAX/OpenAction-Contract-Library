@@ -36,12 +36,7 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
     error InvalidAddress();
     error InvalidAmounts();
 
-    struct CollectionInfo {
-        uint256[] collectionIds;
-        uint256[] amounts;
-    }
-
-    mapping(uint256 => mapping(uint256 => CollectionInfo)) _collectionGroups;
+    mapping(uint256 => mapping(uint256 => uint256)) _collectionGroups;
 
     modifier onlyAdmin() {
         if (!printAccessControl.isAdmin(msg.sender)) {
@@ -54,13 +49,13 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
 
     event ChromadinPurchased(
         address buyerAddress,
-        uint256[] collectionIds,
+        uint256 collectionId,
         uint256 pubId,
         uint256 profileId,
         uint256 totalAmount
     );
     event ChromadinInitialized(
-        uint256[] collectionIds,
+        uint256 collectionId,
         uint256 profileId,
         uint256 pubId,
         address creatorAddress,
@@ -99,30 +94,16 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
             revert InvalidAddress();
         }
 
-        if (
-            _collectionCreator.prices.length !=
-            _collectionCreator.uris.length ||
-            _collectionCreator.fulfillers.length !=
-            _collectionCreator.amounts.length ||
-            _collectionCreator.unlimiteds.length !=
-            _collectionCreator.prices.length
-        ) {
-            revert InvalidAmounts();
-        }
-
-        uint256[] memory _collectionIds = _configureCollection(
+        uint256 _collectionId = _configureCollection(
             _collectionCreator,
             _pubId,
             _profileId
         );
 
-        _collectionGroups[_profileId][_pubId] = CollectionInfo({
-            collectionIds: _collectionIds,
-            amounts: _collectionCreator.amounts
-        });
+        _collectionGroups[_profileId][_pubId] = _collectionId;
 
         emit ChromadinInitialized(
-            _collectionIds,
+            _collectionId,
             _profileId,
             _pubId,
             _collectionCreator.creatorAddress,
@@ -135,7 +116,10 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
     function processPublicationAction(
         Types.ProcessActionParams calldata _params
     ) external override onlyHub returns (bytes memory) {
-        address _currency = abi.decode(_params.actionModuleData, (address));
+        (address _currency, uint256 _quantity) = abi.decode(
+            _params.actionModuleData,
+            (address, uint256)
+        );
 
         if (
             !MODULE_GLOBALS.isCurrencyWhitelisted(_currency) ||
@@ -144,44 +128,38 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
             revert CurrencyNotWhitelisted();
         }
 
-        uint256[] memory _collectionIds = _collectionGroups[
+        uint256 _collectionId = _collectionGroups[
             _params.publicationActedProfileId
-        ][_params.publicationActedId].collectionIds;
+        ][_params.publicationActedId];
 
         uint256 _grandTotal = 0;
 
-        for (uint256 i; i < _collectionIds.length; i++) {
-            if (
-                !printDesignData.getIsCollectionTokenAccepted(
-                    _collectionIds[i],
-                    _currency
-                )
-            ) {
-                revert CurrencyNotWhitelisted();
-            }
-
-            if (!_checkCommunity(_collectionIds[i], _params.actorProfileId)) {
-                revert InvalidCommunityMember();
-            }
-
-            address _designer = printDesignData.getCollectionCreator(
-                _collectionIds[i]
-            );
-
-            _grandTotal += _transferTokens(
-                _collectionIds[i],
-                _designer,
-                _currency,
-                _params.actorProfileOwner
-            );
+        if (
+            !printDesignData.getIsCollectionTokenAccepted(
+                _collectionId,
+                _currency
+            )
+        ) {
+            revert CurrencyNotWhitelisted();
         }
 
+        if (!_checkCommunity(_collectionId, _params.actorProfileId)) {
+            revert InvalidCommunityMember();
+        }
+
+        address _designer = printDesignData.getCollectionCreator(_collectionId);
+
+        _grandTotal += _transferTokens(
+            _designer,
+            _currency,
+            _params.actorProfileOwner,
+            _collectionId,
+            _quantity
+        );
         PrintLibrary.BuyTokensOnlyNFTParams
             memory _buyTokensParams = PrintLibrary.BuyTokensOnlyNFTParams({
-                collectionIds: _collectionIds,
-                collectionAmounts: _collectionGroups[
-                    _params.publicationActedProfileId
-                ][_params.publicationActedId].amounts,
+                collectionId: _collectionId,
+                quantity: _quantity,
                 buyerAddress: _params.actorProfileOwner,
                 chosenCurrency: _currency,
                 pubId: _params.publicationActedId,
@@ -193,27 +171,28 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
 
         emit ChromadinPurchased(
             _params.actorProfileOwner,
-            _collectionIds,
+            _collectionId,
             _params.publicationActedId,
             _params.publicationActedProfileId,
             _grandTotal
         );
 
-        return abi.encode(_collectionIds, _currency);
+        return abi.encode(_collectionId, _currency);
     }
 
     function _transferTokens(
-        uint256 _collectionId,
         address _chosenCurrency,
         address _designer,
-        address _buyer
+        address _buyer,
+        uint256 _collectionId,
+        uint256 _quantity
     ) internal returns (uint256) {
         uint256 _totalPrice = printDesignData.getCollectionPrices(
             _collectionId
         )[0];
         uint256 _calculatedPrice = _calculateAmount(
             _chosenCurrency,
-            _totalPrice
+            _totalPrice * _quantity
         );
 
         IERC20(_chosenCurrency).transferFrom(
@@ -259,32 +238,25 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
         PrintLibrary.CollectionValuesParams memory _collectionCreator,
         uint256 _pubId,
         uint256 _profileId
-    ) internal returns (uint256[] memory) {
-        uint256[] memory _collectionIds = new uint256[](
-            _collectionCreator.uris.length
+    ) internal returns (uint256) {
+        uint256 _collectionId = collectionCreator.createCollection(
+            PrintLibrary.MintParams({
+                prices: _collectionCreator.prices,
+                acceptedTokens: _collectionCreator.acceptedTokens,
+                communityIds: _collectionCreator.communityIds,
+                uri: _collectionCreator.uri,
+                fulfiller: _collectionCreator.fulfiller,
+                pubId: _pubId,
+                profileId: _profileId,
+                creator: _collectionCreator.creatorAddress,
+                printType: PrintLibrary.PrintType.NFTOnly,
+                origin: PrintLibrary.Origin.Chromadin,
+                amount: _collectionCreator.amount,
+                unlimited: _collectionCreator.unlimited
+            })
         );
 
-        for (uint256 i = 0; i < _collectionCreator.uris.length; i++) {
-            uint256 _id = collectionCreator.createCollection(
-                PrintLibrary.MintParams({
-                    prices: _collectionCreator.prices[i],
-                    acceptedTokens: _collectionCreator.acceptedTokens[i],
-                    communityIds: _collectionCreator.communityIds[i],
-                    uri: _collectionCreator.uris[i],
-                    fulfiller: _collectionCreator.fulfillers[i],
-                    pubId: _pubId,
-                    profileId: _profileId,
-                    creator: _collectionCreator.creatorAddress,
-                    printType: PrintLibrary.PrintType.NFTOnly,
-                    origin: PrintLibrary.Origin.Chromadin,
-                    amount: _collectionCreator.amounts[i],
-                    unlimited: _collectionCreator.unlimiteds[i]
-                })
-            );
-            _collectionIds[i] = _id;
-        }
-
-        return _collectionIds;
+        return _collectionId;
     }
 
     function _checkCommunity(

@@ -16,6 +16,8 @@ contract PrintLibrary {
         Poster,
         Shirt,
         Hoodie,
+        Sleeve,
+        Crop,
         NFTOnly
     }
     enum OrderStatus {
@@ -147,22 +149,23 @@ contract PrintLibrary {
         bool withPKP;
     }
     struct BuyTokensOnlyNFTParams {
-        uint256[] collectionIds;
-        uint256[] collectionAmounts;
+        uint256 collectionId;
+        uint256 quantity;
         address buyerAddress;
         address chosenCurrency;
         uint256 pubId;
         uint256 profileId;
         uint256 buyerProfileId;
     }
+
     struct CollectionValuesParams {
-        uint256[][] prices;
-        uint256[][] communityIds;
-        address[][] acceptedTokens;
-        string[] uris;
-        address[] fulfillers;
-        uint256[] amounts;
-        bool[] unlimiteds;
+        uint256[] prices;
+        uint256[] communityIds;
+        address[] acceptedTokens;
+        string uri;
+        address fulfiller;
+        uint256 amount;
+        bool unlimited;
         address creatorAddress;
     }
 }
