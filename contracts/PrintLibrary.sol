@@ -38,6 +38,7 @@ contract PrintLibrary {
         uint256 collectionId;
         uint256 pubId;
         uint256 profileId;
+        uint256 dropId;
         uint256 mintedTokens;
         uint256 amount;
         Origin origin;
@@ -124,6 +125,7 @@ contract PrintLibrary {
         uint256 amount;
         uint256 pubId;
         uint256 profileId;
+        uint256 dropId;
         bool unlimited;
     }
     struct CreateCommunityParams {
@@ -165,6 +167,7 @@ contract PrintLibrary {
         string uri;
         address fulfiller;
         uint256 amount;
+        uint256 dropId;
         bool unlimited;
         address creatorAddress;
     }
