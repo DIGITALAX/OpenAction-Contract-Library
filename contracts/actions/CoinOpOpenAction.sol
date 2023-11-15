@@ -247,6 +247,7 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
                 fulfiller: _collectionCreator.fulfiller,
                 pubId: _pubId,
                 profileId: _profileId,
+                dropId: _collectionCreator.dropId,
                 creator: _collectionCreator.creatorAddress,
                 printType: _printType,
                 origin: PrintLibrary.Origin.CoinOp,

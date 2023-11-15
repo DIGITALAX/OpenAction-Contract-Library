@@ -23,6 +23,7 @@ contract PrintDesignData {
     mapping(uint256 => mapping(address => bool)) private _acceptedTokens;
 
     error InvalidAddress();
+    error InvalidDrop();
 
     event TokensMinted(uint256 indexed tokenId, uint256 collectionId);
     event CollectionCreated(
@@ -40,7 +41,8 @@ contract PrintDesignData {
     );
     event DropCreated(uint256 dropId, string uri, address creator);
     event DropDeleted(uint256 dropId);
-    event CollectionUpdated(uint256 indexed collectionId);
+    event CollectionDeleted(uint256 collectionId);
+    event CollectionUpdated(uint256 collectionId);
     event CollectionMintedTokensSet(
         uint256 indexed collectionId,
         uint256 mintedTokensAmount
@@ -82,6 +84,10 @@ contract PrintDesignData {
         PrintLibrary.Collection memory _collectionData
     ) external onlyCollectionCreator returns (uint256) {
         _collectionSupply++;
+
+        if (_drops[_collectionData.dropId].dropId == 0) {
+            revert InvalidDrop();
+        }
 
         _collections[_collectionSupply] = _collectionData;
 
@@ -130,49 +136,59 @@ contract PrintDesignData {
         );
     }
 
-    function updateCollection(
+    function modifyCollectionsInDrop(
+        uint256[] memory _collectionIds,
+        string memory _uri,
+        uint256 _dropId
+    ) external onlyCollectionCreator {
+        for (uint256 i = 0; i < _drops[_dropId].collectionIds.length; i++) {
+            _collections[_drops[_dropId].collectionIds[i]].dropId = 0;
+        }
+
+        for (uint256 i = 0; i < _collectionIds.length; i++) {
+            _collections[_collectionIds[i]].dropId = _dropId;
+        }
+
+        _drops[_dropId].collectionIds = _collectionIds;
+        _drops[_dropId].uri = _uri;
+
+        emit DropCollectionsUpdated(_dropId, _collectionIds, _uri);
+    }
+
+    function modifyCollection(
         uint256 _collectionId,
-        PrintLibrary.MintParams memory _params
-    ) external onlyAdmin {
-        uint256 _amount = _params.amount;
-        if (_params.unlimited) {
-            _amount = type(uint256).max;
-        }
-
-        PrintLibrary.Collection memory _currentCollection = _collections[
-            _collectionId
-        ];
-
-        for (uint256 i = 0; i < _currentCollection.acceptedTokens.length; i++) {
+        PrintLibrary.Collection memory _collectionData
+    ) external onlyCollectionCreator {
+        for (
+            uint256 i = 0;
+            i < _collections[_collectionId].acceptedTokens.length;
+            i++
+        ) {
             _acceptedTokens[_collectionSupply][
-                _currentCollection.acceptedTokens[i]
+                _collections[_collectionId].acceptedTokens[i]
             ] = false;
         }
 
-        for (uint256 i = 0; i < _params.acceptedTokens.length; i++) {
+        for (uint256 i = 0; i < _collectionData.acceptedTokens.length; i++) {
             _acceptedTokens[_collectionSupply][
-                _params.acceptedTokens[i]
+                _collectionData.acceptedTokens[i]
             ] = false;
         }
 
-        _currentCollection.prices = _params.prices;
-        _currentCollection.acceptedTokens = _params.acceptedTokens;
-        _currentCollection.amount = _amount;
-        _currentCollection.creator = _params.creator;
-        _currentCollection.unlimited = _params.unlimited;
-        _currentCollection.uri = _params.uri;
-        _currentCollection.printType = _params.printType;
-        _currentCollection.origin = _params.origin;
-        _currentCollection.pubId = _params.pubId;
-        _currentCollection.profileId = _params.profileId;
-        _currentCollection.fulfiller = _params.fulfiller;
-        _currentCollection.communityIds = _params.communityIds;
+        _collections[_collectionId] = _collectionData;
 
         emit CollectionUpdated(_collectionId);
     }
 
+    function deleteCollection(
+        uint256 _collectionId
+    ) external onlyCollectionCreator {
+        delete _collections[_collectionId];
+
+        emit CollectionDeleted(_collectionId);
+    }
+
     function createDrop(
-        uint256[] memory _collectionIds,
         string memory _uri,
         address _creator
     ) external onlyCollectionCreator {
@@ -180,7 +196,7 @@ contract PrintDesignData {
 
         _drops[_dropSupply] = PrintLibrary.Drop({
             dropId: _dropSupply,
-            collectionIds: _collectionIds,
+            collectionIds: new uint256[](0),
             uri: _uri,
             creator: _creator
         });
@@ -189,20 +205,13 @@ contract PrintDesignData {
     }
 
     function deleteDrop(uint256 _dropId) external onlyCollectionCreator {
+        for (uint256 i = 0; i < _drops[_dropId].collectionIds.length; i++) {
+            _collections[_drops[_dropId].collectionIds[i]].dropId = 0;
+        }
+
         delete _drops[_dropId];
 
         emit DropDeleted(_dropId);
-    }
-
-    function modifyCollectionsInDrop(
-        uint256[] memory _collectionIds,
-        string memory _uri,
-        uint256 _dropId
-    ) external onlyCollectionCreator {
-        _drops[_dropId].collectionIds = _collectionIds;
-        _drops[_dropId].uri = _uri;
-
-        emit DropCollectionsUpdated(_dropId, _collectionIds, _uri);
     }
 
     function setNFT(
@@ -246,6 +255,12 @@ contract PrintDesignData {
         uint256 _collectionId
     ) public view returns (PrintLibrary.Origin) {
         return _collections[_collectionId].origin;
+    }
+
+    function getCollectionDropId(
+        uint256 _collectionId
+    ) public view returns (uint256) {
+        return _collections[_collectionId].dropId;
     }
 
     function getCollectionURI(

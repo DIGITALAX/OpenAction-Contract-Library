@@ -27,16 +27,10 @@ contract CollectionCreator {
         _;
     }
 
-    modifier onlyCreator(uint256[] memory _collectionIds) {
-        for (uint256 i = 0; i < _collectionIds.length; i++) {
-            if (
-                printDesignData.getCollectionCreator(_collectionIds[i]) !=
-                msg.sender
-            ) {
-                revert AddressNotDesigner();
-            }
+    modifier onlyDesigner() {
+        if (!printAccessControl.isDesigner(msg.sender)) {
+            revert AddressNotDesigner();
         }
-
         _;
     }
 
@@ -73,6 +67,7 @@ contract CollectionCreator {
             amount: _amount,
             pubId: _params.pubId,
             profileId: _params.profileId,
+            dropId: _params.dropId,
             tokenIds: new uint256[](0),
             mintedTokens: 0,
             fulfiller: _params.fulfiller,
@@ -84,6 +79,19 @@ contract CollectionCreator {
         });
 
         uint256 _collectionId = printDesignData.setCollection(newCollection);
+        string memory _uri = printDesignData.getDropURI(_params.dropId);
+        uint256[] memory _collectionIds = printDesignData.getDropCollectionIds(
+            _params.dropId
+        );
+        uint256[] memory _newCollectionIds = new uint256[](
+            _collectionIds.length + 1
+        );
+        for (uint i = 0; i < _collectionIds.length; i++) {
+            _newCollectionIds[i] = _collectionIds[i];
+        }
+        _newCollectionIds[_collectionIds.length] = _collectionId;
+
+        updateDrop(_newCollectionIds, _uri, _params.dropId);
 
         return _collectionId;
     }
@@ -129,30 +137,110 @@ contract CollectionCreator {
         }
     }
 
-    function createDrop(
-        uint256[] memory _collectionIds,
-        string memory _uri
-    ) public onlyCreator(_collectionIds) {
-        printDesignData.createDrop(_collectionIds, _uri, msg.sender);
+    function updateCollection(
+        uint256 _collectionId,
+        PrintLibrary.MintParams memory _params
+    ) public onlyDesigner {
+        if (msg.sender != printDesignData.getCollectionCreator(_collectionId)) {
+            revert AddressNotDesigner();
+        }
+
+        uint256 _amount = _params.amount;
+        if (_params.unlimited) {
+            _amount = type(uint256).max;
+        }
+
+        uint256 _oldDropId = printDesignData.getCollectionDropId(_collectionId);
+
+        bool _sameDrop = _params.dropId == _oldDropId;
+
+        if (!_sameDrop) {
+            _updateDropStatus(_oldDropId, _collectionId, _params.dropId);
+        }
+
+        PrintLibrary.Collection memory _collection = PrintLibrary.Collection({
+            collectionId: _collectionId,
+            prices: _params.prices,
+            acceptedTokens: _params.acceptedTokens,
+            communityIds: _params.communityIds,
+            amount: _amount,
+            pubId: _params.pubId,
+            profileId: _params.profileId,
+            dropId: _params.dropId,
+            tokenIds: printDesignData.getCollectionTokenIds(_collectionId),
+            mintedTokens: printDesignData.getCollectionTokensMinted(
+                _collectionId
+            ),
+            fulfiller: _params.fulfiller,
+            creator: _params.creator,
+            uri: _params.uri,
+            printType: _params.printType,
+            origin: _params.origin,
+            unlimited: _params.unlimited
+        });
+
+        printDesignData.modifyCollection(_collectionId, _collection);
+    }
+
+    function removeCollection(uint256 _collectionId) public onlyDesigner {
+        if (printDesignData.getCollectionCreator(_collectionId) != msg.sender) {
+            revert AddressNotDesigner();
+        }
+
+        uint256 _dropId = printDesignData.getCollectionDropId(_collectionId);
+        uint256[] memory _collectionIds = printDesignData.getDropCollectionIds(
+            _dropId
+        );
+        string memory _uri = printDesignData.getDropURI(_dropId);
+        uint256[] memory _newIds = new uint256[](_collectionIds.length - 1);
+        uint256 j = 0;
+
+        for (uint256 i = 0; i < _collectionIds.length; i++) {
+            if (_collectionIds[i] != _collectionId) {
+                _newIds[j] = _collectionIds[i];
+                j++;
+            }
+        }
+
+        printDesignData.modifyCollectionsInDrop(_newIds, _uri, _dropId);
+
+        printDesignData.deleteCollection(_collectionId);
+    }
+
+    function createDrop(string memory _uri) public onlyDesigner {
+        printDesignData.createDrop(_uri, msg.sender);
     }
 
     function updateDrop(
         uint256[] memory _collectionIds,
         string memory _uri,
         uint256 _dropId
-    ) public onlyCreator(_collectionIds) {
-        if (
-            printDesignData.getDropCollectionIds(_dropId).length < 1 ||
-            printDesignData.getDropCreator(_dropId) != msg.sender
-        ) {
+    ) public onlyDesigner {
+        if (bytes(printDesignData.getDropURI(_dropId)).length == 0) {
             revert InvalidUpdate();
         }
+
+        if (msg.sender != address(this)) {
+            if (printDesignData.getDropCreator(_dropId) != msg.sender) {
+                revert InvalidUpdate();
+            }
+
+            for (uint256 i = 0; i < _collectionIds.length; i++) {
+                if (
+                    printDesignData.getCollectionCreator(_collectionIds[i]) !=
+                    msg.sender
+                ) {
+                    revert AddressNotDesigner();
+                }
+            }
+        }
+
         printDesignData.modifyCollectionsInDrop(_collectionIds, _uri, _dropId);
     }
 
-    function removeDrop(uint256 _dropId) public {
+    function removeDrop(uint256 _dropId) public onlyDesigner {
         if (
-            printDesignData.getDropCollectionIds(_dropId).length < 1 ||
+            bytes(printDesignData.getDropURI(_dropId)).length == 0 ||
             printDesignData.getDropCreator(_dropId) != msg.sender
         ) {
             revert InvalidUpdate();
@@ -182,5 +270,43 @@ contract CollectionCreator {
         address _newMarketCreatorAddress
     ) public onlyAdmin {
         marketCreator = _newMarketCreatorAddress;
+    }
+
+    function _updateDropStatus(
+        uint256 _oldDropId,
+        uint256 _collectionId,
+        uint256 _paramsDropId
+    ) internal {
+        uint256[] memory _currentIds = printDesignData.getDropCollectionIds(
+            _oldDropId
+        );
+
+        uint256[] memory _remove = new uint256[](_currentIds.length - 1);
+        uint256 j = 0;
+
+        for (uint256 i = 0; i < _currentIds.length; i++) {
+            if (_currentIds[i] != _collectionId) {
+                _remove[j] = _currentIds[i];
+                j++;
+            }
+        }
+
+        uint256[] memory _newDropIds = printDesignData.getDropCollectionIds(
+            _paramsDropId
+        );
+        uint256[] memory _newCollectionIds = new uint256[](
+            _newDropIds.length + 1
+        );
+        for (uint i = 0; i < _newDropIds.length; i++) {
+            _newCollectionIds[i] = _newDropIds[i];
+        }
+        _newCollectionIds[_newDropIds.length] = _collectionId;
+
+        updateDrop(_remove, printDesignData.getDropURI(_oldDropId), _oldDropId);
+        updateDrop(
+            _newCollectionIds,
+            printDesignData.getDropURI(_paramsDropId),
+            _paramsDropId
+        );
     }
 }

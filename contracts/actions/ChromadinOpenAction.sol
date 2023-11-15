@@ -248,6 +248,7 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
                 fulfiller: _collectionCreator.fulfiller,
                 pubId: _pubId,
                 profileId: _profileId,
+                dropId: _collectionCreator.dropId,
                 creator: _collectionCreator.creatorAddress,
                 printType: PrintLibrary.PrintType.NFTOnly,
                 origin: PrintLibrary.Origin.Chromadin,
