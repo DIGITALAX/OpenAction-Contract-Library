@@ -253,7 +253,8 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
                 printType: PrintLibrary.PrintType.NFTOnly,
                 origin: PrintLibrary.Origin.Chromadin,
                 amount: _collectionCreator.amount,
-                unlimited: _collectionCreator.unlimited
+                unlimited: _collectionCreator.unlimited,
+                encrypted: _collectionCreator.encrypted
             })
         );
 

@@ -252,7 +252,8 @@ contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
                 printType: _printType,
                 origin: PrintLibrary.Origin.Listener,
                 amount: _collectionCreator.amount,
-                unlimited: _collectionCreator.unlimited
+                unlimited: _collectionCreator.unlimited,
+                encrypted: _collectionCreator.encrypted
             })
         );
 

@@ -155,31 +155,6 @@ contract PrintDesignData {
         emit DropCollectionsUpdated(_dropId, _collectionIds, _uri);
     }
 
-    function modifyCollection(
-        uint256 _collectionId,
-        PrintLibrary.Collection memory _collectionData
-    ) external onlyCollectionCreator {
-        for (
-            uint256 i = 0;
-            i < _collections[_collectionId].acceptedTokens.length;
-            i++
-        ) {
-            _acceptedTokens[_collectionSupply][
-                _collections[_collectionId].acceptedTokens[i]
-            ] = false;
-        }
-
-        for (uint256 i = 0; i < _collectionData.acceptedTokens.length; i++) {
-            _acceptedTokens[_collectionSupply][
-                _collectionData.acceptedTokens[i]
-            ] = false;
-        }
-
-        _collections[_collectionId] = _collectionData;
-
-        emit CollectionUpdated(_collectionId);
-    }
-
     function deleteCollection(
         uint256 _collectionId
     ) external onlyCollectionCreator {
@@ -297,6 +272,12 @@ contract PrintDesignData {
         uint256 _collectionId
     ) public view returns (bool) {
         return _collections[_collectionId].unlimited;
+    }
+
+    function getCollectionEncrypted(
+        uint256 _collectionId
+    ) public view returns (bool) {
+        return _collections[_collectionId].encrypted;
     }
 
     function getCollectionTokenIds(
