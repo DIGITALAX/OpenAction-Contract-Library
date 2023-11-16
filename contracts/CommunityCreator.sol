@@ -33,15 +33,13 @@ contract CommunityCreator {
     }
 
     constructor(
-        address _printCommunityDataAddress,
         address _printOrderDataAddress,
         address _printAccessControlAddress,
-        address _newPrintDesignDataAddress
+        address _printDesignDataAddress
     ) {
         printAccessControl = PrintAccessControl(_printAccessControlAddress);
-        printCommunityData = PrintCommunityData(_printCommunityDataAddress);
         printOrderData = PrintOrderData(_printOrderDataAddress);
-        printDesignData = PrintDesignData(_newPrintDesignDataAddress);
+        printDesignData = PrintDesignData(_printDesignDataAddress);
 
         symbol = "CCR";
         name = "CollectionCreator";

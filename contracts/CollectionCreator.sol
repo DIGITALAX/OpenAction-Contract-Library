@@ -75,7 +75,8 @@ contract CollectionCreator {
             uri: _params.uri,
             printType: _params.printType,
             origin: _params.origin,
-            unlimited: _params.unlimited
+            unlimited: _params.unlimited,
+            encrypted: _params.encrypted
         });
 
         uint256 _collectionId = printDesignData.setCollection(newCollection);
@@ -135,51 +136,6 @@ contract CollectionCreator {
                 _newTokenIds
             );
         }
-    }
-
-    function updateCollection(
-        uint256 _collectionId,
-        PrintLibrary.MintParams memory _params
-    ) public onlyDesigner {
-        if (msg.sender != printDesignData.getCollectionCreator(_collectionId)) {
-            revert AddressNotDesigner();
-        }
-
-        uint256 _amount = _params.amount;
-        if (_params.unlimited) {
-            _amount = type(uint256).max;
-        }
-
-        uint256 _oldDropId = printDesignData.getCollectionDropId(_collectionId);
-
-        bool _sameDrop = _params.dropId == _oldDropId;
-
-        if (!_sameDrop) {
-            _updateDropStatus(_oldDropId, _collectionId, _params.dropId);
-        }
-
-        PrintLibrary.Collection memory _collection = PrintLibrary.Collection({
-            collectionId: _collectionId,
-            prices: _params.prices,
-            acceptedTokens: _params.acceptedTokens,
-            communityIds: _params.communityIds,
-            amount: _amount,
-            pubId: _params.pubId,
-            profileId: _params.profileId,
-            dropId: _params.dropId,
-            tokenIds: printDesignData.getCollectionTokenIds(_collectionId),
-            mintedTokens: printDesignData.getCollectionTokensMinted(
-                _collectionId
-            ),
-            fulfiller: _params.fulfiller,
-            creator: _params.creator,
-            uri: _params.uri,
-            printType: _params.printType,
-            origin: _params.origin,
-            unlimited: _params.unlimited
-        });
-
-        printDesignData.modifyCollection(_collectionId, _collection);
     }
 
     function removeCollection(uint256 _collectionId) public onlyDesigner {

@@ -44,7 +44,9 @@ contract PrintLibrary {
         Origin origin;
         PrintType printType;
         bool unlimited;
+        bool encrypted;
     }
+
     struct Drop {
         uint256[] collectionIds;
         string uri;
@@ -127,6 +129,7 @@ contract PrintLibrary {
         uint256 profileId;
         uint256 dropId;
         bool unlimited;
+        bool encrypted;
     }
     struct CreateCommunityParams {
         address[] validCreators;
@@ -166,9 +169,10 @@ contract PrintLibrary {
         address[] acceptedTokens;
         string uri;
         address fulfiller;
+        address creatorAddress;
         uint256 amount;
         uint256 dropId;
         bool unlimited;
-        address creatorAddress;
+        bool encrypted;
     }
 }

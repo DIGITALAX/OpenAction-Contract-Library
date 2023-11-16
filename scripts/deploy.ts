@@ -2,6 +2,7 @@ import { ethers, run } from "hardhat";
 
 const HUB = "0xC1E77eE73403B8a7478884915aA599932A677870";
 const MODULE = "0x8834aE494ADD3C56d274Fe88243526DBAB15dEF8";
+const PKP_FIAT = "0x8834aE494ADD3C56d274Fe88243526DBAB15dEF8";
 const main = async () => {
   try {
     // const PrintAccessControl = await ethers.getContractFactory(
@@ -16,56 +17,111 @@ const main = async () => {
     //   "CollectionCreator"
     // );
     // const MarketCreator = await ethers.getContractFactory("MarketCreator");
+    // const PrintCommunityData = await ethers.getContractFactory(
+    //   "PrintCommunityData"
+    // );
+    // const CommunityCreator = await ethers.getContractFactory(
+    //   "CommunityCreator"
+    // );
+    // const ChromadinOpenAction = await ethers.getContractFactory(
+    //   "ChromadinOpenAction"
+    // );
+    // const CoinOpOpenAction = await ethers.getContractFactory(
+    //   "CoinOpOpenAction"
+    // );
     // const LegendOpenAction = await ethers.getContractFactory(
     //   "LegendOpenAction"
     // );
     // const LegendMilestone = await ethers.getContractFactory("LegendMilestone");
     // const LegendRegister = await ethers.getContractFactory("LegendRegister");
+    // const ListenerOpenAction = await ethers.getContractFactory(
+    //   "ListenerOpenAction"
+    // );
 
     // const printAccessControl = await PrintAccessControl.deploy();
     // const printLibrary = await PrintLibrary.deploy();
     // const printDesignData = await PrintDesignData.deploy(
-    //   "0x8489b67f528De6270173ad261B53dFdd533D7419"
+    //   printAccessControl.address
     // );
     // const printOrderData = await PrintOrderData.deploy(
     //   printAccessControl.address
     // );
     // const printSplitsData = await PrintSplitsData.deploy(
-    //   printAccessControl.address
+    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"
     // );
     // const nFTCreator = await NFTCreator.deploy(
-    //   printDesignData.address,
-    //   printAccessControl.address
+    //   "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"
     // );
     // const collectionCreator = await CollectionCreator.deploy(
     //   nFTCreator.address,
-    //   printDesignData.address,
-    //   printAccessControl.address
+    //   "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"
     // );
     // const marketCreator = await MarketCreator.deploy(
-    //   printAccessControl.address,
+    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
     //   printSplitsData.address,
-    //   printOrderData.address,
+    //   "0x792143D199067a4a40Ac4682d81C957623f7c5c3",
     //   collectionCreator.address,
-    //   printDesignData.address
+    //   "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //   PKP_FIAT
+    // );
+    // const communityCreator = await CommunityCreator.deploy(
+    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //   "0x792143D199067a4a40Ac4682d81C957623f7c5c3",
+    //   "0x813186B4290Ff3240808372b7bB75DBD7881B087"
+    // );
+    // const printCommunityData = await PrintCommunityData.deploy(
+    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //   communityCreator.address
+    // );
+    // const chromadinOpenAction = await ChromadinOpenAction.deploy(
+    //   HUB,
+    //   MODULE,
+    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //   "0x456Dfd81673256c358d79307aC400A9586aECA7B",
+    //   "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //   "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
+    //   "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
+    //   printCommunityData.address
+    // );
+    // const coinOpOpenAction = await CoinOpOpenAction.deploy(
+    //   HUB,
+    //   MODULE,
+    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //   "0x456Dfd81673256c358d79307aC400A9586aECA7B",
+    //   "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //   "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
+    //   "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
+    //   printCommunityData.address
     // );
     // const legendRegister = await LegendRegister.deploy(
-    //   printAccessControl.address
+    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"
     // );
     // const legendMilestone = await LegendMilestone.deploy(
     //   legendRegister.address,
-    //   printAccessControl.address,
-    //   printSplitsData.address
+    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //   "0x456Dfd81673256c358d79307aC400A9586aECA7B"
     // );
     // const legendOpenAction = await LegendOpenAction.deploy(
     //   HUB,
     //   MODULE,
-    //   "0x8489b67f528De6270173ad261B53dFdd533D7419",
-    //   "0x6603eE13D851Fa4A74A99854dc17cD7192e0A21E",
-    //   "0xfC043AB048b9C1b359857C89E8aE1a9eeac6c8E2",
-    //   "0x543c3556970eb140C61Af964Dd6454811b65cDa7",
-    //   "0xa6931B10156721F55e6bd7D8A980254952A78BaA",
-    //   "0xDCA5f61037d77188439D519117261ACbC14c3D7D"
+    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //   "0x456Dfd81673256c358d79307aC400A9586aECA7B",
+    //   "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //   "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
+    //   legendMilestone.address,
+    //   legendRegister.address
+    // );
+    // const listenerOpenAction = await ListenerOpenAction.deploy(
+    //   HUB,
+    //   MODULE,
+    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //   "0x456Dfd81673256c358d79307aC400A9586aECA7B",
+    //   "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //   "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
+    //   "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
+    //   "0x068F3F62c252FE509dFB826515D1b34cAcfCa714"
     // );
 
     const WAIT_BLOCK_CONFIRMATIONS = 20;
@@ -77,10 +133,14 @@ const main = async () => {
     // nFTCreator.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // collectionCreator.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // marketCreator.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    // printCommunityData.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    // communityCreator.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    // chromadinOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    // coinOpOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // legendRegister.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // legendMilestone.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // legendOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
-
+    // listenerOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // console.log(
     //   `PrintAccessControl deployed at\n${printAccessControl.address}`
     // );
@@ -91,76 +151,144 @@ const main = async () => {
     // console.log(`NFTCreator deployed at\n${nFTCreator.address}`);
     // console.log(`CollectionCreator deployed at\n${collectionCreator.address}`);
     // console.log(`MarketCreator deployed at\n${marketCreator.address}`);
+    // console.log(
+    //   `PrintCommunityData deployed at\n${printCommunityData.address}`
+    // );
+    // console.log(`CommunityCreator deployed at\n${communityCreator.address}`);
+    // console.log(
+    //   `ChromadinOpenAction deployed at\n${chromadinOpenAction.address}`
+    // );
+    // console.log(`CoinOpOpenAction deployed at\n${coinOpOpenAction.address}`);
     // console.log(`LegendRegister deployed at\n${legendRegister.address}`);
     // console.log(`LegendMilestone deployed at\n${legendMilestone.address}`);
     // console.log(`LegendOpenAction deployed at\n${legendOpenAction.address}`);
+    // console.log(
+    //   `ListenerOpenAction deployed at\n${listenerOpenAction.address}`
+    // );
 
-    // await run(`verify:verify`, {
-    //   address: "0x8489b67f528De6270173ad261B53dFdd533D7419",
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0xD45d47eAb081BBbE07cE4836D48bc768b442E86C",
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0xfC043AB048b9C1b359857C89E8aE1a9eeac6c8E2",
-    //   constructorArguments: ["0x8489b67f528De6270173ad261B53dFdd533D7419"],
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0xF7f852c6fB32b780A75B5D965F7D52aF2F560F12",
-    //   constructorArguments: ["0x8489b67f528De6270173ad261B53dFdd533D7419"],
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0x6603eE13D851Fa4A74A99854dc17cD7192e0A21E",
-    //   constructorArguments: ["0x8489b67f528De6270173ad261B53dFdd533D7419"],
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0xb3a97960B47a3a5480143BB8b91E7260b85E7A2e",
-    //   constructorArguments: [
-    //     "0x8562907F56E7Af91afb23D13E9DCBCEFbB89cE50",
-    //     "0x8489b67f528De6270173ad261B53dFdd533D7419",
-    //   ],
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0x37d93046Bf2b1D2fEC8F2559f421682491d8C7Ba",
-    //   constructorArguments: [
-    //     "0xb3a97960B47a3a5480143BB8b91E7260b85E7A2e",
-    //     "0x8562907F56E7Af91afb23D13E9DCBCEFbB89cE50",
-    //     "0x8489b67f528De6270173ad261B53dFdd533D7419",
-    //   ],
-    // });
-    //  await run(`verify:verify`, {
-    //   address: "0x543c3556970eb140C61Af964Dd6454811b65cDa7",
-    //   constructorArguments: [
-    //     "0x8489b67f528De6270173ad261B53dFdd533D7419",
-    //     "0x6603eE13D851Fa4A74A99854dc17cD7192e0A21E",
-    //     "0xF7f852c6fB32b780A75B5D965F7D52aF2F560F12",
-    //     "0x37d93046Bf2b1D2fEC8F2559f421682491d8C7Ba",
-    //     "0x8562907F56E7Af91afb23D13E9DCBCEFbB89cE50",
-    //   ],
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0xDCA5f61037d77188439D519117261ACbC14c3D7D",
-    //   constructorArguments: ["0x8489b67f528De6270173ad261B53dFdd533D7419"],
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0xa6931B10156721F55e6bd7D8A980254952A78BaA",
-    //   constructorArguments: [
-    //     "0xDCA5f61037d77188439D519117261ACbC14c3D7D",
-    //     "0x8489b67f528De6270173ad261B53dFdd533D7419",
-    //     "0x6603eE13D851Fa4A74A99854dc17cD7192e0A21E",
-    //   ],
-    // });
+    await run(`verify:verify`, {
+      address: "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    });
+    await run(`verify:verify`, {
+      address: "0xeD8D361AA83E87Eb0588F59295D45533826FcE86",
+    });
+    await run(`verify:verify`, {
+      address: "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+      constructorArguments: ["0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"],
+    });
+    await run(`verify:verify`, {
+      address: "0x792143D199067a4a40Ac4682d81C957623f7c5c3",
+      constructorArguments: ["0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"],
+    });
+    await run(`verify:verify`, {
+      address: "0x456Dfd81673256c358d79307aC400A9586aECA7B",
+      constructorArguments: ["0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"],
+    });
+
+    await run(`verify:verify`, {
+      address: "0x3Bb3157F4af00BA61A562A0Ffe9cBfd07388d2b1",
+      constructorArguments: [
+        "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+      ],
+    });
+    await run(`verify:verify`, {
+      address: "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
+      constructorArguments: [
+        "0x3Bb3157F4af00BA61A562A0Ffe9cBfd07388d2b1",
+        "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+      ],
+    });
+    await run(`verify:verify`, {
+      address: "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
+      constructorArguments: [
+        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+        "0x456Dfd81673256c358d79307aC400A9586aECA7B",
+        "0x792143D199067a4a40Ac4682d81C957623f7c5c3",
+        "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
+        "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+        PKP_FIAT,
+      ],
+    });
+    await run(`verify:verify`, {
+      address: "0xa9A70a87d67B6FC0C72e0799266755a332d43DAf",
+      constructorArguments: ["0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"],
+    });
+    await run(`verify:verify`, {
+      address: "0x3AE1cbbFfa5E011d688E7d48C35710a5842491f",
+      constructorArguments: [
+        "0xa9A70a87d67B6FC0C72e0799266755a332d43DAf",
+        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+        "0x456Dfd81673256c358d79307aC400A9586aECA7B",
+      ],
+    });
     await run(`verify:verify`, {
       address: "0x0eb82Cc9df6DB90fb05aD515B53eC9C5222A08F0",
       constructorArguments: [
         HUB,
         MODULE,
-        "0x8489b67f528De6270173ad261B53dFdd533D7419",
-        "0x6603eE13D851Fa4A74A99854dc17cD7192e0A21E",
-        "0xfC043AB048b9C1b359857C89E8aE1a9eeac6c8E2",
-        "0x543c3556970eb140C61Af964Dd6454811b65cDa7",
-        "0xa6931B10156721F55e6bd7D8A980254952A78BaA",
-        "0xDCA5f61037d77188439D519117261ACbC14c3D7D",
+        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+        "0x456Dfd81673256c358d79307aC400A9586aECA7B",
+        "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+        "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
+        "0x3AE1cbbFfa5E011d688E7d48C35710a5842491f",
+        "0xa9A70a87d67B6FC0C72e0799266755a332d43DAf",
+      ],
+    });
+    await run(`verify:verify`, {
+      address: "0x068F3F62c252FE509dFB826515D1b34cAcfCa714",
+      constructorArguments: [
+        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+        "0xc3642Ab0c912874c9D8361074666D6c7187BD8fd",
+      ],
+    });
+    await run(`verify:verify`, {
+      address: "0xc3642Ab0c912874c9D8361074666D6c7187BD8fd",
+      constructorArguments: [
+        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+        "0x792143D199067a4a40Ac4682d81C957623f7c5c3",
+        "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+      ],
+    });
+
+    await run(`verify:verify`, {
+      address: "0xeA2B9375910dd3032b514Daefd8061f545aa62B3",
+      constructorArguments: [
+        HUB,
+        MODULE,
+        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+        "0x456Dfd81673256c358d79307aC400A9586aECA7B",
+        "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+        "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
+        "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
+        "0x068F3F62c252FE509dFB826515D1b34cAcfCa714",
+      ],
+    });
+    await run(`verify:verify`, {
+      address: "0x616BBd3F1d09349a9cd32C05621FE04572539A41",
+      constructorArguments: [
+        HUB,
+        MODULE,
+        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+        "0x456Dfd81673256c358d79307aC400A9586aECA7B",
+        "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+        "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
+        "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
+        "0x068F3F62c252FE509dFB826515D1b34cAcfCa714",
+      ],
+    });
+    await run(`verify:verify`, {
+      address: "0x6A1878895AE23375f678dE7E9582F03Aa33c8A80",
+      constructorArguments: [
+        HUB,
+        MODULE,
+        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+        "0x456Dfd81673256c358d79307aC400A9586aECA7B",
+        "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+        "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
+        "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
+        "0x068F3F62c252FE509dFB826515D1b34cAcfCa714",
       ],
     });
   } catch (err: any) {
