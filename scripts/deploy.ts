@@ -166,76 +166,76 @@ const main = async () => {
     //   `ListenerOpenAction deployed at\n${listenerOpenAction.address}`
     // );
 
-    await run(`verify:verify`, {
-      address: "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-    });
-    await run(`verify:verify`, {
-      address: "0xeD8D361AA83E87Eb0588F59295D45533826FcE86",
-    });
-    await run(`verify:verify`, {
-      address: "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-      constructorArguments: ["0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"],
-    });
-    await run(`verify:verify`, {
-      address: "0x792143D199067a4a40Ac4682d81C957623f7c5c3",
-      constructorArguments: ["0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"],
-    });
-    await run(`verify:verify`, {
-      address: "0x456Dfd81673256c358d79307aC400A9586aECA7B",
-      constructorArguments: ["0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"],
-    });
+    // await run(`verify:verify`, {
+    //   address: "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0xeD8D361AA83E87Eb0588F59295D45533826FcE86",
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //   constructorArguments: ["0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0x792143D199067a4a40Ac4682d81C957623f7c5c3",
+    //   constructorArguments: ["0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0x456Dfd81673256c358d79307aC400A9586aECA7B",
+    //   constructorArguments: ["0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"],
+    // });
 
-    await run(`verify:verify`, {
-      address: "0x3Bb3157F4af00BA61A562A0Ffe9cBfd07388d2b1",
-      constructorArguments: [
-        "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-      ],
-    });
-    await run(`verify:verify`, {
-      address: "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
-      constructorArguments: [
-        "0x3Bb3157F4af00BA61A562A0Ffe9cBfd07388d2b1",
-        "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-      ],
-    });
-    await run(`verify:verify`, {
-      address: "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
-      constructorArguments: [
-        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-        "0x456Dfd81673256c358d79307aC400A9586aECA7B",
-        "0x792143D199067a4a40Ac4682d81C957623f7c5c3",
-        "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
-        "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-        PKP_FIAT,
-      ],
-    });
-    await run(`verify:verify`, {
-      address: "0xa9A70a87d67B6FC0C72e0799266755a332d43DAf",
-      constructorArguments: ["0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"],
-    });
-    await run(`verify:verify`, {
-      address: "0x3AE1cbbFfa5E011d688E7d48C35710a5842491f",
-      constructorArguments: [
-        "0xa9A70a87d67B6FC0C72e0799266755a332d43DAf",
-        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-        "0x456Dfd81673256c358d79307aC400A9586aECA7B",
-      ],
-    });
-    await run(`verify:verify`, {
-      address: "0x0eb82Cc9df6DB90fb05aD515B53eC9C5222A08F0",
-      constructorArguments: [
-        HUB,
-        MODULE,
-        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-        "0x456Dfd81673256c358d79307aC400A9586aECA7B",
-        "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-        "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
-        "0x3AE1cbbFfa5E011d688E7d48C35710a5842491f",
-        "0xa9A70a87d67B6FC0C72e0799266755a332d43DAf",
-      ],
-    });
+    // await run(`verify:verify`, {
+    //   address: "0x3Bb3157F4af00BA61A562A0Ffe9cBfd07388d2b1",
+    //   constructorArguments: [
+    //     "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //   ],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
+    //   constructorArguments: [
+    //     "0x3Bb3157F4af00BA61A562A0Ffe9cBfd07388d2b1",
+    //     "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //   ],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
+    //   constructorArguments: [
+    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //     "0x456Dfd81673256c358d79307aC400A9586aECA7B",
+    //     "0x792143D199067a4a40Ac4682d81C957623f7c5c3",
+    //     "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
+    //     "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //     PKP_FIAT,
+    //   ],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0xa9A70a87d67B6FC0C72e0799266755a332d43DAf",
+    //   constructorArguments: ["0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0x3AE1cbbFfa5E011d688E7d48C35710a5842491f",
+    //   constructorArguments: [
+    //     "0xa9A70a87d67B6FC0C72e0799266755a332d43DAf",
+    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //     "0x456Dfd81673256c358d79307aC400A9586aECA7B",
+    //   ],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0x0eb82Cc9df6DB90fb05aD515B53eC9C5222A08F0",
+    //   constructorArguments: [
+    //     HUB,
+    //     MODULE,
+    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //     "0x456Dfd81673256c358d79307aC400A9586aECA7B",
+    //     "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //     "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
+    //     "0x3AE1cbbFfa5E011d688E7d48C35710a5842491f",
+    //     "0xa9A70a87d67B6FC0C72e0799266755a332d43DAf",
+    //   ],
+    // });
     await run(`verify:verify`, {
       address: "0x068F3F62c252FE509dFB826515D1b34cAcfCa714",
       constructorArguments: [
