@@ -297,3 +297,26 @@ const main = async () => {
 };
 
 main();
+
+
+/* Steps
+
+1. Print Design Data
+[] set collection creator
+[] set nft creator
+
+2. Print Order
+[] set market creator
+
+3. Nft creator
+[] set collection creator
+
+4. collection creator
+[] set market creator
+
+5. community creator
+[] set community data 
+
+6. 
+
+*/

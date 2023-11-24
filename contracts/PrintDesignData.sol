@@ -42,7 +42,6 @@ contract PrintDesignData {
     event DropCreated(uint256 dropId, string uri, address creator);
     event DropDeleted(uint256 dropId);
     event CollectionDeleted(uint256 collectionId);
-    event CollectionUpdated(uint256 collectionId);
     event CollectionMintedTokensSet(
         uint256 indexed collectionId,
         uint256 mintedTokensAmount
