@@ -5,10 +5,13 @@ pragma solidity ^0.8.16;
 import "./PrintAccessControl.sol";
 import "./PrintLibrary.sol";
 import "./MarketCreator.sol";
+import "./PrintDesignData.sol";
+import "hardhat/console.sol";
 
 contract PrintOrderData {
     PrintAccessControl public printAccessControl;
     MarketCreator public marketCreator;
+    PrintDesignData public printDesignData;
     string public symbol;
     string public name;
     uint256 private _orderSupply;
@@ -47,6 +50,10 @@ contract PrintOrderData {
         address buyer
     );
     event UpdateOrderMessage(uint256 indexed orderId, string newMessageDetails);
+    event UpdateNFTOnlyOrderMessage(
+        uint256 indexed orderId,
+        string newMessageDetails
+    );
 
     modifier onlyAdmin() {
         if (!printAccessControl.isAdmin(msg.sender)) {
@@ -80,8 +87,12 @@ contract PrintOrderData {
         _;
     }
 
-    constructor(address _printAccessControlAddress) {
+    constructor(
+        address _printAccessControlAddress,
+        address _printDesignDataAddress
+    ) {
         printAccessControl = PrintAccessControl(_printAccessControlAddress);
+        printDesignData = PrintDesignData(_printDesignDataAddress);
         _orderSupply = 0;
         _subOrderSupply = 0;
         _nftOnlyOrderSupply = 0;
@@ -135,7 +146,8 @@ contract PrintOrderData {
         uint256 _pubId,
         uint256 _profileId,
         uint256 _buyerProfileId,
-        uint256 _totalPrice
+        uint256 _totalPrice,
+        uint256 _collectionId
     ) external onlyMarketContract {
         _nftOnlyOrderSupply++;
         PrintLibrary.NFTOnlyOrder memory newOrder = PrintLibrary.NFTOnlyOrder({
@@ -147,11 +159,13 @@ contract PrintOrderData {
             chosenCurrency: _chosenCurrency,
             timestamp: block.timestamp,
             messages: new string[](0),
-            totalPrice: _totalPrice
+            totalPrice: _totalPrice,
+            collectionId: _collectionId
         });
 
         _nftOnlyOrders[_nftOnlyOrderSupply] = newOrder;
-        _addressToNFTOnlyOrderIds[_buyer].push(_orderSupply);
+
+        _addressToNFTOnlyOrderIds[_buyer].push(_nftOnlyOrderSupply);
 
         emit NFTOnlyOrderCreated(
             _nftOnlyOrderSupply,
@@ -225,6 +239,22 @@ contract PrintOrderData {
         emit UpdateOrderMessage(_orderId, _newMessage);
     }
 
+    function setNFTOnlyOrderMessage(
+        uint256 _orderId,
+        string memory _newMessage
+    ) external {
+        if (
+            msg.sender !=
+            printDesignData.getCollectionCreator(
+                _nftOnlyOrders[_orderId].collectionId
+            )
+        ) {
+            revert InvalidAddress();
+        }
+        _nftOnlyOrders[_orderId].messages.push(_newMessage);
+        emit UpdateNFTOnlyOrderMessage(_orderId, _newMessage);
+    }
+
     function setPrintAccessControlAddress(
         address _newPrintAccessControlAddress
     ) public onlyAdmin {
@@ -235,6 +265,12 @@ contract PrintOrderData {
         address _newMarketCreatorAddress
     ) public onlyAdmin {
         marketCreator = MarketCreator(_newMarketCreatorAddress);
+    }
+
+    function setPrintDesignDataAddress(
+        address _newPrintDesignDataAddress
+    ) public onlyAdmin {
+        printDesignData = PrintDesignData(_newPrintDesignDataAddress);
     }
 
     function getSubOrderTokenIds(
@@ -259,6 +295,12 @@ contract PrintOrderData {
         return _orders[_orderId].buyer;
     }
 
+    function getOrderBuyerProfileId(
+        uint256 _orderId
+    ) public view returns (uint256) {
+        return _orders[_orderId].buyerProfileId;
+    }
+
     function getOrderChosenCurrency(
         uint256 _orderId
     ) public view returns (address) {
@@ -271,6 +313,20 @@ contract PrintOrderData {
 
     function getOrderTimestamp(uint256 _orderId) public view returns (uint256) {
         return _orders[_orderId].timestamp;
+    }
+
+    function getOrderTotalPrice(
+        uint256 _orderId
+    ) public view returns (uint256) {
+        return _orders[_orderId].totalPrice;
+    }
+
+    function getOrderPubId(uint256 _orderId) public view returns (uint256) {
+        return _orders[_orderId].pubId;
+    }
+
+    function getOrderProfileId(uint256 _orderId) public view returns (uint256) {
+        return _orders[_orderId].profileId;
     }
 
     function getSubOrderStatus(
@@ -337,6 +393,66 @@ contract PrintOrderData {
 
     function getNFTOnlyOrderSupply() public view returns (uint256) {
         return _nftOnlyOrderSupply;
+    }
+
+    function getNFTOnlyOrderPubId(
+        uint256 _orderId
+    ) public view returns (uint256) {
+        return _nftOnlyOrders[_orderId].pubId;
+    }
+
+    function getNFTOnlyOrderProfileId(
+        uint256 _orderId
+    ) public view returns (uint256) {
+        return _nftOnlyOrders[_orderId].profileId;
+    }
+
+    function getNFTOnlyOrderChosenCurrency(
+        uint256 _orderId
+    ) public view returns (address) {
+        return _nftOnlyOrders[_orderId].chosenCurrency;
+    }
+
+    function getNFTOnlyOrderTimestamp(
+        uint256 _orderId
+    ) public view returns (uint256) {
+        return _nftOnlyOrders[_orderId].timestamp;
+    }
+
+    function getNFTOnlyOrderMessages(
+        uint256 _orderId
+    ) public view returns (string[] memory) {
+        return _nftOnlyOrders[_orderId].messages;
+    }
+
+    function getNFTOnlyOrderTotalPrice(
+        uint256 _orderId
+    ) public view returns (uint256) {
+        return _nftOnlyOrders[_orderId].totalPrice;
+    }
+
+    function getNFTOnlyOrderCollectionId(
+        uint256 _orderId
+    ) public view returns (uint256) {
+        return _nftOnlyOrders[_orderId].collectionId;
+    }
+
+    function getNFTOnlyOrderBuyer(
+        uint256 _orderId
+    ) public view returns (address) {
+        return _nftOnlyOrders[_orderId].buyer;
+    }
+
+    function getNFTOnlyOrderBuyerProfileId(
+        uint256 _orderId
+    ) public view returns (uint256) {
+        return _nftOnlyOrders[_orderId].buyerProfileId;
+    }
+
+    function getAddressToNFTOnlyOrderIds(
+        address _address
+    ) public view returns (uint256[] memory) {
+        return _addressToNFTOnlyOrderIds[_address];
     }
 
     function getAddressToOrderIds(

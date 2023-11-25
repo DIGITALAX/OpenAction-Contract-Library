@@ -325,6 +325,6 @@ main();
 [] Add verified currencies 
 [] se tOracle Price USD
 
-8. verify open action modules and MONA and accepted token currencies
+8. verify open action modules and MONA and accepted token currencies with lens contracts!
 
 */

@@ -171,14 +171,6 @@ contract MarketCreator {
             revert InvalidAddress();
         }
 
-        if (
-            printDesignData.getCollectionTokensMinted(_params.collectionId) +
-                _params.quantity >=
-            printDesignData.getCollectionAmount(_params.collectionId)
-        ) {
-            revert ExceedAmount();
-        }
-
         collectionCreator.purchaseAndMintToken(
             _oneItem(_params.collectionId),
             _oneItem(_params.quantity),
@@ -197,7 +189,8 @@ contract MarketCreator {
             _params.pubId,
             _params.profileId,
             _params.buyerProfileId,
-            _price
+            _price,
+            _params.collectionId
         );
     }
 

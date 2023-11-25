@@ -42,6 +42,7 @@ contract ChromadinOpenAction is
     error InvalidCommunityMember();
     error InvalidAddress();
     error InvalidAmounts();
+    error ExceedAmount();
 
     mapping(uint256 => mapping(uint256 => uint256)) _collectionGroups;
 
@@ -156,6 +157,14 @@ contract ChromadinOpenAction is
             revert InvalidCommunityMember();
         }
 
+        if (
+            printDesignData.getCollectionTokensMinted(_collectionId) +
+                _quantity >=
+            printDesignData.getCollectionAmount(_collectionId)
+        ) {
+            revert ExceedAmount();
+        }
+
         address _designer = printDesignData.getCollectionCreator(_collectionId);
 
         _grandTotal += _transferTokens(
@@ -199,6 +208,7 @@ contract ChromadinOpenAction is
         uint256 _totalPrice = printDesignData.getCollectionPrices(
             _collectionId
         )[0];
+
         uint256 _calculatedPrice = _calculateAmount(
             _chosenCurrency,
             _totalPrice * _quantity
