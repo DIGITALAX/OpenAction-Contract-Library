@@ -6,7 +6,7 @@ import {HubRestricted} from "./../lens/v2/base/HubRestricted.sol";
 import {Types} from "./../lens/v2/libraries/constants/Types.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IPublicationActionModule} from "./../lens/v2/interfaces/IPublicationActionModule.sol";
-import {IModuleGlobals} from "./../lens/v2/interfaces/IModuleGlobals.sol";
+import {IModuleRegistry} from "./../lens/v2/interfaces/IModuleRegistry.sol";
 import "./../MarketCreator.sol";
 import "./../legend/LegendRegister.sol";
 import "./../PrintAccessControl.sol";
@@ -61,7 +61,7 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
         uint256[] amounts;
     }
 
-    IModuleGlobals public immutable MODULE_GLOBALS;
+    IModuleRegistry public immutable MODULE_GLOBALS;
     mapping(uint256 => mapping(uint256 => mapping(uint256 => LevelInfo))) _grantLevelInfo;
     mapping(uint256 => mapping(uint256 => address)) _granteeReceiver;
 
@@ -84,7 +84,7 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
         address _legendMilestoneAddress,
         address _legendRegisterAddress
     ) HubRestricted(_hub) {
-        MODULE_GLOBALS = IModuleGlobals(_moduleGlobals);
+        MODULE_GLOBALS = IModuleRegistry(_moduleGlobals);
         marketCreator = MarketCreator(_marketCreatorAddress);
         printAccessControl = PrintAccessControl(_printAccessControlAddress);
         printSplitsData = PrintSplitsData(_printSplitsDataAddress);
@@ -174,7 +174,7 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
         ][_params.publicationActedId];
 
         if (
-            !MODULE_GLOBALS.isCurrencyWhitelisted(_currency) ||
+            !MODULE_GLOBALS.isErc20CurrencyRegistered(_currency) ||
             !printSplitsData.getIsCurrency(_currency)
         ) {
             revert CurrencyNotWhitelisted();
