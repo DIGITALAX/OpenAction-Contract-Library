@@ -55,7 +55,10 @@ describe("ChromadinOpenAction", () => {
     printAccessControl = await PrintAccessControl.deploy();
     printLibrary = await PrintLibrary.deploy();
     printDesignData = await PrintDesignData.deploy(printAccessControl.address);
-    printOrderData = await PrintOrderData.deploy(printAccessControl.address);
+    printOrderData = await PrintOrderData.deploy(
+      printAccessControl.address,
+      printDesignData.address
+    );
     printSplitsData = await PrintSplitsData.deploy(printAccessControl.address);
     nFTCreator = await NFTCreator.deploy(
       printDesignData.address,
@@ -291,7 +294,7 @@ describe("ChromadinOpenAction", () => {
           {
             prices: ["200000000000000000000", "500000"],
             communityIds: [],
-            acceptedTokens: [mona.address, eth.address],
+            acceptedTokens: [mona.address, usdt.address],
             uri: "ipfs://QmVY1588Y98iMKeaDskCq7R3GrbTBSLpoCrzgC1MgXUkgk",
             fulfiller: "0x0000000000000000000000000000000000000000",
             creatorAddress: await creatorTwo.getAddress(),
@@ -360,7 +363,7 @@ describe("ChromadinOpenAction", () => {
     });
 
     it("purchase a collection", async () => {
-      const encodedData = ethers.utils.defaultAbiCoder.encode(
+      const encodedDataOne = ethers.utils.defaultAbiCoder.encode(
         ["address", "uint256"],
         [matic.address, 2]
       );
@@ -374,6 +377,9 @@ describe("ChromadinOpenAction", () => {
         .connect(buyer)
         .approve(chromadinOpenAction.address, ethers.utils.parseEther("260"));
 
+      const balanceCreator = await matic.balanceOf(await creator.getAddress());
+      const balanceBuyer = await matic.balanceOf(await buyer.getAddress());
+
       await chromadinOpenAction.connect(hub).processPublicationAction({
         publicationActedProfileId: 50,
         publicationActedId: 10,
@@ -383,12 +389,121 @@ describe("ChromadinOpenAction", () => {
         referrerProfileIds: [],
         referrerPubIds: [],
         referrerPubTypes: [],
-        actionModuleData: encodedData,
+        actionModuleData: encodedDataOne,
       });
 
-      // cant get more than funds that u have
-      // cant get more than the max amount
-      // check usd wei working!
+      expect(await matic.balanceOf(await creator.getAddress())).to.equal(
+        balanceCreator.add("259000000000000000000")
+      );
+      expect(await matic.balanceOf(await buyer.getAddress())).to.equal(
+        balanceBuyer.sub("259000000000000000000")
+      );
+
+      await matic.transfer(
+        await buyer.getAddress(),
+        ethers.utils.parseEther("660")
+      );
+
+      await matic
+        .connect(buyer)
+        .approve(chromadinOpenAction.address, ethers.utils.parseEther("660"));
+
+      try {
+        const encodedDataTwo = ethers.utils.defaultAbiCoder.encode(
+          ["address", "uint256"],
+          [matic.address, 5]
+        );
+        await chromadinOpenAction.connect(hub).processPublicationAction({
+          publicationActedProfileId: 50,
+          publicationActedId: 10,
+          actorProfileId: 1000,
+          actorProfileOwner: await buyer.getAddress(),
+          transactionExecutor: await hub.getAddress(),
+          referrerProfileIds: [],
+          referrerPubIds: [],
+          referrerPubTypes: [],
+          actionModuleData: encodedDataTwo,
+        });
+      } catch (err: any) {
+        expect(err.message).to.include("ExceedAmount");
+      }
+
+      await usdt.transfer(
+        await buyer.getAddress(),
+        ethers.utils.parseEther("300")
+      );
+
+      await usdt
+        .connect(buyer)
+        .approve(chromadinOpenAction.address, ethers.utils.parseEther("300"));
+
+      const encodedDataThree = ethers.utils.defaultAbiCoder.encode(
+        ["address", "uint256"],
+        [usdt.address, 1]
+      );
+
+      await chromadinOpenAction.connect(hub).processPublicationAction({
+        publicationActedProfileId: 4001,
+        publicationActedId: 10,
+        actorProfileId: 1000,
+        actorProfileOwner: await buyer.getAddress(),
+        transactionExecutor: await hub.getAddress(),
+        referrerProfileIds: [],
+        referrerPubIds: [],
+        referrerPubTypes: [],
+        actionModuleData: encodedDataThree,
+      });
+
+      expect(await printOrderData.getOrderSupply()).to.equal(0);
+      expect(await printOrderData.getSubOrderSupply()).to.equal(0);
+      expect(await printOrderData.getNFTOnlyOrderSupply()).to.equal(2);
+
+      expect(await printOrderData.getNFTOnlyOrderPubId(2)).to.equal(10);
+      expect(await printOrderData.getNFTOnlyOrderProfileId(2)).to.equal(4001);
+      expect(await printOrderData.getNFTOnlyOrderChosenCurrency(2)).to.equal(
+        usdt.address
+      );
+      expect(await printOrderData.getNFTOnlyOrderChosenCurrency(2)).to.equal(
+        usdt.address
+      );
+      expect(await printOrderData.getNFTOnlyOrderMessages(2)).to.deep.equal([]);
+      expect(await printOrderData.getNFTOnlyOrderTotalPrice(2)).to.equal(
+        "200000000000000000000"
+      );
+      expect(await printOrderData.getNFTOnlyOrderCollectionId(2)).to.equal(3);
+      expect(await printOrderData.getNFTOnlyOrderBuyer(2)).to.equal(
+        await buyer.getAddress()
+      );
+      expect(await printOrderData.getNFTOnlyOrderBuyerProfileId(2)).to.equal(
+        1000
+      );
+      expect(
+        await printOrderData.getAddressToNFTOnlyOrderIds(
+          await buyer.getAddress()
+        )
+      ).to.deep.equal([1, 2]);
+
+      try {
+        await printOrderData
+          .connect(creator)
+          .setNFTOnlyOrderMessage(2, "some first message");
+      } catch (err: any) {
+        expect(err.message).to.include("InvalidAddress");
+      }
+
+      await printOrderData
+        .connect(creatorTwo)
+        .setNFTOnlyOrderMessage(2, "some first message");
+      expect(await printOrderData.getNFTOnlyOrderMessages(2)).to.deep.equal([
+        "some first message",
+      ]);
+      await printOrderData
+        .connect(creatorTwo)
+        .setNFTOnlyOrderMessage(2, "some other message");
+      expect(await printOrderData.getNFTOnlyOrderMessages(2)).to.deep.equal([
+        "some first message",
+        "some other message",
+      ]);
     });
   });
 });

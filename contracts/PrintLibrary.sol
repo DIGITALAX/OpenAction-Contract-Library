@@ -84,6 +84,7 @@ contract PrintLibrary {
         uint256 buyerProfileId;
         uint256 timestamp;
         uint256 totalPrice;
+        uint256 collectionId;
     }
     struct Community {
         address[] validCreatorKeys;

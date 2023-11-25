@@ -292,10 +292,9 @@ contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
         }
 
         uint256 _exchangeRate = printSplitsData.getRateByCurrency(_currency);
+
         uint256 _weiDivisor = printSplitsData.getWeiByCurrency(_currency);
-
-        uint256 _tokenAmount = (_amountInWei * _weiDivisor) / _exchangeRate;
-
+        uint256 _tokenAmount = (_amountInWei / _exchangeRate) * _weiDivisor;
         return _tokenAmount;
     }
 
