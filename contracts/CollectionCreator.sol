@@ -260,7 +260,6 @@ contract CollectionCreator {
         if (bytes(printDesignData.getDropURI(_dropId)).length == 0) {
             revert InvalidUpdate();
         }
-
         if (printDesignData.getDropCreator(_dropId) != _caller) {
             revert InvalidUpdate();
         }

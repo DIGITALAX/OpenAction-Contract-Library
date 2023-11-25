@@ -159,7 +159,7 @@ contract ChromadinOpenAction is
 
         if (
             printDesignData.getCollectionTokensMinted(_collectionId) +
-                _quantity >=
+                _quantity >
             printDesignData.getCollectionAmount(_collectionId)
         ) {
             revert ExceedAmount();

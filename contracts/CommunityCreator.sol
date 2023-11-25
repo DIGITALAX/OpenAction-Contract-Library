@@ -6,6 +6,7 @@ import "./PrintAccessControl.sol";
 import "./PrintCommunityData.sol";
 import "./PrintOrderData.sol";
 import "./PrintDesignData.sol";
+import "hardhat/console.sol";
 
 contract CommunityCreator {
     PrintAccessControl public printAccessControl;
@@ -111,16 +112,23 @@ contract CommunityCreator {
         address[] memory _valid20AddressKeys = printCommunityData
             .getCommunityValid20AddressKeys(_communityId);
 
+        _isValid = false;
+
         for (uint256 i = 0; i < _valid20AddressKeys.length; i++) {
             if (
-                IERC20(_valid20AddressKeys[i]).balanceOf(_memberAddress) <
+                IERC20(_valid20AddressKeys[i]).balanceOf(_memberAddress) >=
                 printCommunityData.getCommunityValid20Threshold(
                     _valid20AddressKeys[i],
                     _communityId
                 )
             ) {
-                revert RequirementsNotMet();
+                _isValid = true;
+                break;
             }
+        }
+
+        if (!_isValid) {
+            revert RequirementsNotMet();
         }
 
         printCommunityData.addCommunityMember(
@@ -138,12 +146,17 @@ contract CommunityCreator {
             !printCommunityData.getIsCommunityMember(
                 _communityId,
                 _memberProfileId
+            ) ||
+            !printCommunityData.getIsValidCommunityAddress(
+                msg.sender,
+                _communityId
             )
         ) {
             revert InvalidAddress();
         }
 
         printCommunityData.removeCommunityMember(
+            msg.sender,
             _communityId,
             _memberProfileId
         );

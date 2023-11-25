@@ -76,6 +76,7 @@ contract PrintLibrary {
     }
     struct NFTOnlyOrder {
         string[] messages;
+        uint256[] tokenIds;
         address buyer;
         address chosenCurrency;
         uint256 orderId;
