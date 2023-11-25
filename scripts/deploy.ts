@@ -1,7 +1,7 @@
 import { ethers, run } from "hardhat";
 
-const HUB = "0xC1E77eE73403B8a7478884915aA599932A677870";
-const MODULE = "0x8834aE494ADD3C56d274Fe88243526DBAB15dEF8";
+const HUB = "0x4fbffF20302F3326B20052ab9C217C44F6480900";
+const MODULE = "0x4BeB63842BB800A1Da77a62F2c74dE3CA39AF7C0";
 const PKP_FIAT = "0x8834aE494ADD3C56d274Fe88243526DBAB15dEF8";
 const main = async () => {
   try {
@@ -67,8 +67,8 @@ const main = async () => {
     //   PKP_FIAT
     // );
     // const communityCreator = await CommunityCreator.deploy(
-    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
     //   "0x792143D199067a4a40Ac4682d81C957623f7c5c3",
+    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
     //   "0x813186B4290Ff3240808372b7bB75DBD7881B087"
     // );
     // const printCommunityData = await PrintCommunityData.deploy(
@@ -76,6 +76,7 @@ const main = async () => {
     //   communityCreator.address
     // );
     // const chromadinOpenAction = await ChromadinOpenAction.deploy(
+    //   "mystringjsoninfo",
     //   HUB,
     //   MODULE,
     //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
@@ -83,7 +84,7 @@ const main = async () => {
     //   "0x813186B4290Ff3240808372b7bB75DBD7881B087",
     //   "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
     //   "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
-    //   printCommunityData.address
+    //   "0x068F3F62c252FE509dFB826515D1b34cAcfCa714"
     // );
     // const coinOpOpenAction = await CoinOpOpenAction.deploy(
     //   HUB,
@@ -236,25 +237,26 @@ const main = async () => {
     //     "0xa9A70a87d67B6FC0C72e0799266755a332d43DAf",
     //   ],
     // });
-    await run(`verify:verify`, {
-      address: "0x068F3F62c252FE509dFB826515D1b34cAcfCa714",
-      constructorArguments: [
-        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-        "0xc3642Ab0c912874c9D8361074666D6c7187BD8fd",
-      ],
-    });
-    await run(`verify:verify`, {
-      address: "0xc3642Ab0c912874c9D8361074666D6c7187BD8fd",
-      constructorArguments: [
-        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-        "0x792143D199067a4a40Ac4682d81C957623f7c5c3",
-        "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-      ],
-    });
+    // await run(`verify:verify`, {
+    //   address: "0x068F3F62c252FE509dFB826515D1b34cAcfCa714",
+    //   constructorArguments: [
+    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //     "0xc3642Ab0c912874c9D8361074666D6c7187BD8fd",
+    //   ],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0x20e15dDcFa20Da9a742514F9606C93A8778bb747",
+    //   constructorArguments: [
+    //     "0x792143D199067a4a40Ac4682d81C957623f7c5c3",
+    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //     "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //   ],
+    // });
 
     await run(`verify:verify`, {
-      address: "0xeA2B9375910dd3032b514Daefd8061f545aa62B3",
+      address: "0xEf7a24F490496f9f88078D7C4e7Ce6B8c757859F",
       constructorArguments: [
+        "mystringjsoninfo",
         HUB,
         MODULE,
         "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
@@ -265,39 +267,38 @@ const main = async () => {
         "0x068F3F62c252FE509dFB826515D1b34cAcfCa714",
       ],
     });
-    await run(`verify:verify`, {
-      address: "0x616BBd3F1d09349a9cd32C05621FE04572539A41",
-      constructorArguments: [
-        HUB,
-        MODULE,
-        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-        "0x456Dfd81673256c358d79307aC400A9586aECA7B",
-        "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-        "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
-        "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
-        "0x068F3F62c252FE509dFB826515D1b34cAcfCa714",
-      ],
-    });
-    await run(`verify:verify`, {
-      address: "0x6A1878895AE23375f678dE7E9582F03Aa33c8A80",
-      constructorArguments: [
-        HUB,
-        MODULE,
-        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-        "0x456Dfd81673256c358d79307aC400A9586aECA7B",
-        "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-        "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
-        "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
-        "0x068F3F62c252FE509dFB826515D1b34cAcfCa714",
-      ],
-    });
+    // await run(`verify:verify`, {
+    //   address: "0x616BBd3F1d09349a9cd32C05621FE04572539A41",
+    //   constructorArguments: [
+    //     HUB,
+    //     MODULE,
+    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //     "0x456Dfd81673256c358d79307aC400A9586aECA7B",
+    //     "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //     "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
+    //     "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
+    //     "0x068F3F62c252FE509dFB826515D1b34cAcfCa714",
+    //   ],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0x6A1878895AE23375f678dE7E9582F03Aa33c8A80",
+    //   constructorArguments: [
+    //     HUB,
+    //     MODULE,
+    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //     "0x456Dfd81673256c358d79307aC400A9586aECA7B",
+    //     "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //     "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
+    //     "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
+    //     "0x068F3F62c252FE509dFB826515D1b34cAcfCa714",
+    //   ],
+    // });
   } catch (err: any) {
     console.error(err.message);
   }
 };
 
 main();
-
 
 /* Steps
 
@@ -317,6 +318,13 @@ main();
 5. community creator
 [] set community data 
 
-6. 
+6. access control
+[] add open actions
+
+7. Print Splits
+[] Add verified currencies 
+[] se tOracle Price USD
+
+8. verify open action modules and MONA and accepted token currencies
 
 */

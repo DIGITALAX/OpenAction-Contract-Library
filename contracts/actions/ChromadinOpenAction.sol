@@ -6,12 +6,14 @@ import {HubRestricted} from "./../lens/v2/base/HubRestricted.sol";
 import {Types} from "./../lens/v2/libraries/constants/Types.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IPublicationActionModule} from "./../lens/v2/interfaces/IPublicationActionModule.sol";
-import {IModuleGlobals} from "./../lens/v2/interfaces/IModuleGlobals.sol";
+import {ILensModule} from "./../lens/v2/interfaces/ILensModule.sol";
+import {IModuleRegistry} from "./../lens/v2/interfaces/IModuleRegistry.sol";
 import "./../MarketCreator.sol";
 import "./../CollectionCreator.sol";
 import "./../PrintAccessControl.sol";
 import "./../PrintDesignData.sol";
 import "./../PrintCommunityData.sol";
+import "hardhat/console.sol";
 
 library ChromadinOpenActionLibrary {
     struct CollectionValues {
@@ -23,13 +25,18 @@ library ChromadinOpenActionLibrary {
     }
 }
 
-contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
+contract ChromadinOpenAction is
+    HubRestricted,
+    ILensModule,
+    IPublicationActionModule
+{
     MarketCreator public marketCreator;
     CollectionCreator public collectionCreator;
     PrintAccessControl public printAccessControl;
     PrintSplitsData public printSplitsData;
     PrintDesignData public printDesignData;
     PrintCommunityData public printCommunityData;
+    string private _metadata;
 
     error CurrencyNotWhitelisted();
     error InvalidCommunityMember();
@@ -45,7 +52,7 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
         _;
     }
 
-    IModuleGlobals public immutable MODULE_GLOBALS;
+    IModuleRegistry public immutable MODULE_GLOBALS;
 
     event ChromadinPurchased(
         address buyerAddress,
@@ -63,6 +70,7 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
     );
 
     constructor(
+        string memory _metadataDetails,
         address _hub,
         address _moduleGlobals,
         address _printAccessControlAddress,
@@ -72,13 +80,14 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
         address _collectionCreatorAddress,
         address _printCommunityDataAddress
     ) HubRestricted(_hub) {
-        MODULE_GLOBALS = IModuleGlobals(_moduleGlobals);
+        MODULE_GLOBALS = IModuleRegistry(_moduleGlobals);
         marketCreator = MarketCreator(_marketCreatorAddress);
         collectionCreator = CollectionCreator(_collectionCreatorAddress);
         printAccessControl = PrintAccessControl(_printAccessControlAddress);
         printSplitsData = PrintSplitsData(_printSplitsDataAddress);
         printDesignData = PrintDesignData(_printDesignDataAddress);
         printCommunityData = PrintCommunityData(_printCommunityDataAddress);
+        _metadata = _metadataDetails;
     }
 
     function initializePublicationAction(
@@ -121,12 +130,12 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
             (address, uint256)
         );
 
-        if (
-            !MODULE_GLOBALS.isCurrencyWhitelisted(_currency) ||
-            !printSplitsData.getIsCurrency(_currency)
-        ) {
-            revert CurrencyNotWhitelisted();
-        }
+        // if (
+        //     !MODULE_GLOBALS.isErc20CurrencyRegistered(_currency) ||
+        //     !printSplitsData.getIsCurrency(_currency)
+        // ) {
+        //     revert CurrencyNotWhitelisted();
+        // }
 
         uint256 _collectionId = _collectionGroups[
             _params.publicationActedProfileId
@@ -150,8 +159,8 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
         address _designer = printDesignData.getCollectionCreator(_collectionId);
 
         _grandTotal += _transferTokens(
-            _designer,
             _currency,
+            _designer,
             _params.actorProfileOwner,
             _collectionId,
             _quantity
@@ -267,8 +276,10 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
     ) internal view returns (bool) {
         uint256[] memory _communityIds = printDesignData
             .getCollectionCommunityIds(_collectionId);
-        bool _validMember = false;
+        bool _validMember = true;
+
         if (_communityIds.length > 0) {
+            _validMember = false;
             for (uint256 j = 0; j < _communityIds.length; j++) {
                 if (
                     printCommunityData.getIsCommunityMember(
@@ -293,10 +304,27 @@ contract ChromadinOpenAction is HubRestricted, IPublicationActionModule {
         }
 
         uint256 _exchangeRate = printSplitsData.getRateByCurrency(_currency);
-        uint256 _weiDivisor = printSplitsData.getWeiByCurrency(_currency);
 
-        uint256 _tokenAmount = (_amountInWei * _weiDivisor) / _exchangeRate;
+        uint256 _weiDivisor = printSplitsData.getWeiByCurrency(_currency);
+        uint256 _tokenAmount = (_amountInWei / _exchangeRate) * _weiDivisor;
 
         return _tokenAmount;
+    }
+
+    function supportsInterface(
+        bytes4 interfaceId
+    ) external view override returns (bool) {
+        return
+            interfaceId == bytes4(keccak256(abi.encodePacked("LENS_MODULE"))) ||
+            interfaceId == type(IPublicationActionModule).interfaceId;
+    }
+
+    function getModuleMetadataURI()
+        external
+        view
+        override
+        returns (string memory)
+    {
+        return _metadata;
     }
 }

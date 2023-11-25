@@ -6,11 +6,14 @@ import "./NFTCreator.sol";
 import "./PrintDesignData.sol";
 import "./PrintAccessControl.sol";
 import "./PrintLibrary.sol";
+import "./PrintSplitsData.sol";
+import "hardhat/console.sol";
 
 contract CollectionCreator {
     PrintDesignData public printDesignData;
     PrintAccessControl public printAccessControl;
     NFTCreator public nftCreator;
+    PrintSplitsData public printSplitsData;
     string public symbol;
     string public name;
     address public marketCreator;
@@ -19,6 +22,7 @@ contract CollectionCreator {
     error AddressNotDesigner();
     error AddressNotAdmin();
     error InvalidUpdate();
+    error InvalidCurrency();
 
     modifier onlyAdmin() {
         if (!printAccessControl.isAdmin(msg.sender)) {
@@ -37,11 +41,13 @@ contract CollectionCreator {
     constructor(
         address _nftCreatorAddress,
         address _printDesignDataAddress,
-        address _printAccessControlAddress
+        address _printAccessControlAddress,
+        address _printSplitsDataAddress
     ) {
         nftCreator = NFTCreator(_nftCreatorAddress);
         printDesignData = PrintDesignData(_printDesignDataAddress);
         printAccessControl = PrintAccessControl(_printAccessControlAddress);
+        printSplitsData = PrintSplitsData(_printSplitsDataAddress);
         symbol = "CCR";
         name = "CollectionCreator";
     }
@@ -50,11 +56,19 @@ contract CollectionCreator {
         PrintLibrary.MintParams memory _params
     ) external returns (uint256) {
         if (
-            !printAccessControl.isDesigner(msg.sender) ||
-            !printAccessControl.isOpenAction(msg.sender)
+            !printAccessControl.isDesigner(msg.sender) &&
+            !printAccessControl.isOpenAction(msg.sender) &&
+            !printAccessControl.isDesigner(_params.creator)
         ) {
             revert AddressNotDesigner();
         }
+
+        for (uint256 k = 0; k < _params.acceptedTokens.length; k++) {
+            if (!printSplitsData.getIsCurrency(_params.acceptedTokens[k])) {
+                revert InvalidCurrency();
+            }
+        }
+
         uint256 _amount = _params.amount;
         if (_params.unlimited) {
             _amount = type(uint256).max;
@@ -92,7 +106,12 @@ contract CollectionCreator {
         }
         _newCollectionIds[_collectionIds.length] = _collectionId;
 
-        updateDrop(_newCollectionIds, _uri, _params.dropId);
+        _internalUpdate(
+            _newCollectionIds,
+            _uri,
+            _params.creator,
+            _params.dropId
+        );
 
         return _collectionId;
     }
@@ -171,23 +190,21 @@ contract CollectionCreator {
         uint256[] memory _collectionIds,
         string memory _uri,
         uint256 _dropId
-    ) public onlyDesigner {
+    ) public {
         if (bytes(printDesignData.getDropURI(_dropId)).length == 0) {
             revert InvalidUpdate();
         }
 
-        if (msg.sender != address(this)) {
-            if (printDesignData.getDropCreator(_dropId) != msg.sender) {
-                revert InvalidUpdate();
-            }
+        if (printDesignData.getDropCreator(_dropId) != msg.sender) {
+            revert InvalidUpdate();
+        }
 
-            for (uint256 i = 0; i < _collectionIds.length; i++) {
-                if (
-                    printDesignData.getCollectionCreator(_collectionIds[i]) !=
-                    msg.sender
-                ) {
-                    revert AddressNotDesigner();
-                }
+        for (uint256 i = 0; i < _collectionIds.length; i++) {
+            if (
+                printDesignData.getCollectionCreator(_collectionIds[i]) !=
+                msg.sender
+            ) {
+                revert AddressNotDesigner();
             }
         }
 
@@ -216,6 +233,12 @@ contract CollectionCreator {
         printAccessControl = PrintAccessControl(_newPrintAccessControlAddress);
     }
 
+    function setPrintSplitsDataAddress(
+        address _newPrintSplitsDataAddress
+    ) public onlyAdmin {
+        printSplitsData = PrintSplitsData(_newPrintSplitsDataAddress);
+    }
+
     function setNFTCreatorAddress(
         address _newNFTCreatorAddress
     ) public onlyAdmin {
@@ -228,41 +251,29 @@ contract CollectionCreator {
         marketCreator = _newMarketCreatorAddress;
     }
 
-    function _updateDropStatus(
-        uint256 _oldDropId,
-        uint256 _collectionId,
-        uint256 _paramsDropId
+    function _internalUpdate(
+        uint256[] memory _collectionIds,
+        string memory _uri,
+        address _caller,
+        uint256 _dropId
     ) internal {
-        uint256[] memory _currentIds = printDesignData.getDropCollectionIds(
-            _oldDropId
-        );
+        if (bytes(printDesignData.getDropURI(_dropId)).length == 0) {
+            revert InvalidUpdate();
+        }
 
-        uint256[] memory _remove = new uint256[](_currentIds.length - 1);
-        uint256 j = 0;
+        if (printDesignData.getDropCreator(_dropId) != _caller) {
+            revert InvalidUpdate();
+        }
 
-        for (uint256 i = 0; i < _currentIds.length; i++) {
-            if (_currentIds[i] != _collectionId) {
-                _remove[j] = _currentIds[i];
-                j++;
+        for (uint256 i = 0; i < _collectionIds.length; i++) {
+            if (
+                printDesignData.getCollectionCreator(_collectionIds[i]) !=
+                _caller
+            ) {
+                revert AddressNotDesigner();
             }
         }
 
-        uint256[] memory _newDropIds = printDesignData.getDropCollectionIds(
-            _paramsDropId
-        );
-        uint256[] memory _newCollectionIds = new uint256[](
-            _newDropIds.length + 1
-        );
-        for (uint i = 0; i < _newDropIds.length; i++) {
-            _newCollectionIds[i] = _newDropIds[i];
-        }
-        _newCollectionIds[_newDropIds.length] = _collectionId;
-
-        updateDrop(_remove, printDesignData.getDropURI(_oldDropId), _oldDropId);
-        updateDrop(
-            _newCollectionIds,
-            printDesignData.getDropURI(_paramsDropId),
-            _paramsDropId
-        );
+        printDesignData.modifyCollectionsInDrop(_collectionIds, _uri, _dropId);
     }
 }

@@ -2,143 +2,184 @@
 
 pragma solidity ^0.8.15;
 
-import {Errors} from "../libraries/constants/Errors.sol";
-import {Events} from "../libraries/constants/Events.sol";
-import {IModuleGlobals} from "../interfaces/IModuleGlobals.sol";
+import {IModuleRegistry} from "./../interfaces/IModuleRegistry.sol";
+import {IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import {ILensModule} from "./../interfaces/ILensModule.sol";
+
+import {IPublicationActionModule} from "./../interfaces/IPublicationActionModule.sol";
+import {IFollowModule} from "./../interfaces/IFollowModule.sol";
+import {IReferenceModule} from "./../interfaces/IReferenceModule.sol";
 
 /**
- * @title ModuleGlobals
+ * @title ModuleRegistry
  * @author Lens Protocol
- *
- * @notice This contract contains data relevant to Lens modules, such as the module governance address, treasury
- * address and treasury fee BPS.
- *
- * NOTE: The reason we have an additional governance address instead of just fetching it from the hub is to
- * allow the flexibility of using different governance executors.
+ * @notice A registry for modules and currencies
+ * @custom:upgradeable Transparent upgradeable proxy without initializer.
  */
-contract ModuleGlobals is IModuleGlobals {
-    uint16 internal constant BPS_MAX = 10000;
+contract ModuleRegistry is IModuleRegistry {
+    bytes4 private constant LENS_MODULE_INTERFACE_ID =
+        bytes4(keccak256(abi.encodePacked("LENS_MODULE")));
 
-    mapping(address => bool) internal _currencyWhitelisted;
-    address internal _governance;
-    address internal _treasury;
-    uint16 internal _treasuryFee;
+    event ModuleRegistered(
+        address indexed moduleAddress,
+        uint256 indexed moduleType,
+        string metadata,
+        uint256 timestamp
+    );
 
-    modifier onlyGov() {
-        if (msg.sender != _governance) revert Errors.NotGovernance();
-        _;
+    event erc20CurrencyRegistered(
+        address indexed erc20CurrencyAddress,
+        string name,
+        string symbol,
+        uint8 decimals,
+        uint256 timestamp
+    );
+
+    error NotLensModule();
+    error ModuleDoesNotSupportType(uint256 moduleType);
+
+    mapping(address moduleAddress => uint256 moduleTypesBitmap)
+        internal registeredModules;
+
+    mapping(address erc20CurrencyAddress => bool)
+        internal registeredErc20Currencies;
+
+    // Modules
+
+    function verifyModule(
+        address moduleAddress,
+        uint256 moduleType
+    ) external returns (bool) {
+        registerModule(moduleAddress, moduleType);
+        return true;
     }
 
-    /**
-     * @notice Initializes the governance, treasury and treasury fee amounts.
-     *
-     * @param governance The governance address which has additional control over setting certain parameters.
-     * @param treasury The treasury address to direct fees to.
-     * @param treasuryFee The treasury fee in BPS to levy on collects.
-     */
-    constructor(address governance, address treasury, uint16 treasuryFee) {
-        _setGovernance(governance);
-        _setTreasury(treasury);
-        _setTreasuryFee(treasuryFee);
-    }
-
-    /// @inheritdoc IModuleGlobals
-    function setGovernance(address newGovernance) external override onlyGov {
-        _setGovernance(newGovernance);
-    }
-
-    /// @inheritdoc IModuleGlobals
-    function setTreasury(address newTreasury) external override onlyGov {
-        _setTreasury(newTreasury);
-    }
-
-    /// @inheritdoc IModuleGlobals
-    function setTreasuryFee(uint16 newTreasuryFee) external override onlyGov {
-        _setTreasuryFee(newTreasuryFee);
-    }
-
-    /// @inheritdoc IModuleGlobals
-    function whitelistCurrency(
-        address currency,
-        bool toWhitelist
-    ) external override onlyGov {
-        _whitelistCurrency(currency, toWhitelist);
-    }
-
-    /// @inheritdoc IModuleGlobals
-    function isCurrencyWhitelisted(
-        address currency
-    ) external view override returns (bool) {
-        return _currencyWhitelisted[currency];
-    }
-
-    /// @inheritdoc IModuleGlobals
-    function getGovernance() external view override returns (address) {
-        return _governance;
-    }
-
-    /// @inheritdoc IModuleGlobals
-    function getTreasury() external view override returns (address) {
-        return _treasury;
-    }
-
-    /// @inheritdoc IModuleGlobals
-    function getTreasuryFee() external view override returns (uint16) {
-        return _treasuryFee;
-    }
-
-    //@inheritdoc IModuleGlobals
-    function getTreasuryData()
-        external
-        view
-        override
-        returns (address, uint16)
-    {
-        return (_treasury, _treasuryFee);
-    }
-
-    function _setGovernance(address newGovernance) internal {
-        if (newGovernance == address(0)) revert Errors.InitParamsInvalid();
-        address prevGovernance = _governance;
-        _governance = newGovernance;
-        emit Events.ModuleGlobalsGovernanceSet(
-            prevGovernance,
-            newGovernance,
-            block.timestamp
+    function registerModule(
+        address moduleAddress,
+        uint256 moduleType
+    ) public returns (bool registrationWasPerformed) {
+        // This will fail if moduleType is out of range for `IModuleRegistry.ModuleType`
+        require(
+            moduleType > 0 &&
+                moduleType <= uint256(type(IModuleRegistry.ModuleType).max),
+            "Module Type out of bounds"
         );
+
+        bool isAlreadyRegisteredAsThatType = registeredModules[moduleAddress] &
+            (1 << moduleType) !=
+            0;
+        if (isAlreadyRegisteredAsThatType) {
+            return false;
+        } else {
+            if (
+                !ILensModule(moduleAddress).supportsInterface(
+                    LENS_MODULE_INTERFACE_ID
+                )
+            ) {
+                revert NotLensModule();
+            }
+
+            validateModuleSupportsType(moduleAddress, moduleType);
+
+            string memory metadata = ILensModule(moduleAddress)
+                .getModuleMetadataURI();
+            emit ModuleRegistered(
+                moduleAddress,
+                moduleType,
+                metadata,
+                block.timestamp
+            );
+            registeredModules[moduleAddress] |= (1 << moduleType);
+            return true;
+        }
     }
 
-    function _setTreasury(address newTreasury) internal {
-        if (newTreasury == address(0)) revert Errors.InitParamsInvalid();
-        address prevTreasury = _treasury;
-        _treasury = newTreasury;
-        emit Events.ModuleGlobalsTreasurySet(
-            prevTreasury,
-            newTreasury,
-            block.timestamp
-        );
+    function validateModuleSupportsType(
+        address moduleAddress,
+        uint256 moduleType
+    ) internal view {
+        bool supportsInterface;
+        if (
+            moduleType ==
+            uint256(IModuleRegistry.ModuleType.PUBLICATION_ACTION_MODULE)
+        ) {
+            supportsInterface = ILensModule(moduleAddress).supportsInterface(
+                type(IPublicationActionModule).interfaceId
+            );
+        } else if (
+            moduleType == uint256(IModuleRegistry.ModuleType.FOLLOW_MODULE)
+        ) {
+            supportsInterface = ILensModule(moduleAddress).supportsInterface(
+                type(IFollowModule).interfaceId
+            );
+        } else if (
+            moduleType == uint256(IModuleRegistry.ModuleType.REFERENCE_MODULE)
+        ) {
+            supportsInterface = ILensModule(moduleAddress).supportsInterface(
+                type(IReferenceModule).interfaceId
+            );
+        }
+
+        if (!supportsInterface) {
+            revert ModuleDoesNotSupportType(moduleType);
+        }
     }
 
-    function _setTreasuryFee(uint16 newTreasuryFee) internal {
-        if (newTreasuryFee >= BPS_MAX / 2) revert Errors.InitParamsInvalid();
-        uint16 prevTreasuryFee = _treasuryFee;
-        _treasuryFee = newTreasuryFee;
-        emit Events.ModuleGlobalsTreasuryFeeSet(
-            prevTreasuryFee,
-            newTreasuryFee,
-            block.timestamp
-        );
+    function getModuleTypes(
+        address moduleAddress
+    ) public view returns (uint256) {
+        return registeredModules[moduleAddress];
     }
 
-    function _whitelistCurrency(address currency, bool toWhitelist) internal {
-        if (currency == address(0)) revert Errors.InitParamsInvalid();
-        bool prevWhitelisted = _currencyWhitelisted[currency];
-        _currencyWhitelisted[currency] = toWhitelist;
-        emit Events.ModuleGlobalsCurrencyWhitelisted(
-            currency,
-            prevWhitelisted,
-            toWhitelist,
-            block.timestamp
-        );
+    function isModuleRegistered(
+        address moduleAddress
+    ) external view returns (bool) {
+        return registeredModules[moduleAddress] != 0;
+    }
+
+    function isModuleRegisteredAs(
+        address moduleAddress,
+        uint256 moduleType
+    ) public view returns (bool) {
+        require(moduleType <= type(uint8).max);
+        return registeredModules[moduleAddress] & (1 << moduleType) != 0;
+    }
+
+    // Currencies
+
+    function verifyErc20Currency(
+        address currencyAddress
+    ) external returns (bool) {
+        registerErc20Currency(currencyAddress);
+        return true;
+    }
+
+    function registerErc20Currency(
+        address currencyAddress
+    ) public returns (bool registrationWasPerformed) {
+        bool isAlreadyRegistered = registeredErc20Currencies[currencyAddress];
+        if (isAlreadyRegistered) {
+            return false;
+        } else {
+            uint8 decimals = IERC20Metadata(currencyAddress).decimals();
+            string memory name = IERC20Metadata(currencyAddress).name();
+            string memory symbol = IERC20Metadata(currencyAddress).symbol();
+
+            emit erc20CurrencyRegistered(
+                currencyAddress,
+                name,
+                symbol,
+                decimals,
+                block.timestamp
+            );
+            registeredErc20Currencies[currencyAddress] = true;
+            return true;
+        }
+    }
+
+    function isErc20CurrencyRegistered(
+        address currencyAddress
+    ) external view returns (bool) {
+        return registeredErc20Currencies[currencyAddress];
     }
 }

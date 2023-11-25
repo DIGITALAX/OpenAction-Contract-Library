@@ -6,7 +6,7 @@ import {HubRestricted} from "./../lens/v2/base/HubRestricted.sol";
 import {Types} from "./../lens/v2/libraries/constants/Types.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IPublicationActionModule} from "./../lens/v2/interfaces/IPublicationActionModule.sol";
-import {IModuleGlobals} from "./../lens/v2/interfaces/IModuleGlobals.sol";
+import {IModuleRegistry} from "./../lens/v2/interfaces/IModuleRegistry.sol";
 import "./../MarketCreator.sol";
 import "./../CollectionCreator.sol";
 import "./../PrintAccessControl.sol";
@@ -35,7 +35,7 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
         _;
     }
 
-    IModuleGlobals public immutable MODULE_GLOBALS;
+    IModuleRegistry public immutable MODULE_GLOBALS;
 
     event CoinOpPurchased(
         address buyerAddress,
@@ -62,7 +62,7 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
         address _collectionCreatorAddress,
         address _printCommunityDataAddress
     ) HubRestricted(_hub) {
-        MODULE_GLOBALS = IModuleGlobals(_moduleGlobals);
+        MODULE_GLOBALS = IModuleRegistry(_moduleGlobals);
         marketCreator = MarketCreator(_marketCreatorAddress);
         collectionCreator = CollectionCreator(_collectionCreatorAddress);
         printAccessControl = PrintAccessControl(_printAccessControlAddress);
@@ -124,7 +124,7 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
             );
 
         if (
-            !MODULE_GLOBALS.isCurrencyWhitelisted(_currency) ||
+            !MODULE_GLOBALS.isErc20CurrencyRegistered(_currency) ||
             !printSplitsData.getIsCurrency(_currency)
         ) {
             revert CurrencyNotWhitelisted();
@@ -328,8 +328,8 @@ contract CoinOpOpenAction is HubRestricted, IPublicationActionModule {
                 _collectionId,
                 _chosenIndex,
                 _quantity,
-                printDesignData.getCollectionCreator(_collectionId),
                 _currency,
+                printDesignData.getCollectionCreator(_collectionId),
                 _buyer
             );
         }
