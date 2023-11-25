@@ -141,6 +141,7 @@ contract PrintOrderData {
     }
 
     function createNFTOnlyOrder(
+        uint256[] memory _tokenIds,
         address _chosenCurrency,
         address _buyer,
         uint256 _pubId,
@@ -160,12 +161,17 @@ contract PrintOrderData {
             timestamp: block.timestamp,
             messages: new string[](0),
             totalPrice: _totalPrice,
-            collectionId: _collectionId
+            collectionId: _collectionId,
+            tokenIds: _tokenIds
         });
 
         _nftOnlyOrders[_nftOnlyOrderSupply] = newOrder;
 
         _addressToNFTOnlyOrderIds[_buyer].push(_nftOnlyOrderSupply);
+
+        for (uint256 i = 0; i < _tokenIds.length; i++) {
+            _communityHelperAddressToTokenIds[_buyer].push(_tokenIds[i]);
+        }
 
         emit NFTOnlyOrderCreated(
             _nftOnlyOrderSupply,
@@ -447,6 +453,12 @@ contract PrintOrderData {
         uint256 _orderId
     ) public view returns (uint256) {
         return _nftOnlyOrders[_orderId].buyerProfileId;
+    }
+
+    function getNFTOnlyOrderTokenIds(
+        uint256 _orderId
+    ) public view returns (uint256[] memory) {
+        return _nftOnlyOrders[_orderId].tokenIds;
     }
 
     function getAddressToNFTOnlyOrderIds(

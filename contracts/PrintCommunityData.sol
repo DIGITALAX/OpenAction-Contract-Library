@@ -20,6 +20,7 @@ contract PrintCommunityData {
     mapping(uint256 => mapping(uint256 => uint256))
         public _memberProfileIdToIndex;
     mapping(uint256 => mapping(uint256 => bool)) private _profileIdToCommunity;
+    mapping(address => mapping(uint256 => bool)) private _addressToCommunity;
 
     event CommunityCreated(
         uint256 indexed communityId,
@@ -85,7 +86,7 @@ contract PrintCommunityData {
             );
         }
 
-        for (uint256 i = 0; i < _params.validCreators.length; i++) {
+        for (uint256 i = 0; i < _params.validOrigins.length; i++) {
             _communities[_communitySupply].validOrigins[
                 _params.validOrigins[i]
             ] = true;
@@ -154,7 +155,7 @@ contract PrintCommunityData {
             _community.validCreatorKeys.push(_params.validCreators[i]);
         }
 
-        for (uint256 i = 0; i < _params.validCreators.length; i++) {
+        for (uint256 i = 0; i < _params.validOrigins.length; i++) {
             _community.validOrigins[_params.validOrigins[i]] = true;
 
             _community.validOriginKeys.push(_params.validOrigins[i]);
@@ -187,6 +188,7 @@ contract PrintCommunityData {
             });
         _communities[_communityId].communityMembers.push(newMember);
         _profileIdToCommunity[_memberProfileId][_communityId] = true;
+        _addressToCommunity[_memberAddress][_communityId] = true;
         _memberProfileIdToIndex[_memberProfileId][_communityId] =
             _communities[_communityId].communityMembers.length -
             1;
@@ -199,6 +201,7 @@ contract PrintCommunityData {
     }
 
     function removeCommunityMember(
+        address _memberAddress,
         uint256 _communityId,
         uint256 _memberProfileId
     ) external onlyCommunityCreator {
@@ -225,6 +228,7 @@ contract PrintCommunityData {
         delete _memberProfileIdToIndex[_memberProfileId][_communityId];
 
         _profileIdToCommunity[_memberProfileId][_communityId] = false;
+        _addressToCommunity[_memberAddress][_communityId] = false;
 
         emit CommunityMemberRemoved(_communityId, _memberProfileId);
     }
@@ -313,6 +317,13 @@ contract PrintCommunityData {
         uint256 _communityId
     ) public view returns (uint256) {
         return _communities[_communityId].valid20Thresholds[_tokenAddress];
+    }
+
+    function getIsValidCommunityAddress(
+        address _memberAddress,
+        uint256 _communityId
+    ) public view returns (bool) {
+        return _addressToCommunity[_memberAddress][_communityId];
     }
 
     function getIsCommunityMember(

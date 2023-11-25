@@ -6,6 +6,7 @@ import {HubRestricted} from "./../lens/v2/base/HubRestricted.sol";
 import {Types} from "./../lens/v2/libraries/constants/Types.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IPublicationActionModule} from "./../lens/v2/interfaces/IPublicationActionModule.sol";
+import {ILensModule} from "./../lens/v2/interfaces/ILensModule.sol";
 import {IModuleRegistry} from "./../lens/v2/interfaces/IModuleRegistry.sol";
 import "./../MarketCreator.sol";
 import "./../CollectionCreator.sol";
@@ -13,13 +14,18 @@ import "./../PrintAccessControl.sol";
 import "./../PrintDesignData.sol";
 import "./../PrintCommunityData.sol";
 
-contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
+contract ListenerOpenAction is
+    HubRestricted,
+    ILensModule,
+    IPublicationActionModule
+{
     MarketCreator public marketCreator;
     CollectionCreator public collectionCreator;
     PrintAccessControl public printAccessControl;
     PrintSplitsData public printSplitsData;
     PrintDesignData public printDesignData;
     PrintCommunityData public printCommunityData;
+    string private _metadata;
 
     error CurrencyNotWhitelisted();
     error InvalidAddress();
@@ -123,12 +129,12 @@ contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
                 (uint256, uint256, string, address, bool)
             );
 
-        if (
-            !MODULE_GLOBALS.isErc20CurrencyRegistered(_currency) ||
-            !printSplitsData.getIsCurrency(_currency)
-        ) {
-            revert CurrencyNotWhitelisted();
-        }
+        // if (
+        //     !MODULE_GLOBALS.isErc20CurrencyRegistered(_currency) ||
+        //     !printSplitsData.getIsCurrency(_currency)
+        // ) {
+        //     revert CurrencyNotWhitelisted();
+        // }
 
         uint256 _collectionId = _collectionGroups[
             _params.publicationActedProfileId
@@ -266,8 +272,10 @@ contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
     ) internal view returns (bool) {
         uint256[] memory _communityIds = printDesignData
             .getCollectionCommunityIds(_collectionId);
-        bool _validMember = false;
+        bool _validMember = true;
+
         if (_communityIds.length > 0) {
+            _validMember = false;
             for (uint256 j = 0; j < _communityIds.length; j++) {
                 if (
                     printCommunityData.getIsCommunityMember(
@@ -295,6 +303,7 @@ contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
 
         uint256 _weiDivisor = printSplitsData.getWeiByCurrency(_currency);
         uint256 _tokenAmount = (_amountInWei / _exchangeRate) * _weiDivisor;
+
         return _tokenAmount;
     }
 
@@ -368,5 +377,22 @@ contract ListenerOpenAction is HubRestricted, IPublicationActionModule {
         _arr[0] = _value;
 
         return _arr;
+    }
+
+    function supportsInterface(
+        bytes4 interfaceId
+    ) external view override returns (bool) {
+        return
+            interfaceId == bytes4(keccak256(abi.encodePacked("LENS_MODULE"))) ||
+            interfaceId == type(IPublicationActionModule).interfaceId;
+    }
+
+    function getModuleMetadataURI()
+        external
+        view
+        override
+        returns (string memory)
+    {
+        return _metadata;
     }
 }

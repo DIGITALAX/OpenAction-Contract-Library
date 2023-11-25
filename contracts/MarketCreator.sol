@@ -19,7 +19,6 @@ contract MarketCreator {
     address public fiatPKPAddress;
 
     error InvalidAddress();
-    error ExceedAmount();
 
     modifier onlyAdmin() {
         if (!printAccessControl.isAdmin(msg.sender)) {
@@ -170,7 +169,7 @@ contract MarketCreator {
         if (!printAccessControl.isOpenAction(msg.sender)) {
             revert InvalidAddress();
         }
-
+        
         collectionCreator.purchaseAndMintToken(
             _oneItem(_params.collectionId),
             _oneItem(_params.quantity),
@@ -183,7 +182,19 @@ contract MarketCreator {
             _params.collectionId
         )[0] * _params.quantity;
 
+        uint256[] memory _tokenIds = printDesignData.getCollectionTokenIds(
+            _params.collectionId
+        );
+
+        uint256[] memory _tokenIdsOrder = new uint256[](_params.quantity);
+        for (uint256 j = 0; j < _params.quantity; j++) {
+            _tokenIdsOrder[j] = _tokenIds[
+                _tokenIds.length - _params.quantity + j
+            ];
+        }
+
         printOrderData.createNFTOnlyOrder(
+            _tokenIdsOrder,
             _params.chosenCurrency,
             _params.buyerAddress,
             _params.pubId,

@@ -24,10 +24,11 @@ describe("ChromadinOpenAction", () => {
     pkpFiat: Signer,
     creator: Signer,
     creatorTwo: Signer,
-    buyer: Signer;
+    buyer: Signer,
+    member: Signer;
 
   before(async () => {
-    [admin, hub, module, pkpFiat, creator, creatorTwo, buyer] =
+    [admin, hub, module, pkpFiat, creator, creatorTwo, buyer, member] =
       await ethers.getSigners();
 
     const PrintAccessControl = await ethers.getContractFactory(
@@ -474,6 +475,9 @@ describe("ChromadinOpenAction", () => {
       expect(await printOrderData.getNFTOnlyOrderBuyer(2)).to.equal(
         await buyer.getAddress()
       );
+      expect(await printOrderData.getNFTOnlyOrderTokenIds(2)).to.deep.equal([
+        3,
+      ]);
       expect(await printOrderData.getNFTOnlyOrderBuyerProfileId(2)).to.equal(
         1000
       );
@@ -505,5 +509,246 @@ describe("ChromadinOpenAction", () => {
         "some other message",
       ]);
     });
+
+    it("Test community functions", async () => {
+      await printAccessControl.addCommunitySteward(await creator.getAddress());
+
+      await communityCreator.connect(creator).createNewCommunity({
+        validCreators: [
+          await creator.getAddress(),
+          await creatorTwo.getAddress(),
+        ],
+        validOrigins: [1],
+        validPrintTypes: [6],
+        valid20Addresses: [usdt.address],
+        valid20Thresholds: ["200000000000000000000"],
+        uri: "myurihere",
+        steward: await creator.getAddress(),
+      });
+
+      expect(await printCommunityData.getCommunitySupply()).to.equal(1);
+      expect(await printCommunityData.getCommunitySteward(1)).to.equal(
+        await creator.getAddress()
+      );
+      expect(await printCommunityData.getCommunityURI(1)).to.equal("myurihere");
+      expect(await printCommunityData.getCommunityMembers(1)).to.deep.equal([]);
+      expect(
+        await printCommunityData.getCommunityValidOriginKeys(1)
+      ).to.deep.equal([1]);
+      expect(
+        await printCommunityData.getCommunityValidCreatorKeys(1)
+      ).to.deep.equal([
+        await creator.getAddress(),
+        await creatorTwo.getAddress(),
+      ]);
+      expect(
+        await printCommunityData.getCommunityValidPrintTypeKeys(1)
+      ).to.deep.equal([6]);
+      expect(
+        await printCommunityData.getCommunityValid20AddressKeys(1)
+      ).to.deep.equal([usdt.address]);
+      expect(
+        await printCommunityData.getCommunityIsValidCreator(
+          await creator.getAddress(),
+          1
+        )
+      ).to.be.true;
+      expect(
+        await printCommunityData.getCommunityIsValidCreator(
+          await buyer.getAddress(),
+          1
+        )
+      ).to.be.false;
+      expect(await printCommunityData.getCommunityIsValidOrigin(1, 1)).to.be
+        .true;
+      expect(await printCommunityData.getCommunityIsValidOrigin(0, 1)).to.be
+        .false;
+      expect(await printCommunityData.getCommunityIsValidPrintType(3, 1)).to.be
+        .false;
+      expect(await printCommunityData.getCommunityIsValidPrintType(6, 1)).to.be
+        .true;
+      expect(
+        await printCommunityData.getCommunityValid20Threshold(usdt.address, 1)
+      ).to.equal("200000000000000000000");
+
+      // update community
+      await communityCreator.connect(creator).updateExistingCommunity(
+        {
+          validCreators: [await creator.getAddress(), await buyer.getAddress()],
+          validOrigins: [1, 2, 3],
+          validPrintTypes: [6, 5, 4],
+          valid20Addresses: [eth.address, mona.address],
+          valid20Thresholds: ["500000000000000000000", "100"],
+          uri: "mynewurihere",
+          steward: await creator.getAddress(),
+        },
+        1
+      );
+
+      expect(await printCommunityData.getCommunitySteward(1)).to.equal(
+        await creator.getAddress()
+      );
+      expect(await printCommunityData.getCommunityURI(1)).to.equal(
+        "mynewurihere"
+      );
+      expect(
+        await printCommunityData.getCommunityValidOriginKeys(1)
+      ).to.deep.equal([1, 2, 3]);
+      expect(
+        await printCommunityData.getCommunityValidCreatorKeys(1)
+      ).to.deep.equal([await creator.getAddress(), await buyer.getAddress()]);
+      expect(
+        await printCommunityData.getCommunityValidPrintTypeKeys(1)
+      ).to.deep.equal([6, 5, 4]);
+      expect(
+        await printCommunityData.getCommunityValid20AddressKeys(1)
+      ).to.deep.equal([eth.address, mona.address]);
+      expect(
+        await printCommunityData.getCommunityIsValidCreator(
+          await creator.getAddress(),
+          1
+        )
+      ).to.be.true;
+      expect(
+        await printCommunityData.getCommunityIsValidCreator(
+          await buyer.getAddress(),
+          1
+        )
+      ).to.be.true;
+      expect(await printCommunityData.getCommunityIsValidOrigin(1, 1)).to.be
+        .true;
+      expect(await printCommunityData.getCommunityIsValidOrigin(0, 1)).to.be
+        .false;
+      expect(await printCommunityData.getCommunityIsValidPrintType(3, 1)).to.be
+        .false;
+      expect(await printCommunityData.getCommunityIsValidPrintType(6, 1)).to.be
+        .true;
+      expect(
+        await printCommunityData.getCommunityValid20Threshold(eth.address, 1)
+      ).to.equal("500000000000000000000");
+      expect(
+        await printCommunityData.getCommunityValid20Threshold(mona.address, 1)
+      ).to.equal("100");
+
+      await mona.transfer(await buyer.getAddress(), "100");
+
+      await communityCreator.joinCommunity(await buyer.getAddress(), 1, 535);
+
+      const member = (await printCommunityData.getCommunityMembers(1))[0];
+
+      expect(member.memberAddress).to.equal(await buyer.getAddress());
+      expect(member.memberProfileId).to.equal(535);
+      expect(await printCommunityData.getIsCommunityMember(1, 535)).to.be.true;
+
+      try {
+        await communityCreator.leaveCommunity(1, 535);
+      } catch (err: any) {
+        expect(err.message).to.include("InvalidAddress");
+      }
+
+      await communityCreator.connect(buyer).leaveCommunity(1, 535);
+
+      expect(await printCommunityData.getCommunityMembers(1)).to.deep.equal([]);
+
+      await communityCreator.joinCommunity(await buyer.getAddress(), 1, 535);
+      const newMember = (await printCommunityData.getCommunityMembers(1))[0];
+
+      expect(newMember.memberAddress).to.equal(await buyer.getAddress());
+      expect(newMember.memberProfileId).to.equal(535);
+      expect(await printCommunityData.getIsCommunityMember(1, 535)).to.be.true;
+
+      await collectionCreator
+        .connect(creatorTwo)
+        .createDrop("newcommunitydrop");
+      const myEncodedData = ethers.utils.defaultAbiCoder.encode(
+        [
+          "tuple(uint256[] prices, uint256[] communityIds, address[] acceptedTokens, string uri, address fulfiller, address creatorAddress, uint256 amount, uint256 dropId, bool unlimited, bool encrypted)",
+        ],
+        [
+          {
+            prices: ["1000000"],
+            communityIds: [1],
+            acceptedTokens: [
+              mona.address,
+              matic.address,
+              eth.address,
+              usdt.address,
+            ],
+            uri: "ipfs://QmVY1588Y98iMKeaDskCq7R3GrbTBSLpoCrzgC1MgXUkgk",
+            fulfiller: "0x0000000000000000000000000000000000000000",
+            creatorAddress: await creatorTwo.getAddress(),
+            amount: 1,
+            dropId: 5,
+            unlimited: false,
+            encrypted: false,
+          },
+        ]
+      );
+
+      await chromadinOpenAction
+        .connect(hub)
+        .initializePublicationAction(
+          100,
+          10,
+          await hub.getAddress(),
+          myEncodedData
+        );
+
+      expect(await printDesignData.getCollectionCommunityIds(4)).to.deep.equal([
+        1,
+      ]);
+
+      const encodedDataOne = ethers.utils.defaultAbiCoder.encode(
+        ["address", "uint256"],
+        [matic.address, 1]
+      );
+
+      await matic
+        .connect(admin)
+        .approve(chromadinOpenAction.address, "1000000");
+
+      try {
+        await chromadinOpenAction.connect(hub).processPublicationAction({
+          publicationActedProfileId: 100,
+          publicationActedId: 10,
+          actorProfileId: 40,
+          actorProfileOwner: await admin.getAddress(),
+          transactionExecutor: await hub.getAddress(),
+          referrerProfileIds: [],
+          referrerPubIds: [],
+          referrerPubTypes: [],
+          actionModuleData: encodedDataOne,
+        });
+      } catch (err: any) {
+        expect(err.message).to.include("InvalidCommunityMember");
+      }
+
+      await matic.transfer(await buyer.getAddress(), "1000000");
+
+      await matic
+        .connect(buyer)
+        .approve(chromadinOpenAction.address, "1000000");
+
+      await chromadinOpenAction.connect(hub).processPublicationAction({
+        publicationActedProfileId: 100,
+        publicationActedId: 10,
+        actorProfileId: 535,
+        actorProfileOwner: await buyer.getAddress(),
+        transactionExecutor: await hub.getAddress(),
+        referrerProfileIds: [],
+        referrerPubIds: [],
+        referrerPubTypes: [],
+        actionModuleData: encodedDataOne,
+      });
+
+      expect(
+        await printOrderData.getAddressToNFTOnlyOrderIds(
+          await buyer.getAddress()
+        )
+      ).to.deep.equal([1, 2, 3]);
+    });
+
+    xit("Tests listener open action", async () => {});
+    xit("Tests coin op open action", async () => {});
   });
 });
