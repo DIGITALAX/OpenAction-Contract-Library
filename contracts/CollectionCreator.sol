@@ -7,7 +7,6 @@ import "./PrintDesignData.sol";
 import "./PrintAccessControl.sol";
 import "./PrintLibrary.sol";
 import "./PrintSplitsData.sol";
-import "hardhat/console.sol";
 
 contract CollectionCreator {
     PrintDesignData public printDesignData;
@@ -23,6 +22,7 @@ contract CollectionCreator {
     error AddressNotAdmin();
     error InvalidUpdate();
     error InvalidCurrency();
+    error InvalidRemoval();
 
     modifier onlyAdmin() {
         if (!printAccessControl.isAdmin(msg.sender)) {
@@ -160,6 +160,10 @@ contract CollectionCreator {
     function removeCollection(uint256 _collectionId) public onlyDesigner {
         if (printDesignData.getCollectionCreator(_collectionId) != msg.sender) {
             revert AddressNotDesigner();
+        }
+
+        if (printDesignData.getCollectionTokensMinted(_collectionId) > 0) {
+            revert InvalidRemoval();
         }
 
         uint256 _dropId = printDesignData.getCollectionDropId(_collectionId);

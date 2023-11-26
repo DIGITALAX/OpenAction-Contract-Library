@@ -31,6 +31,7 @@ contract CoinOpOpenAction is
     error InvalidAddress();
     error InvalidAmounts();
     error InvalidCommunityMember();
+    error ExceedAmount();
 
     mapping(uint256 => mapping(uint256 => uint256)) _collectionGroups;
 
@@ -59,6 +60,7 @@ contract CoinOpOpenAction is
     );
 
     constructor(
+        string memory _metadataDetails,
         address _hub,
         address _moduleGlobals,
         address _printAccessControlAddress,
@@ -75,6 +77,7 @@ contract CoinOpOpenAction is
         printSplitsData = PrintSplitsData(_printSplitsDataAddress);
         printDesignData = PrintDesignData(_printDesignDataAddress);
         printCommunityData = PrintCommunityData(_printCommunityDataAddress);
+        _metadata = _metadataDetails;
     }
 
     function initializePublicationAction(
@@ -140,18 +143,12 @@ contract CoinOpOpenAction is
             _params.publicationActedProfileId
         ][_params.publicationActedId];
 
-        uint256 _grandTotal = 0;
-
-        bool _isVerified = false;
-
-        _managePurchase(
+        (uint256 _grandTotal, bool _isVerified) = _managePurchase(
             _params,
+            _currency,
             _chosenIndex,
             _quantity,
             _collectionId,
-            _currency,
-            _grandTotal,
-            _isVerified,
             _fiat
         );
 
@@ -191,19 +188,52 @@ contract CoinOpOpenAction is
         address _designer,
         address _buyer
     ) internal returns (uint256) {
+        address _fulfiller = printDesignData.getCollectionFulfiller(
+            _collectionId
+        );
+        PrintLibrary.PrintType _printType = printDesignData
+            .getCollectionPrintType(_collectionId);
+
+        uint256 _fulfillerBase = printSplitsData.getFulfillerBase(
+            _fulfiller,
+            _printType
+        );
+        uint256 _fulfillerSplit = printSplitsData.getFulfillerSplit(
+            _fulfiller,
+            _printType
+        );
+
         uint256 _totalPrice = printDesignData.getCollectionPrices(
             _collectionId
         )[_chosenIndex] * _chosenAmount;
+
         uint256 _calculatedPrice = _calculateAmount(
             _chosenCurrency,
             _totalPrice
         );
-
-        IERC20(_chosenCurrency).transferFrom(
-            _buyer,
-            _designer,
-            _calculatedPrice
+        uint256 _calculatedBase = _calculateAmount(
+            _chosenCurrency,
+            _fulfillerBase * _chosenAmount
         );
+
+        uint256 _fulfillerAmount = _calculatedBase +
+            ((_fulfillerSplit * _calculatedPrice) / 1e20);
+
+        if (_fulfillerAmount > 0) {
+            IERC20(_chosenCurrency).transferFrom(
+                _buyer,
+                _fulfiller,
+                _fulfillerAmount
+            );
+        }
+
+        if ((_calculatedPrice - _fulfillerAmount) > 0) {
+            IERC20(_chosenCurrency).transferFrom(
+                _buyer,
+                _designer,
+                _calculatedPrice - _fulfillerAmount
+            );
+        }
 
         return _calculatedPrice;
     }
@@ -295,14 +325,14 @@ contract CoinOpOpenAction is
         address _currency,
         uint256 _amountInWei
     ) internal view returns (uint256) {
-        if (_amountInWei == 0) {
+        uint256 _exchangeRate = printSplitsData.getRateByCurrency(_currency);
+
+        if (_exchangeRate == 0) {
             revert InvalidAmounts();
         }
 
-        uint256 _exchangeRate = printSplitsData.getRateByCurrency(_currency);
-
         uint256 _weiDivisor = printSplitsData.getWeiByCurrency(_currency);
-        uint256 _tokenAmount = (_amountInWei / _exchangeRate) * _weiDivisor;
+        uint256 _tokenAmount = (_amountInWei * _weiDivisor) / _exchangeRate;
 
         return _tokenAmount;
     }
@@ -313,10 +343,10 @@ contract CoinOpOpenAction is
         uint256 _quantity,
         uint256 _chosenIndex,
         uint256 _collectionId,
-        uint256 _grandTotal,
         uint256 _profileId,
         bool _isVerified
-    ) internal {
+    ) internal returns (uint256) {
+        uint256 _total = 0;
         if (
             !printDesignData.getIsCollectionTokenAccepted(
                 _collectionId,
@@ -330,8 +360,16 @@ contract CoinOpOpenAction is
             revert InvalidCommunityMember();
         }
 
+        if (
+            printDesignData.getCollectionTokensMinted(_collectionId) +
+                _quantity >
+            printDesignData.getCollectionAmount(_collectionId)
+        ) {
+            revert ExceedAmount();
+        }
+
         if (!_isVerified) {
-            _grandTotal += _transferTokens(
+            _total = _transferTokens(
                 _collectionId,
                 _chosenIndex,
                 _quantity,
@@ -340,18 +378,20 @@ contract CoinOpOpenAction is
                 _buyer
             );
         }
+
+        return _total;
     }
 
     function _managePurchase(
         Types.ProcessActionParams calldata _params,
+        address _currency,
         uint256 _chosenIndex,
         uint256 _quantity,
         uint256 _collectionId,
-        address _currency,
-        uint256 _grandTotal,
-        bool _isVerified,
         bool _fiat
-    ) internal {
+    ) internal returns (uint256, bool) {
+        bool _isVerified = false;
+
         if (_fiat) {
             _isVerified = printAccessControl.isVerifiedFiat(
                 _params.actorProfileOwner,
@@ -360,14 +400,16 @@ contract CoinOpOpenAction is
             );
         }
 
-        _checkAndSend(
-            _currency,
-            _params.actorProfileOwner,
-            _quantity,
-            _chosenIndex,
-            _collectionId,
-            _grandTotal,
-            _params.actorProfileId,
+        return (
+            _checkAndSend(
+                _currency,
+                _params.actorProfileOwner,
+                _quantity,
+                _chosenIndex,
+                _collectionId,
+                _params.actorProfileId,
+                _isVerified
+            ),
             _isVerified
         );
     }

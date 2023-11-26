@@ -6,7 +6,6 @@ import "./PrintAccessControl.sol";
 import "./PrintLibrary.sol";
 import "./MarketCreator.sol";
 import "./PrintDesignData.sol";
-import "hardhat/console.sol";
 
 contract PrintOrderData {
     PrintAccessControl public printAccessControl;
@@ -68,7 +67,7 @@ contract PrintOrderData {
         _;
     }
     modifier onlyFulfiller(address _fulfiller) {
-        if (_fulfiller == msg.sender) {
+        if (_fulfiller != msg.sender) {
             revert InvalidFulfiller();
         }
         _;
@@ -227,8 +226,8 @@ contract PrintOrderData {
     }
 
     function setOrderDetails(
-        uint256 _orderId,
-        string memory _newDetails
+        string memory _newDetails,
+        uint256 _orderId
     ) external {
         if (_orders[_orderId].buyer != msg.sender) {
             revert InvalidAddress();
@@ -238,16 +237,16 @@ contract PrintOrderData {
     }
 
     function setOrderMessage(
-        uint256 _orderId,
-        string memory _newMessage
+        string memory _newMessage,
+        uint256 _orderId
     ) external fulfillerIncluded(_orders[_orderId].subOrderIds) {
         _orders[_orderId].messages.push(_newMessage);
         emit UpdateOrderMessage(_orderId, _newMessage);
     }
 
     function setNFTOnlyOrderMessage(
-        uint256 _orderId,
-        string memory _newMessage
+        string memory _newMessage,
+        uint256 _orderId
     ) external {
         if (
             msg.sender !=

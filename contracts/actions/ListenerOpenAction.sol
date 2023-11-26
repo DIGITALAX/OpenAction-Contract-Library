@@ -31,6 +31,7 @@ contract ListenerOpenAction is
     error InvalidAddress();
     error InvalidAmounts();
     error InvalidCommunityMember();
+    error ExceedAmount();
 
     mapping(uint256 => mapping(uint256 => uint256)) _collectionGroups;
 
@@ -59,6 +60,7 @@ contract ListenerOpenAction is
     );
 
     constructor(
+        string memory _metadataDetails,
         address _hub,
         address _moduleGlobals,
         address _printAccessControlAddress,
@@ -75,6 +77,7 @@ contract ListenerOpenAction is
         printSplitsData = PrintSplitsData(_printSplitsDataAddress);
         printDesignData = PrintDesignData(_printDesignDataAddress);
         printCommunityData = PrintCommunityData(_printCommunityDataAddress);
+        _metadata = _metadataDetails;
     }
 
     function initializePublicationAction(
@@ -129,29 +132,23 @@ contract ListenerOpenAction is
                 (uint256, uint256, string, address, bool)
             );
 
-        // if (
-        //     !MODULE_GLOBALS.isErc20CurrencyRegistered(_currency) ||
-        //     !printSplitsData.getIsCurrency(_currency)
-        // ) {
-        //     revert CurrencyNotWhitelisted();
-        // }
+        if (
+            !MODULE_GLOBALS.isErc20CurrencyRegistered(_currency) ||
+            !printSplitsData.getIsCurrency(_currency)
+        ) {
+            revert CurrencyNotWhitelisted();
+        }
 
         uint256 _collectionId = _collectionGroups[
             _params.publicationActedProfileId
         ][_params.publicationActedId];
 
-        uint256 _grandTotal = 0;
-
-        bool _isVerified = false;
-
-        _managePurchase(
+        (uint256 _grandTotal, bool _isVerified) = _managePurchase(
             _params,
             _chosenIndex,
             _quantity,
             _collectionId,
             _currency,
-            _grandTotal,
-            _isVerified,
             _fiat
         );
 
@@ -302,7 +299,7 @@ contract ListenerOpenAction is
         uint256 _exchangeRate = printSplitsData.getRateByCurrency(_currency);
 
         uint256 _weiDivisor = printSplitsData.getWeiByCurrency(_currency);
-        uint256 _tokenAmount = (_amountInWei / _exchangeRate) * _weiDivisor;
+        uint256 _tokenAmount = (_amountInWei * _weiDivisor) / _exchangeRate;
 
         return _tokenAmount;
     }
@@ -313,10 +310,10 @@ contract ListenerOpenAction is
         uint256 _quantity,
         uint256 _chosenIndex,
         uint256 _collectionId,
-        uint256 _grandTotal,
         uint256 _profileId,
         bool _isVerified
-    ) internal {
+    ) internal returns (uint256) {
+        uint256 _total = 0;
         if (
             !printDesignData.getIsCollectionTokenAccepted(
                 _collectionId,
@@ -330,8 +327,16 @@ contract ListenerOpenAction is
             revert InvalidCommunityMember();
         }
 
+        if (
+            printDesignData.getCollectionTokensMinted(_collectionId) +
+                _quantity >
+            printDesignData.getCollectionAmount(_collectionId)
+        ) {
+            revert ExceedAmount();
+        }
+
         if (!_isVerified) {
-            _grandTotal += _transferTokens(
+            _total = _transferTokens(
                 _collectionId,
                 _chosenIndex,
                 _quantity,
@@ -340,6 +345,8 @@ contract ListenerOpenAction is
                 _buyer
             );
         }
+
+        return _total;
     }
 
     function _managePurchase(
@@ -348,10 +355,9 @@ contract ListenerOpenAction is
         uint256 _quantity,
         uint256 _collectionId,
         address _currency,
-        uint256 _grandTotal,
-        bool _isVerified,
         bool _fiat
-    ) internal {
+    ) internal returns (uint256, bool) {
+        bool _isVerified = false;
         if (_fiat) {
             _isVerified = printAccessControl.isVerifiedFiat(
                 _params.actorProfileOwner,
@@ -360,14 +366,16 @@ contract ListenerOpenAction is
             );
         }
 
-        _checkAndSend(
-            _currency,
-            _params.actorProfileOwner,
-            _quantity,
-            _chosenIndex,
-            _collectionId,
-            _grandTotal,
-            _params.actorProfileId,
+        return (
+            _checkAndSend(
+                _currency,
+                _params.actorProfileOwner,
+                _quantity,
+                _chosenIndex,
+                _collectionId,
+                _params.actorProfileId,
+                _isVerified
+            ),
             _isVerified
         );
     }

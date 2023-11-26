@@ -6,7 +6,6 @@ import "./PrintAccessControl.sol";
 import "./PrintCommunityData.sol";
 import "./PrintOrderData.sol";
 import "./PrintDesignData.sol";
-import "hardhat/console.sol";
 
 contract CommunityCreator {
     PrintAccessControl public printAccessControl;
