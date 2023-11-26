@@ -90,7 +90,7 @@ contract MarketCreator {
         uint256[] memory _prices = new uint256[](_params.collectionIds.length);
 
         address _buyerAddress = _params.buyerAddress;
-        if (msg.sender != fiatPKPAddress) {
+        if (msg.sender == fiatPKPAddress && _params.withPKP) {
             _buyerAddress = _params.pkpAddress;
         }
 

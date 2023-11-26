@@ -323,8 +323,9 @@ main();
 
 7. Print Splits
 [] Add verified currencies 
-[] se tOracle Price USD
-
+[] set Oracle Price USD
+[] add fulfiller coinop split
+ 
 8. verify open action modules and MONA and accepted token currencies with lens contracts!
 
 */

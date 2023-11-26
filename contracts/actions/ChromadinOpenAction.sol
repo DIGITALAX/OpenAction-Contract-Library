@@ -13,7 +13,6 @@ import "./../CollectionCreator.sol";
 import "./../PrintAccessControl.sol";
 import "./../PrintDesignData.sol";
 import "./../PrintCommunityData.sol";
-import "hardhat/console.sol";
 
 library ChromadinOpenActionLibrary {
     struct CollectionValues {
@@ -131,18 +130,16 @@ contract ChromadinOpenAction is
             (address, uint256)
         );
 
-        // if (
-        //     !MODULE_GLOBALS.isErc20CurrencyRegistered(_currency) ||
-        //     !printSplitsData.getIsCurrency(_currency)
-        // ) {
-        //     revert CurrencyNotWhitelisted();
-        // }
+        if (
+            !MODULE_GLOBALS.isErc20CurrencyRegistered(_currency) ||
+            !printSplitsData.getIsCurrency(_currency)
+        ) {
+            revert CurrencyNotWhitelisted();
+        }
 
         uint256 _collectionId = _collectionGroups[
             _params.publicationActedProfileId
         ][_params.publicationActedId];
-
-        uint256 _grandTotal = 0;
 
         if (
             !printDesignData.getIsCollectionTokenAccepted(
@@ -167,7 +164,7 @@ contract ChromadinOpenAction is
 
         address _designer = printDesignData.getCollectionCreator(_collectionId);
 
-        _grandTotal += _transferTokens(
+        uint256 _grandTotal = _transferTokens(
             _currency,
             _designer,
             _params.actorProfileOwner,
@@ -316,7 +313,7 @@ contract ChromadinOpenAction is
         uint256 _exchangeRate = printSplitsData.getRateByCurrency(_currency);
 
         uint256 _weiDivisor = printSplitsData.getWeiByCurrency(_currency);
-        uint256 _tokenAmount = (_amountInWei / _exchangeRate) * _weiDivisor;
+        uint256 _tokenAmount = (_amountInWei * _weiDivisor) / _exchangeRate;
 
         return _tokenAmount;
     }
