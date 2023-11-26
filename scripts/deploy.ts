@@ -8,7 +8,6 @@ const main = async () => {
     // const PrintAccessControl = await ethers.getContractFactory(
     //   "PrintAccessControl"
     // );
-    // const PrintLibrary = await ethers.getContractFactory("PrintLibrary");
     // const PrintDesignData = await ethers.getContractFactory("PrintDesignData");
     // const PrintOrderData = await ethers.getContractFactory("PrintOrderData");
     // const PrintSplitsData = await ethers.getContractFactory("PrintSplitsData");
@@ -29,71 +28,85 @@ const main = async () => {
     // const CoinOpOpenAction = await ethers.getContractFactory(
     //   "CoinOpOpenAction"
     // );
+    // const ListenerOpenAction = await ethers.getContractFactory(
+    //   "ListenerOpenAction"
+    // );
+
     // const LegendOpenAction = await ethers.getContractFactory(
     //   "LegendOpenAction"
     // );
     // const LegendMilestone = await ethers.getContractFactory("LegendMilestone");
     // const LegendRegister = await ethers.getContractFactory("LegendRegister");
-    // const ListenerOpenAction = await ethers.getContractFactory(
-    //   "ListenerOpenAction"
-    // );
 
     // const printAccessControl = await PrintAccessControl.deploy();
-    // const printLibrary = await PrintLibrary.deploy();
     // const printDesignData = await PrintDesignData.deploy(
     //   printAccessControl.address
     // );
     // const printOrderData = await PrintOrderData.deploy(
-    //   printAccessControl.address
+    //   printAccessControl.address,
+    //   printDesignData.address
     // );
     // const printSplitsData = await PrintSplitsData.deploy(
-    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"
+    //   printAccessControl.address
     // );
     // const nFTCreator = await NFTCreator.deploy(
-    //   "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"
+    //   "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
+    //   "0xd140356e35930a15943757A276D72487E7e77746"
     // );
     // const collectionCreator = await CollectionCreator.deploy(
     //   nFTCreator.address,
-    //   "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"
+    //   "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
+    //   "0xd140356e35930a15943757A276D72487E7e77746",
+    //   "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD"
     // );
     // const marketCreator = await MarketCreator.deploy(
-    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-    //   printSplitsData.address,
-    //   "0x792143D199067a4a40Ac4682d81C957623f7c5c3",
+    //   "0xd140356e35930a15943757A276D72487E7e77746",
+    //   "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
+    //   "0x0cFbdC285A8C4f2D95660da5B67f10aEB61fe029",
     //   collectionCreator.address,
-    //   "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //   "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
     //   PKP_FIAT
     // );
     // const communityCreator = await CommunityCreator.deploy(
-    //   "0x792143D199067a4a40Ac4682d81C957623f7c5c3",
-    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-    //   "0x813186B4290Ff3240808372b7bB75DBD7881B087"
+    //   "0x0cFbdC285A8C4f2D95660da5B67f10aEB61fe029",
+    //   "0xd140356e35930a15943757A276D72487E7e77746",
+    //   "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE"
     // );
     // const printCommunityData = await PrintCommunityData.deploy(
-    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-    //   communityCreator.address
+    //   "0xd140356e35930a15943757A276D72487E7e77746",
+    //   "0x22Cb3b5A41B17Cb455C827d81b2A6Bc11F4B1d11"
     // );
     // const chromadinOpenAction = await ChromadinOpenAction.deploy(
     //   "mystringjsoninfo",
     //   HUB,
     //   MODULE,
-    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-    //   "0x456Dfd81673256c358d79307aC400A9586aECA7B",
-    //   "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-    //   "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
-    //   "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
-    //   "0x068F3F62c252FE509dFB826515D1b34cAcfCa714"
+    //   "0xd140356e35930a15943757A276D72487E7e77746",
+    //   "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
+    //   "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
+    //   "0x81d8C7f6c30ab10815ecd3B83548Bbc1a3a9c3Fb",
+    //   "0xb40009a0aEAe4d01a539E8Acd56A6893F65c19d3",
+    //   printCommunityData.address
     // );
     // const coinOpOpenAction = await CoinOpOpenAction.deploy(
+    //   "mystringjsoninfo",
     //   HUB,
     //   MODULE,
-    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-    //   "0x456Dfd81673256c358d79307aC400A9586aECA7B",
-    //   "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-    //   "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
-    //   "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
+    //   "0xd140356e35930a15943757A276D72487E7e77746",
+    //   "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
+    //   "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
+    //   "0x81d8C7f6c30ab10815ecd3B83548Bbc1a3a9c3Fb",
+    //   "0xb40009a0aEAe4d01a539E8Acd56A6893F65c19d3",
+    //   printCommunityData.address
+    // );
+    // const listenerOpenAction = await ListenerOpenAction.deploy(
+    //   "mystringjsoninfo",
+    //   HUB,
+    //   MODULE,
+    //   "0xd140356e35930a15943757A276D72487E7e77746",
+    //   "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
+    //   "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
+    //   "0x81d8C7f6c30ab10815ecd3B83548Bbc1a3a9c3Fb",
+    //   "0xb40009a0aEAe4d01a539E8Acd56A6893F65c19d3",
     //   printCommunityData.address
     // );
     // const legendRegister = await LegendRegister.deploy(
@@ -114,183 +127,150 @@ const main = async () => {
     //   legendMilestone.address,
     //   legendRegister.address
     // );
-    // const listenerOpenAction = await ListenerOpenAction.deploy(
-    //   HUB,
-    //   MODULE,
-    //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-    //   "0x456Dfd81673256c358d79307aC400A9586aECA7B",
-    //   "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-    //   "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
-    //   "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
-    //   "0x068F3F62c252FE509dFB826515D1b34cAcfCa714"
-    // );
 
     const WAIT_BLOCK_CONFIRMATIONS = 20;
     // printAccessControl.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // printDesignData.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
-    // printLibrary.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // printOrderData.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // printSplitsData.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // nFTCreator.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // collectionCreator.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // marketCreator.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
-    // printCommunityData.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // communityCreator.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    // printCommunityData.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // chromadinOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // coinOpOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    // listenerOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+
     // legendRegister.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // legendMilestone.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // legendOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
-    // listenerOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // console.log(
     //   `PrintAccessControl deployed at\n${printAccessControl.address}`
     // );
     // console.log(`PrintDesignData deployed at\n${printDesignData.address}`);
-    // console.log(`PrintLibrary deployed at\n${printLibrary.address}`);
     // console.log(`PrintOrderData deployed at\n${printOrderData.address}`);
     // console.log(`PrintSplitsData deployed at\n${printSplitsData.address}`);
     // console.log(`NFTCreator deployed at\n${nFTCreator.address}`);
     // console.log(`CollectionCreator deployed at\n${collectionCreator.address}`);
     // console.log(`MarketCreator deployed at\n${marketCreator.address}`);
+    // console.log(`CommunityCreator deployed at\n${communityCreator.address}`);
     // console.log(
     //   `PrintCommunityData deployed at\n${printCommunityData.address}`
     // );
-    // console.log(`CommunityCreator deployed at\n${communityCreator.address}`);
     // console.log(
     //   `ChromadinOpenAction deployed at\n${chromadinOpenAction.address}`
     // );
     // console.log(`CoinOpOpenAction deployed at\n${coinOpOpenAction.address}`);
-    // console.log(`LegendRegister deployed at\n${legendRegister.address}`);
-    // console.log(`LegendMilestone deployed at\n${legendMilestone.address}`);
-    // console.log(`LegendOpenAction deployed at\n${legendOpenAction.address}`);
     // console.log(
     //   `ListenerOpenAction deployed at\n${listenerOpenAction.address}`
     // );
+    // console.log(`LegendRegister deployed at\n${legendRegister.address}`);
+    // console.log(`LegendMilestone deployed at\n${legendMilestone.address}`);
+    // console.log(`LegendOpenAction deployed at\n${legendOpenAction.address}`);
 
     // await run(`verify:verify`, {
-    //   address: "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //   address: "0xd140356e35930a15943757A276D72487E7e77746",
     // });
     // await run(`verify:verify`, {
-    //   address: "0xeD8D361AA83E87Eb0588F59295D45533826FcE86",
+    //   address: "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
+    //   constructorArguments: ["0xd140356e35930a15943757A276D72487E7e77746"],
     // });
     // await run(`verify:verify`, {
-    //   address: "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-    //   constructorArguments: ["0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"],
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0x792143D199067a4a40Ac4682d81C957623f7c5c3",
-    //   constructorArguments: ["0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"],
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0x456Dfd81673256c358d79307aC400A9586aECA7B",
-    //   constructorArguments: ["0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"],
-    // });
-
-    // await run(`verify:verify`, {
-    //   address: "0x3Bb3157F4af00BA61A562A0Ffe9cBfd07388d2b1",
+    //   address: "0x0cFbdC285A8C4f2D95660da5B67f10aEB61fe029",
     //   constructorArguments: [
-    //     "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //     "0xd140356e35930a15943757A276D72487E7e77746",
+    //     "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
     //   ],
     // });
     // await run(`verify:verify`, {
-    //   address: "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
+    //   address: "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
+    //   constructorArguments: ["0xd140356e35930a15943757A276D72487E7e77746"],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0xc9C77d0ad2E881397b2Ad5f38Aa20bDb04A5c35c",
     //   constructorArguments: [
-    //     "0x3Bb3157F4af00BA61A562A0Ffe9cBfd07388d2b1",
-    //     "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
+    //     "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
+    //     "0xd140356e35930a15943757A276D72487E7e77746",
+    //   ],
+    // });
+
+    // await run(`verify:verify`, {
+    //   address: "0xb40009a0aEAe4d01a539E8Acd56A6893F65c19d3",
+    //   constructorArguments: [
+    //     "0xc9C77d0ad2E881397b2Ad5f38Aa20bDb04A5c35c",
+    //     "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
+    //     "0xd140356e35930a15943757A276D72487E7e77746",
+    //     "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
     //   ],
     // });
     // await run(`verify:verify`, {
-    //   address: "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
+    //   address: "0x81d8C7f6c30ab10815ecd3B83548Bbc1a3a9c3Fb",
     //   constructorArguments: [
-    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-    //     "0x456Dfd81673256c358d79307aC400A9586aECA7B",
-    //     "0x792143D199067a4a40Ac4682d81C957623f7c5c3",
-    //     "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
-    //     "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //     "0xd140356e35930a15943757A276D72487E7e77746",
+    //     "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
+    //     "0x0cFbdC285A8C4f2D95660da5B67f10aEB61fe029",
+    //     "0xb40009a0aEAe4d01a539E8Acd56A6893F65c19d3",
+    //     "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
     //     PKP_FIAT,
     //   ],
     // });
     // await run(`verify:verify`, {
-    //   address: "0xa9A70a87d67B6FC0C72e0799266755a332d43DAf",
-    //   constructorArguments: ["0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"],
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0x3AE1cbbFfa5E011d688E7d48C35710a5842491f",
+    //   address: "0x22Cb3b5A41B17Cb455C827d81b2A6Bc11F4B1d11",
     //   constructorArguments: [
-    //     "0xa9A70a87d67B6FC0C72e0799266755a332d43DAf",
-    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-    //     "0x456Dfd81673256c358d79307aC400A9586aECA7B",
-    //   ],
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0x0eb82Cc9df6DB90fb05aD515B53eC9C5222A08F0",
-    //   constructorArguments: [
-    //     HUB,
-    //     MODULE,
-    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-    //     "0x456Dfd81673256c358d79307aC400A9586aECA7B",
-    //     "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-    //     "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
-    //     "0x3AE1cbbFfa5E011d688E7d48C35710a5842491f",
-    //     "0xa9A70a87d67B6FC0C72e0799266755a332d43DAf",
-    //   ],
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0x068F3F62c252FE509dFB826515D1b34cAcfCa714",
-    //   constructorArguments: [
-    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-    //     "0xc3642Ab0c912874c9D8361074666D6c7187BD8fd",
-    //   ],
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0x20e15dDcFa20Da9a742514F9606C93A8778bb747",
-    //   constructorArguments: [
-    //     "0x792143D199067a4a40Ac4682d81C957623f7c5c3",
-    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-    //     "0x813186B4290Ff3240808372b7bB75DBD7881B087",
+    //     "0x0cFbdC285A8C4f2D95660da5B67f10aEB61fe029",
+    //     "0xd140356e35930a15943757A276D72487E7e77746",
+    //     "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
     //   ],
     // });
 
-    await run(`verify:verify`, {
-      address: "0xEf7a24F490496f9f88078D7C4e7Ce6B8c757859F",
-      constructorArguments: [
-        "mystringjsoninfo",
-        HUB,
-        MODULE,
-        "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-        "0x456Dfd81673256c358d79307aC400A9586aECA7B",
-        "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-        "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
-        "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
-        "0x068F3F62c252FE509dFB826515D1b34cAcfCa714",
-      ],
-    });
     // await run(`verify:verify`, {
-    //   address: "0x616BBd3F1d09349a9cd32C05621FE04572539A41",
+    //   address: "0xBAeD632166cb30bdA9391212708A2B504fab74e7",
     //   constructorArguments: [
-    //     HUB,
-    //     MODULE,
-    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-    //     "0x456Dfd81673256c358d79307aC400A9586aECA7B",
-    //     "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-    //     "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
-    //     "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
-    //     "0x068F3F62c252FE509dFB826515D1b34cAcfCa714",
+    //     "0xd140356e35930a15943757A276D72487E7e77746",
+    //     "0x22Cb3b5A41B17Cb455C827d81b2A6Bc11F4B1d11"
     //   ],
     // });
     // await run(`verify:verify`, {
-    //   address: "0x6A1878895AE23375f678dE7E9582F03Aa33c8A80",
+    //   address: "0x565eCEd13C8c93Dd204bb4A3C6852f5F8A97Ad12",
     //   constructorArguments: [
+    //     "mystringjsoninfo",
     //     HUB,
     //     MODULE,
-    //     "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
-    //     "0x456Dfd81673256c358d79307aC400A9586aECA7B",
-    //     "0x813186B4290Ff3240808372b7bB75DBD7881B087",
-    //     "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
-    //     "0x15448744C11Ee4C8974018B7e7183435187E0Fa1",
-    //     "0x068F3F62c252FE509dFB826515D1b34cAcfCa714",
+    //     "0xd140356e35930a15943757A276D72487E7e77746",
+    //     "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
+    //     "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
+    //     "0x81d8C7f6c30ab10815ecd3B83548Bbc1a3a9c3Fb",
+    //     "0xb40009a0aEAe4d01a539E8Acd56A6893F65c19d3",
+    //     printCommunityData.address
+    //   ],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0x35EB473bc7df000D5730d289D6b695217d5470C4",
+    //   constructorArguments: [
+    //     "mystringjsoninfo",
+    //     HUB,
+    //     MODULE,
+    //     "0xd140356e35930a15943757A276D72487E7e77746",
+    //     "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
+    //     "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
+    //     "0x81d8C7f6c30ab10815ecd3B83548Bbc1a3a9c3Fb",
+    //     "0xb40009a0aEAe4d01a539E8Acd56A6893F65c19d3",
+    //     printCommunityData.address
+    //   ],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0xff67A1a26CC6a9Cf8CEc5Bf55F7EBFfEA99D56D0",
+    //   constructorArguments: [
+    //     "mystringjsoninfo",
+    //     HUB,
+    //     MODULE,
+    //     "0xd140356e35930a15943757A276D72487E7e77746",
+    //     "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
+    //     "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
+    //     "0x81d8C7f6c30ab10815ecd3B83548Bbc1a3a9c3Fb",
+    //     "0xb40009a0aEAe4d01a539E8Acd56A6893F65c19d3",
+    //     printCommunityData.address
     //   ],
     // });
   } catch (err: any) {
