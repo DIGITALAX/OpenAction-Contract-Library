@@ -43,8 +43,8 @@ const main = async () => {
     //   printAccessControl.address
     // );
     // const printOrderData = await PrintOrderData.deploy(
-    //   printAccessControl.address,
-    //   printDesignData.address
+    //   "0xd140356e35930a15943757A276D72487E7e77746",
+    //   "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE"
     // );
     // const printSplitsData = await PrintSplitsData.deploy(
     //   printAccessControl.address
@@ -176,13 +176,13 @@ const main = async () => {
     //   address: "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
     //   constructorArguments: ["0xd140356e35930a15943757A276D72487E7e77746"],
     // });
-    // await run(`verify:verify`, {
-    //   address: "0x0cFbdC285A8C4f2D95660da5B67f10aEB61fe029",
-    //   constructorArguments: [
-    //     "0xd140356e35930a15943757A276D72487E7e77746",
-    //     "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
-    //   ],
-    // });
+    await run(`verify:verify`, {
+      address: "0xea233D71243E9e3B16dB2CF3b265C35D00cf71d6",
+      constructorArguments: [
+        "0xd140356e35930a15943757A276D72487E7e77746",
+        "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
+      ],
+    });
     // await run(`verify:verify`, {
     //   address: "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
     //   constructorArguments: ["0xd140356e35930a15943757A276D72487E7e77746"],

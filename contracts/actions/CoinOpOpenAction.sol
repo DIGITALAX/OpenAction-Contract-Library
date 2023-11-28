@@ -115,7 +115,12 @@ contract CoinOpOpenAction is
             _collectionCreator.prices.length
         );
 
-        return _data;
+        return
+            abi.encode(
+                _collectionCreator.prices,
+                _collectionCreator.acceptedTokens,
+                _collectionCreator.uri
+            );
     }
 
     function processPublicationAction(

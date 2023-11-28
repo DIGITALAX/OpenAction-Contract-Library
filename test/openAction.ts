@@ -1374,7 +1374,7 @@ describe("ChromadinOpenAction", () => {
           actionModuleData: fiatSkip,
         });
       } catch (err: any) {
-        expect(err.message).to.include("ERC20: insufficient allowance")
+        expect(err.message).to.include("ERC20: insufficient allowance");
       }
     });
   });
