@@ -147,7 +147,8 @@ contract PrintOrderData {
         uint256 _profileId,
         uint256 _buyerProfileId,
         uint256 _totalPrice,
-        uint256 _collectionId
+        uint256 _collectionId,
+        uint256 _amount
     ) external onlyMarketContract {
         _nftOnlyOrderSupply++;
         PrintLibrary.NFTOnlyOrder memory newOrder = PrintLibrary.NFTOnlyOrder({
@@ -155,6 +156,7 @@ contract PrintOrderData {
             pubId: _pubId,
             profileId: _profileId,
             buyerProfileId: _buyerProfileId,
+            amount: _amount,
             buyer: _buyer,
             chosenCurrency: _chosenCurrency,
             timestamp: block.timestamp,
@@ -452,6 +454,12 @@ contract PrintOrderData {
         uint256 _orderId
     ) public view returns (uint256) {
         return _nftOnlyOrders[_orderId].buyerProfileId;
+    }
+
+    function getNFTOnlyOrderAmount(
+        uint256 _orderId
+    ) public view returns (uint256) {
+        return _nftOnlyOrders[_orderId].amount;
     }
 
     function getNFTOnlyOrderTokenIds(

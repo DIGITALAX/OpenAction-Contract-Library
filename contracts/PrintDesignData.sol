@@ -37,6 +37,7 @@ contract PrintDesignData {
     event DropCollectionsUpdated(
         uint256 dropId,
         uint256[] collectionIds,
+        uint256[] oldCollectionIds,
         string uri
     );
     event DropCreated(uint256 dropId, string uri, address creator);
@@ -140,8 +141,9 @@ contract PrintDesignData {
         string memory _uri,
         uint256 _dropId
     ) external onlyCollectionCreator {
-        for (uint256 i = 0; i < _drops[_dropId].collectionIds.length; i++) {
-            _collections[_drops[_dropId].collectionIds[i]].dropId = 0;
+        uint256[] memory _oldCollectionIds = _drops[_dropId].collectionIds;
+        for (uint256 i = 0; i < _oldCollectionIds.length; i++) {
+            _collections[_oldCollectionIds[i]].dropId = 0;
         }
 
         for (uint256 i = 0; i < _collectionIds.length; i++) {
@@ -151,7 +153,12 @@ contract PrintDesignData {
         _drops[_dropId].collectionIds = _collectionIds;
         _drops[_dropId].uri = _uri;
 
-        emit DropCollectionsUpdated(_dropId, _collectionIds, _uri);
+        emit DropCollectionsUpdated(
+            _dropId,
+            _collectionIds,
+            _oldCollectionIds,
+            _uri
+        );
     }
 
     function deleteCollection(

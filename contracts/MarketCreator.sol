@@ -169,7 +169,7 @@ contract MarketCreator {
         if (!printAccessControl.isOpenAction(msg.sender)) {
             revert InvalidAddress();
         }
-        
+
         collectionCreator.purchaseAndMintToken(
             _oneItem(_params.collectionId),
             _oneItem(_params.quantity),
@@ -201,7 +201,8 @@ contract MarketCreator {
             _params.profileId,
             _params.buyerProfileId,
             _price,
-            _params.collectionId
+            _params.collectionId,
+            _params.quantity
         );
     }
 
