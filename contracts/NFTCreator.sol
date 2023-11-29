@@ -45,17 +45,18 @@ contract NFTCreator is ERC721Enumerable {
             revert OnlyCollectionCreator();
         }
         uint256[] memory tokenIds = new uint256[](_amount);
+        uint256 _supply = printData.getTokenSupply();
         for (uint256 i = 0; i < _amount; i++) {
             PrintLibrary.Token memory newToken = PrintLibrary.Token({
                 uri: _uri,
                 chosenCurrency: _chosenCurrency,
-                tokenId: printData.getTokenSupply() + 1,
+                tokenId: _supply + i + 1,
                 collectionId: _collectionId,
                 index: _chosenIndex
             });
-            uint256 _tokenSupply = printData.setNFT(newToken);
-            tokenIds[i] = _tokenSupply;
-            _safeMint(_purchaserAddress, _tokenSupply);
+            _safeMint(_purchaserAddress, _supply + i + 1);
+            printData.setNFT(newToken);
+            tokenIds[i] = _supply + i + 1;
         }
 
         emit BatchTokenMinted(_purchaserAddress, tokenIds);

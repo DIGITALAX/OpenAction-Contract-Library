@@ -6,6 +6,7 @@ import "./PrintAccessControl.sol";
 import "./NFTCreator.sol";
 import "./CollectionCreator.sol";
 import "./PrintLibrary.sol";
+import "hardhat/console.sol";
 
 contract PrintDesignData {
     PrintAccessControl public printAccessControl;
@@ -58,12 +59,7 @@ contract PrintDesignData {
         }
         _;
     }
-    modifier onlyNFTCreator() {
-        if (msg.sender != address(nftCreator)) {
-            revert InvalidAddress();
-        }
-        _;
-    }
+
     modifier onlyAdmin() {
         if (!printAccessControl.isAdmin(msg.sender)) {
             revert InvalidAddress();
@@ -197,14 +193,15 @@ contract PrintDesignData {
 
     function setNFT(
         PrintLibrary.Token memory _tokenData
-    ) external onlyNFTCreator returns (uint256) {
+    ) external {
+        if (msg.sender != address(nftCreator)) {
+            revert InvalidAddress();
+        }
         _tokenSupply++;
 
         _tokens[_tokenSupply] = _tokenData;
 
         emit TokensMinted(_tokenSupply, _tokens[_tokenSupply].collectionId);
-
-        return _tokenSupply;
     }
 
     function getCollectionCreator(

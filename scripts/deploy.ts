@@ -5,32 +5,32 @@ const MODULE = "0x4BeB63842BB800A1Da77a62F2c74dE3CA39AF7C0";
 const PKP_FIAT = "0x8834aE494ADD3C56d274Fe88243526DBAB15dEF8";
 const main = async () => {
   try {
-    // const PrintAccessControl = await ethers.getContractFactory(
-    //   "PrintAccessControl"
-    // );
-    // const PrintDesignData = await ethers.getContractFactory("PrintDesignData");
-    // const PrintOrderData = await ethers.getContractFactory("PrintOrderData");
-    // const PrintSplitsData = await ethers.getContractFactory("PrintSplitsData");
-    // const NFTCreator = await ethers.getContractFactory("NFTCreator");
-    // const CollectionCreator = await ethers.getContractFactory(
-    //   "CollectionCreator"
-    // );
-    // const MarketCreator = await ethers.getContractFactory("MarketCreator");
-    // const PrintCommunityData = await ethers.getContractFactory(
-    //   "PrintCommunityData"
-    // );
-    // const CommunityCreator = await ethers.getContractFactory(
-    //   "CommunityCreator"
-    // );
-    // const ChromadinOpenAction = await ethers.getContractFactory(
-    //   "ChromadinOpenAction"
-    // );
-    // const CoinOpOpenAction = await ethers.getContractFactory(
-    //   "CoinOpOpenAction"
-    // );
-    // const ListenerOpenAction = await ethers.getContractFactory(
-    //   "ListenerOpenAction"
-    // );
+    const PrintAccessControl = await ethers.getContractFactory(
+      "PrintAccessControl"
+    );
+    const PrintDesignData = await ethers.getContractFactory("PrintDesignData");
+    const PrintOrderData = await ethers.getContractFactory("PrintOrderData");
+    const PrintSplitsData = await ethers.getContractFactory("PrintSplitsData");
+    const NFTCreator = await ethers.getContractFactory("NFTCreator");
+    const CollectionCreator = await ethers.getContractFactory(
+      "CollectionCreator"
+    );
+    const MarketCreator = await ethers.getContractFactory("MarketCreator");
+    const PrintCommunityData = await ethers.getContractFactory(
+      "PrintCommunityData"
+    );
+    const CommunityCreator = await ethers.getContractFactory(
+      "CommunityCreator"
+    );
+    const ChromadinOpenAction = await ethers.getContractFactory(
+      "ChromadinOpenAction"
+    );
+    const CoinOpOpenAction = await ethers.getContractFactory(
+      "CoinOpOpenAction"
+    );
+    const ListenerOpenAction = await ethers.getContractFactory(
+      "ListenerOpenAction"
+    );
 
     // const LegendOpenAction = await ethers.getContractFactory(
     //   "LegendOpenAction"
@@ -43,70 +43,70 @@ const main = async () => {
     //   printAccessControl.address
     // );
     // const printOrderData = await PrintOrderData.deploy(
-    //   "0xd140356e35930a15943757A276D72487E7e77746",
-    //   "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE"
+    //   printAccessControl.address,
+    //   printDesignData.address
     // );
     // const printSplitsData = await PrintSplitsData.deploy(
     //   printAccessControl.address
     // );
     // const nFTCreator = await NFTCreator.deploy(
-    //   "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
-    //   "0xd140356e35930a15943757A276D72487E7e77746"
+    //   "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+    //   "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60"
     // );
     // const collectionCreator = await CollectionCreator.deploy(
     //   nFTCreator.address,
-    //   "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
-    //   "0xd140356e35930a15943757A276D72487E7e77746",
-    //   "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD"
+    //   "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+    //   "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+    //   "0xa6466180387940CAc6467CCc0242D4B19A24e6BE"
     // );
     // const marketCreator = await MarketCreator.deploy(
-    //   "0xd140356e35930a15943757A276D72487E7e77746",
-    //   "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
-    //   "0x0cFbdC285A8C4f2D95660da5B67f10aEB61fe029",
+    //   "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+    //   "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
+    //   "0x808602378312f34c53D806C3b4dEFBdF33245134",
     //   collectionCreator.address,
-    //   "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
+    //   "0x597772c9c0EfE354976B0068296dFcb03583C2be",
     //   PKP_FIAT
     // );
     // const communityCreator = await CommunityCreator.deploy(
-    //   "0x0cFbdC285A8C4f2D95660da5B67f10aEB61fe029",
-    //   "0xd140356e35930a15943757A276D72487E7e77746",
-    //   "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE"
+    //   "0x808602378312f34c53D806C3b4dEFBdF33245134",
+    //   "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+    //   "0x597772c9c0EfE354976B0068296dFcb03583C2be"
     // );
     // const printCommunityData = await PrintCommunityData.deploy(
-    //   "0xd140356e35930a15943757A276D72487E7e77746",
-    //   "0x22Cb3b5A41B17Cb455C827d81b2A6Bc11F4B1d11"
+    //   "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+    //   "0x0cA150070b99B85B0AF48ed09BBe8a043E256b20"
     // );
     // const chromadinOpenAction = await ChromadinOpenAction.deploy(
     //   "mystringjsoninfo",
     //   HUB,
     //   MODULE,
-    //   "0xd140356e35930a15943757A276D72487E7e77746",
-    //   "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
-    //   "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
-    //   "0x81d8C7f6c30ab10815ecd3B83548Bbc1a3a9c3Fb",
-    //   "0xb40009a0aEAe4d01a539E8Acd56A6893F65c19d3",
+    //   "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+    //   "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
+    //   "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+    //   "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
+    //   "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
     //   printCommunityData.address
     // );
     // const coinOpOpenAction = await CoinOpOpenAction.deploy(
     //   "mystringjsoninfo",
     //   HUB,
     //   MODULE,
-    //   "0xd140356e35930a15943757A276D72487E7e77746",
-    //   "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
-    //   "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
-    //   "0x81d8C7f6c30ab10815ecd3B83548Bbc1a3a9c3Fb",
-    //   "0xb40009a0aEAe4d01a539E8Acd56A6893F65c19d3",
+    //   "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+    //   "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
+    //   "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+    //   "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
+    //   "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
     //   printCommunityData.address
     // );
     // const listenerOpenAction = await ListenerOpenAction.deploy(
     //   "mystringjsoninfo",
     //   HUB,
     //   MODULE,
-    //   "0xd140356e35930a15943757A276D72487E7e77746",
-    //   "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
-    //   "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
-    //   "0x81d8C7f6c30ab10815ecd3B83548Bbc1a3a9c3Fb",
-    //   "0xb40009a0aEAe4d01a539E8Acd56A6893F65c19d3",
+    //   "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+    //   "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
+    //   "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+    //   "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
+    //   "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
     //   printCommunityData.address
     // );
     // const legendRegister = await LegendRegister.deploy(
@@ -170,109 +170,108 @@ const main = async () => {
     // console.log(`LegendOpenAction deployed at\n${legendOpenAction.address}`);
 
     // await run(`verify:verify`, {
-    //   address: "0xd140356e35930a15943757A276D72487E7e77746",
+    //   address: "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
     // });
     // await run(`verify:verify`, {
-    //   address: "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
-    //   constructorArguments: ["0xd140356e35930a15943757A276D72487E7e77746"],
-    // });
-    await run(`verify:verify`, {
-      address: "0xea233D71243E9e3B16dB2CF3b265C35D00cf71d6",
-      constructorArguments: [
-        "0xd140356e35930a15943757A276D72487E7e77746",
-        "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
-      ],
-    });
-    // await run(`verify:verify`, {
-    //   address: "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
-    //   constructorArguments: ["0xd140356e35930a15943757A276D72487E7e77746"],
+    //   address: "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+    //   constructorArguments: ["0xbC7CeB31979f2DbF77F4B3133366A0378C922B60"],
     // });
     // await run(`verify:verify`, {
-    //   address: "0xc9C77d0ad2E881397b2Ad5f38Aa20bDb04A5c35c",
+    //   address: "0x808602378312f34c53D806C3b4dEFBdF33245134",
     //   constructorArguments: [
-    //     "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
-    //     "0xd140356e35930a15943757A276D72487E7e77746",
+    //     "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+    //     "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+    //   ],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
+    //   constructorArguments: ["0xbC7CeB31979f2DbF77F4B3133366A0378C922B60"],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
+    //   constructorArguments: [
+    //     "0x5B714F8eb491453f9cb9D5c4Ba698b34E9b8c0f0",
+    //     "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+    //     "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+    //     "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
     //   ],
     // });
 
     // await run(`verify:verify`, {
-    //   address: "0xb40009a0aEAe4d01a539E8Acd56A6893F65c19d3",
+    //   address: "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
     //   constructorArguments: [
-    //     "0xc9C77d0ad2E881397b2Ad5f38Aa20bDb04A5c35c",
-    //     "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
-    //     "0xd140356e35930a15943757A276D72487E7e77746",
-    //     "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
-    //   ],
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0x81d8C7f6c30ab10815ecd3B83548Bbc1a3a9c3Fb",
-    //   constructorArguments: [
-    //     "0xd140356e35930a15943757A276D72487E7e77746",
-    //     "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
-    //     "0x0cFbdC285A8C4f2D95660da5B67f10aEB61fe029",
-    //     "0xb40009a0aEAe4d01a539E8Acd56A6893F65c19d3",
-    //     "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
+    //     "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+    //     "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
+    //     "0x808602378312f34c53D806C3b4dEFBdF33245134",
+    //     "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
+    //     "0x597772c9c0EfE354976B0068296dFcb03583C2be",
     //     PKP_FIAT,
     //   ],
     // });
     // await run(`verify:verify`, {
-    //   address: "0x22Cb3b5A41B17Cb455C827d81b2A6Bc11F4B1d11",
+    //   address: "0x0cA150070b99B85B0AF48ed09BBe8a043E256b20",
     //   constructorArguments: [
-    //     "0x0cFbdC285A8C4f2D95660da5B67f10aEB61fe029",
-    //     "0xd140356e35930a15943757A276D72487E7e77746",
-    //     "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
-    //   ],
-    // });
-
-    // await run(`verify:verify`, {
-    //   address: "0xBAeD632166cb30bdA9391212708A2B504fab74e7",
-    //   constructorArguments: [
-    //     "0xd140356e35930a15943757A276D72487E7e77746",
-    //     "0x22Cb3b5A41B17Cb455C827d81b2A6Bc11F4B1d11"
+    //     "0x808602378312f34c53D806C3b4dEFBdF33245134",
+    //     "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+    //     "0x597772c9c0EfE354976B0068296dFcb03583C2be",
     //   ],
     // });
     // await run(`verify:verify`, {
-    //   address: "0x565eCEd13C8c93Dd204bb4A3C6852f5F8A97Ad12",
+    //   address: "0x5B714F8eb491453f9cb9D5c4Ba698b34E9b8c0f0",
     //   constructorArguments: [
-    //     "mystringjsoninfo",
-    //     HUB,
-    //     MODULE,
-    //     "0xd140356e35930a15943757A276D72487E7e77746",
-    //     "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
-    //     "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
-    //     "0x81d8C7f6c30ab10815ecd3B83548Bbc1a3a9c3Fb",
-    //     "0xb40009a0aEAe4d01a539E8Acd56A6893F65c19d3",
-    //     printCommunityData.address
+    //     "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+    //     "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
     //   ],
     // });
-    // await run(`verify:verify`, {
-    //   address: "0x35EB473bc7df000D5730d289D6b695217d5470C4",
-    //   constructorArguments: [
-    //     "mystringjsoninfo",
-    //     HUB,
-    //     MODULE,
-    //     "0xd140356e35930a15943757A276D72487E7e77746",
-    //     "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
-    //     "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
-    //     "0x81d8C7f6c30ab10815ecd3B83548Bbc1a3a9c3Fb",
-    //     "0xb40009a0aEAe4d01a539E8Acd56A6893F65c19d3",
-    //     printCommunityData.address
-    //   ],
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0xff67A1a26CC6a9Cf8CEc5Bf55F7EBFfEA99D56D0",
-    //   constructorArguments: [
-    //     "mystringjsoninfo",
-    //     HUB,
-    //     MODULE,
-    //     "0xd140356e35930a15943757A276D72487E7e77746",
-    //     "0x0682F7ef679478cb37bfBE2239D6D8DdB0b18DFD",
-    //     "0x5a414dC38877198864Ed1c5B299DA19BBe30E5EE",
-    //     "0x81d8C7f6c30ab10815ecd3B83548Bbc1a3a9c3Fb",
-    //     "0xb40009a0aEAe4d01a539E8Acd56A6893F65c19d3",
-    //     printCommunityData.address
-    //   ],
-    // });
+    await run(`verify:verify`, {
+      address: "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4",
+      constructorArguments: [
+        "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+        "0x0cA150070b99B85B0AF48ed09BBe8a043E256b20",
+      ],
+    });
+    await run(`verify:verify`, {
+      address: "0x23Bace2E9571B7A8598c3314e5f0d8C12DBc674A",
+      constructorArguments: [
+        "mystringjsoninfo",
+        HUB,
+        MODULE,
+        "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+        "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
+        "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+        "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
+        "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
+        "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4",
+      ],
+    });
+    await run(`verify:verify`, {
+      address: "0xF73023577E11e3f791c4c7638BD4061a9a181bB5",
+      constructorArguments: [
+        "mystringjsoninfo",
+        HUB,
+        MODULE,
+        "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+        "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
+        "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+        "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
+        "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
+        "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4",
+      ],
+    });
+    await run(`verify:verify`, {
+      address: "0x5e0020A21D61ec18467a92428a5bE6Faf32C412b",
+      constructorArguments: [
+        "mystringjsoninfo",
+        HUB,
+        MODULE,
+        "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+        "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
+        "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+        "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
+        "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
+        "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4",
+      ],
+    });
   } catch (err: any) {
     console.error(err.message);
   }
