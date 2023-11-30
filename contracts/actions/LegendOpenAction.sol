@@ -173,12 +173,12 @@ contract LegendOpenAction is HubRestricted, IPublicationActionModule {
             _params.publicationActedProfileId
         ][_params.publicationActedId];
 
-        // if (
-        //     !MODULE_GLOBALS.isErc20CurrencyRegistered(_currency) ||
-        //     !printSplitsData.getIsCurrency(_currency)
-        // ) {
-        //     revert CurrencyNotWhitelisted();
-        // }
+        if (
+            !MODULE_GLOBALS.isErc20CurrencyRegistered(_currency) ||
+            !printSplitsData.getIsCurrency(_currency)
+        ) {
+            revert CurrencyNotWhitelisted();
+        }
 
         uint256 _grantAmount = 0;
 

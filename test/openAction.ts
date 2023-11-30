@@ -860,8 +860,8 @@ describe("ChromadinOpenAction", () => {
         .approve(listenerOpenAction.address, "540000000000000000");
 
       const encodedDataOne = ethers.utils.defaultAbiCoder.encode(
-        ["uint256", "uint256", "string", "address", "bool"],
-        [2, 1, "myencrypteddetails", usdt.address, false]
+        ["uint256[]", "uint256[]", "string", "address", "bool"],
+        [[2], [1], "myencrypteddetails", usdt.address, false]
       );
       await listenerOpenAction.connect(hub).processPublicationAction({
         publicationActedProfileId: 454,
@@ -1009,8 +1009,8 @@ describe("ChromadinOpenAction", () => {
       );
 
       const encodedDataTwo = ethers.utils.defaultAbiCoder.encode(
-        ["uint256", "uint256", "string", "address", "bool"],
-        [0, 2, "myencrypteddetails", eth.address, false]
+        ["uint256[]", "uint256[]", "string", "address", "bool"],
+        [[0], [2], "myencrypteddetails", eth.address, false]
       );
       await listenerOpenAction.connect(hub).processPublicationAction({
         publicationActedProfileId: 124,
@@ -1109,8 +1109,8 @@ describe("ChromadinOpenAction", () => {
 
       try {
         const encodedDataTwo = ethers.utils.defaultAbiCoder.encode(
-          ["uint256", "uint256", "string", "address", "bool"],
-          [1, 6, "mycoinopencrypteddetails", eth.address, false]
+          ["uint256[]", "uint256[]", "string", "address", "bool"],
+          [[1], [6], "mycoinopencrypteddetails", eth.address, false]
         );
         await coinOpOpenAction.connect(hub).processPublicationAction({
           publicationActedProfileId: 127,
@@ -1148,8 +1148,8 @@ describe("ChromadinOpenAction", () => {
       );
 
       const encodedDataThree = ethers.utils.defaultAbiCoder.encode(
-        ["uint256", "uint256", "string", "address", "bool"],
-        [1, 6, "mycoinopencrypteddetails", mona.address, false]
+        ["uint256[]", "uint256[]", "string", "address", "bool"],
+        [[1], [6], "mycoinopencrypteddetails", mona.address, false]
       );
       await coinOpOpenAction.connect(hub).processPublicationAction({
         publicationActedProfileId: 127,
@@ -1214,8 +1214,8 @@ describe("ChromadinOpenAction", () => {
         .approve(coinOpOpenAction.address, ethers.utils.parseEther("200"));
 
       const encodedDataFour = ethers.utils.defaultAbiCoder.encode(
-        ["uint256", "uint256", "string", "address", "bool"],
-        [3, 1, "mycoinopencrypteddetails", mona.address, false]
+        ["uint256[]", "uint256[]", "string", "address", "bool"],
+        [[3], [1], "mycoinopencrypteddetails", mona.address, false]
       );
       await coinOpOpenAction.connect(hub).processPublicationAction({
         publicationActedProfileId: 127,
@@ -1280,7 +1280,7 @@ describe("ChromadinOpenAction", () => {
 
       await eth.transfer(
         await otherBuyer.getAddress(),
-        ethers.utils.parseEther("200")
+        ethers.utils.parseEther("400")
       );
 
       await eth
@@ -1288,8 +1288,8 @@ describe("ChromadinOpenAction", () => {
         .approve(coinOpOpenAction.address, "200000000000000000000");
 
       const encodedDataTwo = ethers.utils.defaultAbiCoder.encode(
-        ["uint256", "uint256", "string", "address", "bool"],
-        [0, 1, "myencrypteddetails", eth.address, false]
+        ["uint256[]", "uint256[]", "string", "address", "bool"],
+        [[0, 1], [1, 3], "myencrypteddetails", eth.address, false]
       );
       await coinOpOpenAction.connect(hub).processPublicationAction({
         publicationActedProfileId: 19,
@@ -1304,8 +1304,8 @@ describe("ChromadinOpenAction", () => {
       });
 
       const fiatSkip = ethers.utils.defaultAbiCoder.encode(
-        ["uint256", "uint256", "string", "address", "bool"],
-        [0, 1, "myencrypteddetails", eth.address, true]
+        ["uint256[]", "uint256[]", "string", "address", "bool"],
+        [[0], [1], "myencrypteddetails", eth.address, true]
       );
 
       await printAccessControl.addVerifiedFiat(

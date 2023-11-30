@@ -127,14 +127,14 @@ contract CoinOpOpenAction is
         Types.ProcessActionParams calldata _params
     ) external override onlyHub returns (bytes memory) {
         (
-            uint256 _chosenIndex,
-            uint256 _quantity,
+            uint256[] memory _chosenIndexes,
+            uint256[] memory _quantities,
             string memory _encryptedFulfillment,
             address _currency,
             bool _fiat
         ) = abi.decode(
                 _params.actionModuleData,
-                (uint256, uint256, string, address, bool)
+                (uint256[], uint256[], string, address, bool)
             );
 
         if (
@@ -151,17 +151,20 @@ contract CoinOpOpenAction is
         (uint256 _grandTotal, bool _isVerified) = _managePurchase(
             _params,
             _currency,
-            _chosenIndex,
-            _quantity,
+            _chosenIndexes,
+            _quantities,
             _collectionId,
             _fiat
         );
 
         PrintLibrary.BuyTokensParams memory _buyTokensParams = PrintLibrary
             .BuyTokensParams({
-                collectionIds: _oneItem(_collectionId),
-                collectionAmounts: _oneItem((_quantity)),
-                collectionIndexes: _oneItem(_chosenIndex),
+                collectionIds: _fillCollection(
+                    _collectionId,
+                    _quantities.length
+                ),
+                collectionAmounts: _quantities,
+                collectionIndexes: _chosenIndexes,
                 details: _encryptedFulfillment,
                 buyerAddress: _params.actorProfileOwner,
                 chosenCurrency: _currency,
@@ -182,7 +185,7 @@ contract CoinOpOpenAction is
             _grandTotal
         );
 
-        return abi.encode(_collectionId, _currency, _chosenIndex);
+        return abi.encode(_collectionId, _currency, _chosenIndexes);
     }
 
     function _transferTokens(
@@ -345,43 +348,45 @@ contract CoinOpOpenAction is
     function _checkAndSend(
         address _currency,
         address _buyer,
-        uint256 _quantity,
-        uint256 _chosenIndex,
+        uint256[] memory _quantities,
+        uint256[] memory _chosenIndexes,
         uint256 _collectionId,
         uint256 _profileId,
         bool _isVerified
     ) internal returns (uint256) {
         uint256 _total = 0;
-        if (
-            !printDesignData.getIsCollectionTokenAccepted(
-                _collectionId,
-                _currency
-            )
-        ) {
-            revert CurrencyNotWhitelisted();
-        }
+        for (uint256 i = 0; i < _chosenIndexes.length; i++) {
+            if (
+                !printDesignData.getIsCollectionTokenAccepted(
+                    _collectionId,
+                    _currency
+                )
+            ) {
+                revert CurrencyNotWhitelisted();
+            }
 
-        if (!_checkCommunity(_collectionId, _profileId)) {
-            revert InvalidCommunityMember();
-        }
+            if (!_checkCommunity(_collectionId, _profileId)) {
+                revert InvalidCommunityMember();
+            }
 
-        if (
-            printDesignData.getCollectionTokensMinted(_collectionId) +
-                _quantity >
-            printDesignData.getCollectionAmount(_collectionId)
-        ) {
-            revert ExceedAmount();
-        }
+            if (
+                printDesignData.getCollectionTokensMinted(_collectionId) +
+                    _quantities[i] >
+                printDesignData.getCollectionAmount(_collectionId)
+            ) {
+                revert ExceedAmount();
+            }
 
-        if (!_isVerified) {
-            _total = _transferTokens(
-                _collectionId,
-                _chosenIndex,
-                _quantity,
-                _currency,
-                printDesignData.getCollectionCreator(_collectionId),
-                _buyer
-            );
+            if (!_isVerified) {
+                _total = _transferTokens(
+                    _collectionId,
+                    _chosenIndexes[i],
+                    _quantities[i],
+                    _currency,
+                    printDesignData.getCollectionCreator(_collectionId),
+                    _buyer
+                );
+            }
         }
 
         return _total;
@@ -390,8 +395,8 @@ contract CoinOpOpenAction is
     function _managePurchase(
         Types.ProcessActionParams calldata _params,
         address _currency,
-        uint256 _chosenIndex,
-        uint256 _quantity,
+        uint256[] memory _chosenIndexes,
+        uint256[] memory _quantities,
         uint256 _collectionId,
         bool _fiat
     ) internal returns (uint256, bool) {
@@ -409,8 +414,8 @@ contract CoinOpOpenAction is
             _checkAndSend(
                 _currency,
                 _params.actorProfileOwner,
-                _quantity,
-                _chosenIndex,
+                _quantities,
+                _chosenIndexes,
                 _collectionId,
                 _params.actorProfileId,
                 _isVerified
@@ -419,11 +424,15 @@ contract CoinOpOpenAction is
         );
     }
 
-    function _oneItem(uint256 _value) private pure returns (uint256[] memory) {
-        uint256[] memory _arr = new uint256[](1);
-        _arr[0] = _value;
-
-        return _arr;
+    function _fillCollection(
+        uint256 _collectionId,
+        uint256 _quantitiesLength
+    ) internal pure returns (uint256[] memory) {
+        uint256[] memory collectionIds = new uint256[](_quantitiesLength);
+        for (uint256 i = 0; i < _quantitiesLength; i++) {
+            collectionIds[i] = _collectionId;
+        }
+        return collectionIds;
     }
 
     function supportsInterface(
