@@ -96,7 +96,7 @@ const main = async () => {
     //   "0x597772c9c0EfE354976B0068296dFcb03583C2be",
     //   "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
     //   "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
-    //   printCommunityData.address
+    //   "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4"
     // );
     // const listenerOpenAction = await ListenerOpenAction.deploy(
     //   "mystringjsoninfo",
@@ -107,7 +107,7 @@ const main = async () => {
     //   "0x597772c9c0EfE354976B0068296dFcb03583C2be",
     //   "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
     //   "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
-    //   printCommunityData.address
+    //   "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4"
     // );
     // const legendRegister = await LegendRegister.deploy(
     //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"
@@ -223,15 +223,29 @@ const main = async () => {
     //     "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
     //   ],
     // });
+    // await run(`verify:verify`, {
+    //   address: "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4",
+    //   constructorArguments: [
+    //     "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+    //     "0x0cA150070b99B85B0AF48ed09BBe8a043E256b20",
+    //   ],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0x23Bace2E9571B7A8598c3314e5f0d8C12DBc674A",
+    //   constructorArguments: [
+    //     "mystringjsoninfo",
+    //     HUB,
+    //     MODULE,
+    //     "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+    //     "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
+    //     "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+    //     "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
+    //     "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
+    //     "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4",
+    //   ],
+    // });
     await run(`verify:verify`, {
-      address: "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4",
-      constructorArguments: [
-        "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
-        "0x0cA150070b99B85B0AF48ed09BBe8a043E256b20",
-      ],
-    });
-    await run(`verify:verify`, {
-      address: "0x23Bace2E9571B7A8598c3314e5f0d8C12DBc674A",
+      address: "0xB7F7cAAf50Bff0d53E5a66134ed218C3B77555F9",
       constructorArguments: [
         "mystringjsoninfo",
         HUB,
@@ -245,21 +259,7 @@ const main = async () => {
       ],
     });
     await run(`verify:verify`, {
-      address: "0xF73023577E11e3f791c4c7638BD4061a9a181bB5",
-      constructorArguments: [
-        "mystringjsoninfo",
-        HUB,
-        MODULE,
-        "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
-        "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
-        "0x597772c9c0EfE354976B0068296dFcb03583C2be",
-        "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
-        "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
-        "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4",
-      ],
-    });
-    await run(`verify:verify`, {
-      address: "0x5e0020A21D61ec18467a92428a5bE6Faf32C412b",
+      address: "0x9785444E0C3718B499226b89CFb002AB6F31Fc15",
       constructorArguments: [
         "mystringjsoninfo",
         HUB,
