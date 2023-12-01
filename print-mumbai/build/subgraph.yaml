@@ -1,0 +1,194 @@
+specVersion: 0.0.5
+schema:
+  file: schema.graphql
+features:
+  - fullTextSearch
+  - ipfsOnEthereumContracts
+dataSources:
+  - kind: ethereum
+    name: PrintDesignData
+    network: mumbai
+    source:
+      address: "0x597772c9c0EfE354976B0068296dFcb03583C2be"
+      abi: PrintDesignData
+      startBlock: 42860877
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - CollectionCreated
+        - CollectionDeleted
+        - CollectionMintedTokensSet
+        - CollectionTokenIdsSet
+        - DropCollectionsUpdated
+        - DropCreated
+        - DropDeleted
+        - TokensMinted
+      abis:
+        - name: PrintDesignData
+          file: PrintDesignData/abis/PrintDesignData.json
+        - name: PrintSplitData
+          file: PrintDesignData/abis/PrintSplitData.json
+      eventHandlers:
+        - event: CollectionCreated(indexed uint256,uint256,uint256,string,uint256,address)
+          handler: handleCollectionCreated
+        - event: CollectionDeleted(uint256)
+          handler: handleCollectionDeleted
+        - event: CollectionMintedTokensSet(indexed uint256,uint256)
+          handler: handleCollectionMintedTokensSet
+        - event: CollectionTokenIdsSet(indexed uint256,uint256[])
+          handler: handleCollectionTokenIdsSet
+        - event: DropCollectionsUpdated(uint256,uint256[],uint256[],string)
+          handler: handleDropCollectionsUpdated
+        - event: DropCreated(uint256,string,address)
+          handler: handleDropCreated
+        - event: DropDeleted(uint256)
+          handler: handleDropDeleted
+        - event: TokensMinted(indexed uint256,uint256)
+          handler: handleTokensMinted
+      file: PrintDesignData/PrintDesignData.wasm
+  - kind: ethereum
+    name: PrintCommunityData
+    network: mumbai
+    source:
+      address: "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4"
+      abi: PrintCommunityData
+      startBlock: 42861109
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - CommunityCreated
+        - CommunityMemberAdded
+        - CommunityMemberRemoved
+        - CommunityUpdated
+      abis:
+        - name: PrintCommunityData
+          file: PrintCommunityData/abis/PrintCommunityData.json
+      eventHandlers:
+        - event: CommunityCreated(indexed uint256,address,string)
+          handler: handleCommunityCreated
+        - event: CommunityMemberAdded(indexed uint256,address,uint256)
+          handler: handleCommunityMemberAdded
+        - event: CommunityMemberRemoved(indexed uint256,uint256)
+          handler: handleCommunityMemberRemoved
+        - event: CommunityUpdated(indexed uint256,address,string)
+          handler: handleCommunityUpdated
+      file: PrintCommunityData/PrintCommunityData.wasm
+  - kind: ethereum
+    name: PrintSplitData
+    network: mumbai
+    source:
+      address: "0xa6466180387940CAc6467CCc0242D4B19A24e6BE"
+      abi: PrintSplitData
+      startBlock: 42860877
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - CurrencyAdded
+        - CurrencyRemoved
+        - DesignerSplitSet
+        - FulfillerBaseSet
+        - FulfillerSplitSet
+        - OracleUpdated
+        - TreasurySplitSet
+      abis:
+        - name: PrintSplitData
+          file: PrintSplitData/abis/PrintSplitData.json
+      eventHandlers:
+        - event: CurrencyAdded(indexed address)
+          handler: handleCurrencyAdded
+        - event: CurrencyRemoved(indexed address)
+          handler: handleCurrencyRemoved
+        - event: DesignerSplitSet(address,uint8,uint256)
+          handler: handleDesignerSplitSet
+        - event: FulfillerBaseSet(address,uint8,uint256)
+          handler: handleFulfillerBaseSet
+        - event: FulfillerSplitSet(address,uint8,uint256)
+          handler: handleFulfillerSplitSet
+        - event: OracleUpdated(indexed address,uint256)
+          handler: handleOracleUpdated
+        - event: TreasurySplitSet(address,uint8,uint256)
+          handler: handleTreasurySplitSet
+      file: PrintSplitData/PrintSplitData.wasm
+  - kind: ethereum
+    name: PrintOrderData
+    network: mumbai
+    source:
+      address: "0x808602378312f34c53D806C3b4dEFBdF33245134"
+      abi: PrintOrderData
+      startBlock: 42863238
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - NFTOnlyOrderCreated
+        - OrderCreated
+        - SubOrderIsFulfilled
+        - UpdateNFTOnlyOrderMessage
+        - UpdateOrderDetails
+        - UpdateOrderMessage
+        - UpdateSubOrderStatus
+      abis:
+        - name: PrintOrderData
+          file: PrintOrderData/abis/PrintOrderData.json
+        - name: PrintDesignData
+          file: PrintOrderData/abis/PrintDesignData.json
+      eventHandlers:
+        - event: NFTOnlyOrderCreated(uint256,uint256,address,uint256,uint256,address)
+          handler: handleNFTOnlyOrderCreated
+        - event: OrderCreated(uint256,uint256,address,uint256,uint256,address)
+          handler: handleOrderCreated
+        - event: SubOrderIsFulfilled(indexed uint256)
+          handler: handleSubOrderIsFulfilled
+        - event: UpdateNFTOnlyOrderMessage(indexed uint256,string)
+          handler: handleUpdateNFTOnlyOrderMessage
+        - event: UpdateOrderDetails(indexed uint256,string)
+          handler: handleUpdateOrderDetails
+        - event: UpdateOrderMessage(indexed uint256,string)
+          handler: handleUpdateOrderMessage
+        - event: UpdateSubOrderStatus(indexed uint256,uint8)
+          handler: handleUpdateSubOrderStatus
+      file: PrintOrderData/PrintOrderData.wasm
+templates:
+  - name: CollectionMetadata
+    kind: file/ipfs
+    mapping:
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: templates/CollectionMetadata/CollectionMetadata.wasm
+      handler: handleCollectionMetadata
+      entities:
+        - CollectionMetadata
+      abis:
+        - name: PrintDesignData
+          file: CollectionMetadata/abis/PrintDesignData.json
+  - name: DropMetadata
+    kind: file/ipfs
+    mapping:
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: templates/CollectionMetadata/CollectionMetadata.wasm
+      handler: handleDropMetadata
+      entities:
+        - DropMetadata
+      abis:
+        - name: PrintDesignData
+          file: DropMetadata/abis/PrintDesignData.json
+  - name: CommunityMetadata
+    kind: file/ipfs
+    mapping:
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: templates/CollectionMetadata/CollectionMetadata.wasm
+      handler: handleCommunityMetadata
+      entities:
+        - CommunityMetadata
+      abis:
+        - name: PrintDesignData
+          file: CommunityMetadata/abis/PrintDesignData.json

@@ -1,0 +1,17 @@
+{
+  "mumbai": {
+    "PrintDesignData": {
+      "address": "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+      "startBlock": 42860877
+    },
+    "PrintCommunityData": {
+      "address": "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4"
+    },
+    "PrintSplitData": {
+      "address": "0xa6466180387940CAc6467CCc0242D4B19A24e6BE"
+    },
+    "PrintOrderData": {
+      "address": "0x808602378312f34c53D806C3b4dEFBdF33245134"
+    }
+  }
+}
