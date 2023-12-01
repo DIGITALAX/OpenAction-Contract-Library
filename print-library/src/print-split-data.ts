@@ -25,9 +25,7 @@ export function handleCurrencyAdded(event: CurrencyAddedEvent): void {
   let entity = new CurrencyAdded(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   );
-  entity.id = Bytes.fromByteArray(
-    ByteArray.fromHexString(event.params.currency.toString())
-  );
+  entity.id = event.params.currency;
   entity.currency = event.params.currency;
 
   entity.blockNumber = event.block.number;
@@ -418,9 +416,7 @@ export function handleOracleUpdated(event: OracleUpdatedEvent): void {
   entity.currency = event.params.currency;
   entity.rate = event.params.rate;
 
-  let entityOrder = CurrencyAdded.load(
-    Bytes.fromByteArray(ByteArray.fromHexString(entity.currency.toString()))
-  );
+  let entityOrder = CurrencyAdded.load(event.params.currency);
 
   if (entityOrder) {
     entityOrder.rate = entity.rate;
