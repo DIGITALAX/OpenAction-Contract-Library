@@ -1,0 +1,500 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_printAccessControlAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_communityCreatorAddress",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  { "inputs": [], "name": "InvalidAddress", "type": "error" },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "communityId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "steward",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "uri",
+        "type": "string"
+      }
+    ],
+    "name": "CommunityCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "communityId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "memberAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "memberProfileId",
+        "type": "uint256"
+      }
+    ],
+    "name": "CommunityMemberAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "communityId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "memberProfileId",
+        "type": "uint256"
+      }
+    ],
+    "name": "CommunityMemberRemoved",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "communityId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "steward",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "uri",
+        "type": "string"
+      }
+    ],
+    "name": "CommunityUpdated",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "name": "_memberProfileIdToIndex",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_memberAddress",
+        "type": "address"
+      },
+      { "internalType": "uint256", "name": "_communityId", "type": "uint256" },
+      {
+        "internalType": "uint256",
+        "name": "_memberProfileId",
+        "type": "uint256"
+      }
+    ],
+    "name": "addCommunityMember",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "communityCreator",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address[]",
+            "name": "validCreators",
+            "type": "address[]"
+          },
+          {
+            "internalType": "enum PrintLibrary.Origin[]",
+            "name": "validOrigins",
+            "type": "uint8[]"
+          },
+          {
+            "internalType": "enum PrintLibrary.PrintType[]",
+            "name": "validPrintTypes",
+            "type": "uint8[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "valid20Addresses",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "valid20Thresholds",
+            "type": "uint256[]"
+          },
+          { "internalType": "string", "name": "uri", "type": "string" },
+          { "internalType": "address", "name": "steward", "type": "address" }
+        ],
+        "internalType": "struct PrintLibrary.CreateCommunityParams",
+        "name": "_params",
+        "type": "tuple"
+      }
+    ],
+    "name": "createCommunity",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_creator", "type": "address" },
+      { "internalType": "uint256", "name": "_communityId", "type": "uint256" }
+    ],
+    "name": "getCommunityIsValidCreator",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "enum PrintLibrary.Origin",
+        "name": "_origin",
+        "type": "uint8"
+      },
+      { "internalType": "uint256", "name": "_communityId", "type": "uint256" }
+    ],
+    "name": "getCommunityIsValidOrigin",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "enum PrintLibrary.PrintType",
+        "name": "_printType",
+        "type": "uint8"
+      },
+      { "internalType": "uint256", "name": "_communityId", "type": "uint256" }
+    ],
+    "name": "getCommunityIsValidPrintType",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_communityId", "type": "uint256" }
+    ],
+    "name": "getCommunityMembers",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "memberAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "memberProfileId",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PrintLibrary.CommunityMember[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_communityId", "type": "uint256" }
+    ],
+    "name": "getCommunitySteward",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getCommunitySupply",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_communityId", "type": "uint256" }
+    ],
+    "name": "getCommunityURI",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_communityId", "type": "uint256" }
+    ],
+    "name": "getCommunityValid20AddressKeys",
+    "outputs": [
+      { "internalType": "address[]", "name": "", "type": "address[]" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_tokenAddress", "type": "address" },
+      { "internalType": "uint256", "name": "_communityId", "type": "uint256" }
+    ],
+    "name": "getCommunityValid20Threshold",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_communityId", "type": "uint256" }
+    ],
+    "name": "getCommunityValidCreatorKeys",
+    "outputs": [
+      { "internalType": "address[]", "name": "", "type": "address[]" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_communityId", "type": "uint256" }
+    ],
+    "name": "getCommunityValidOriginKeys",
+    "outputs": [
+      {
+        "internalType": "enum PrintLibrary.Origin[]",
+        "name": "",
+        "type": "uint8[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_communityId", "type": "uint256" }
+    ],
+    "name": "getCommunityValidPrintTypeKeys",
+    "outputs": [
+      {
+        "internalType": "enum PrintLibrary.PrintType[]",
+        "name": "",
+        "type": "uint8[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_communityId", "type": "uint256" },
+      {
+        "internalType": "uint256",
+        "name": "_memberProfileId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getIsCommunityMember",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_memberAddress",
+        "type": "address"
+      },
+      { "internalType": "uint256", "name": "_communityId", "type": "uint256" }
+    ],
+    "name": "getIsValidCommunityAddress",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_communityId", "type": "uint256" },
+      {
+        "internalType": "uint256",
+        "name": "_memberProfileId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getMemberToIndex",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "name",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "printAccessControl",
+    "outputs": [
+      {
+        "internalType": "contract PrintAccessControl",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_memberAddress",
+        "type": "address"
+      },
+      { "internalType": "uint256", "name": "_communityId", "type": "uint256" },
+      {
+        "internalType": "uint256",
+        "name": "_memberProfileId",
+        "type": "uint256"
+      }
+    ],
+    "name": "removeCommunityMember",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_newCommunityCreatorAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setCommunityCreatorAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_newPrintAccessControlAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setPrintAccessControlAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address[]",
+            "name": "validCreators",
+            "type": "address[]"
+          },
+          {
+            "internalType": "enum PrintLibrary.Origin[]",
+            "name": "validOrigins",
+            "type": "uint8[]"
+          },
+          {
+            "internalType": "enum PrintLibrary.PrintType[]",
+            "name": "validPrintTypes",
+            "type": "uint8[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "valid20Addresses",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "valid20Thresholds",
+            "type": "uint256[]"
+          },
+          { "internalType": "string", "name": "uri", "type": "string" },
+          { "internalType": "address", "name": "steward", "type": "address" }
+        ],
+        "internalType": "struct PrintLibrary.CreateCommunityParams",
+        "name": "_params",
+        "type": "tuple"
+      },
+      { "internalType": "uint256", "name": "communityId", "type": "uint256" }
+    ],
+    "name": "updateCommunity",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
