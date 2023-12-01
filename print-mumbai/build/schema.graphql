@@ -211,10 +211,6 @@ type _Schema_
     algorithm: rank
     include: [
       {
-        entity: "CollectionCreated"
-        fields: [{ name: "printType" }, { name: "origin" }]
-      }
-      {
         entity: "CollectionMetadata"
         fields: [
           { name: "title" }
@@ -231,26 +227,8 @@ type _Schema_
           { name: "visibility" }
         ]
       }
-      { entity: "DropMetadata", fields: [{ name: "dropTitle" }] }
     ]
   )
-
-input FilterType {
-  access_contains_nocase: String
-  communities_contains_nocase: String
-  description_contains_nocase: String
-  dropTitle_contains_nocase: String
-  microbrand_contains_nocase: String
-  printType_contains_nocase: String
-  prompt_contains_nocase: String
-  tags_contains_nocase: String
-  title_contains_nocase: String
-  visibility_contains_nocase: String
-  mediaTypes_contains_nocase: String
-  unlimited: Boolean
-  amount_gte: String
-  amount_lte: String
-}
 
 type NFTOnlyOrderCreated @entity(immutable: false) {
   id: Bytes!
@@ -378,4 +356,9 @@ type CommunityMetadata @entity {
   cover: String
   name: String
   description: String
+}
+
+type collectionMetadatas @entity {
+  id: ID!
+  collectionMetadatas: [CollectionMetadata!]
 }
