@@ -74,43 +74,43 @@ const main = async () => {
     //   "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
     //   "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F"
     // );
-    const printCommunityData = await PrintCommunityData.deploy(
-      "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
-      "0x0cA150070b99B85B0AF48ed09BBe8a043E256b20"
-    );
-    const chromadinOpenAction = await ChromadinOpenAction.deploy(
-      "mystringjsoninfo",
-      HUB,
-      MODULE,
-      "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
-      "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
-      "0x597772c9c0EfE354976B0068296dFcb03583C2be",
-      "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
-      "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
-      printCommunityData.address
-    );
-    const coinOpOpenAction = await CoinOpOpenAction.deploy(
-      "mystringjsoninfo",
-      HUB,
-      MODULE,
-      "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
-      "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
-      "0x597772c9c0EfE354976B0068296dFcb03583C2be",
-      "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
-      "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
-      "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4"
-    );
-    const listenerOpenAction = await ListenerOpenAction.deploy(
-      "mystringjsoninfo",
-      HUB,
-      MODULE,
-      "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
-      "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
-      "0x597772c9c0EfE354976B0068296dFcb03583C2be",
-      "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
-      "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
-      "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4"
-    );
+    // const printCommunityData = await PrintCommunityData.deploy(
+    //   "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
+    //   "0x64c86C41144839fA957DDD953348B011c1FF440b"
+    // );
+    // const chromadinOpenAction = await ChromadinOpenAction.deploy(
+    //   "Chromadin Open Action",
+    //   HUB,
+    //   MODULE,
+    //   "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
+    //   "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
+    //   "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //   "0x21607110b7E588d15701B3873cd0b48406427655",
+    //   "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
+    //   printCommunityData.address
+    // );
+    // const coinOpOpenAction = await CoinOpOpenAction.deploy(
+    //   "Coin Op Open Action",
+    //   HUB,
+    //   MODULE,
+    //   "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
+    //   "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
+    //   "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //   "0x21607110b7E588d15701B3873cd0b48406427655",
+    //   "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
+    //   "0x2D861E653314f74746Ae1aE86cf3f84B884fbEd9"
+    // );
+    // const listenerOpenAction = await ListenerOpenAction.deploy(
+    //   "Lit Listener Open Action",
+    //   HUB,
+    //   MODULE,
+    //   "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
+    //   "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
+    //   "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //   "0x21607110b7E588d15701B3873cd0b48406427655",
+    //   "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
+    //   "0x2D861E653314f74746Ae1aE86cf3f84B884fbEd9"
+    // );
     // const legendRegister = await LegendRegister.deploy(
     //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"
     // );
@@ -139,10 +139,10 @@ const main = async () => {
     // collectionCreator.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // marketCreator.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // communityCreator.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
-    printCommunityData.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
-    chromadinOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
-    coinOpOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
-    listenerOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    // printCommunityData.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    // chromadinOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    // coinOpOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    // listenerOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
 
     // legendRegister.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // legendMilestone.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
@@ -157,123 +157,123 @@ const main = async () => {
     // console.log(`CollectionCreator deployed at\n${collectionCreator.address}`);
     // console.log(`MarketCreator deployed at\n${marketCreator.address}`);
     // console.log(`CommunityCreator deployed at\n${communityCreator.address}`);
-    console.log(
-      `PrintCommunityData deployed at\n${printCommunityData.address}`
-    );
-    console.log(
-      `ChromadinOpenAction deployed at\n${chromadinOpenAction.address}`
-    );
-    console.log(`CoinOpOpenAction deployed at\n${coinOpOpenAction.address}`);
-    console.log(
-      `ListenerOpenAction deployed at\n${listenerOpenAction.address}`
-    );
+    // console.log(
+    //   `PrintCommunityData deployed at\n${printCommunityData.address}`
+    // );
+    // console.log(
+    //   `ChromadinOpenAction deployed at\n${chromadinOpenAction.address}`
+    // );
+    // console.log(`CoinOpOpenAction deployed at\n${coinOpOpenAction.address}`);
+    // console.log(
+    //   `ListenerOpenAction deployed at\n${listenerOpenAction.address}`
+    // );
     // console.log(`LegendRegister deployed at\n${legendRegister.address}`);
     // console.log(`LegendMilestone deployed at\n${legendMilestone.address}`);
     // console.log(`LegendOpenAction deployed at\n${legendOpenAction.address}`);
 
     // await run(`verify:verify`, {
-    //   address: "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
+    //   address: "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
     // });
     // await run(`verify:verify`, {
-    //   address: "0x597772c9c0EfE354976B0068296dFcb03583C2be",
-    //   constructorArguments: ["0xbC7CeB31979f2DbF77F4B3133366A0378C922B60"],
+    //   address: "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //   constructorArguments: ["0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7"],
     // });
     // await run(`verify:verify`, {
-    //   address: "0x808602378312f34c53D806C3b4dEFBdF33245134",
+    //   address: "0xa6be95a639Ab4bEbb8D1b9203FC4cED7db23D4c2",
     //   constructorArguments: [
-    //     "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
-    //     "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+    //     "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
+    //     "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
     //   ],
     // });
     // await run(`verify:verify`, {
-    //   address: "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
-    //   constructorArguments: ["0xbC7CeB31979f2DbF77F4B3133366A0378C922B60"],
+    //   address: "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
+    //   constructorArguments: ["0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7"],
     // });
     // await run(`verify:verify`, {
-    //   address: "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
+    //   address: "0x3D92B16Bb20A740C5dDcaEda305A7c16B2DdC580",
     //   constructorArguments: [
-    //     "0x5B714F8eb491453f9cb9D5c4Ba698b34E9b8c0f0",
-    //     "0x597772c9c0EfE354976B0068296dFcb03583C2be",
-    //     "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
-    //     "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
+    //     "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //     "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
     //   ],
     // });
-
     // await run(`verify:verify`, {
-    //   address: "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
+    //   address: "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
     //   constructorArguments: [
-    //     "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
-    //     "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
-    //     "0x808602378312f34c53D806C3b4dEFBdF33245134",
-    //     "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
-    //     "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+    //     "0x3D92B16Bb20A740C5dDcaEda305A7c16B2DdC580",
+    //     "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //     "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
+    //     "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
+    //   ],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0x21607110b7E588d15701B3873cd0b48406427655",
+    //   constructorArguments: [
+    //     "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
+    //     "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
+    //     "0xa6be95a639Ab4bEbb8D1b9203FC4cED7db23D4c2",
+    //     "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
+    //     "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
     //     PKP_FIAT,
     //   ],
     // });
     // await run(`verify:verify`, {
-    //   address: "0x0cA150070b99B85B0AF48ed09BBe8a043E256b20",
+    //   address: "0x64c86C41144839fA957DDD953348B011c1FF440b",
     //   constructorArguments: [
-    //     "0x808602378312f34c53D806C3b4dEFBdF33245134",
-    //     "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
-    //     "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+    //     "0xa6be95a639Ab4bEbb8D1b9203FC4cED7db23D4c2",
+    //     "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
+    //     "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //   ],
+    // });
+
+    // await run(`verify:verify`, {
+    //   address: "0x2D861E653314f74746Ae1aE86cf3f84B884fbEd9",
+    //   constructorArguments: [
+    //     "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
+    //     "0x64c86C41144839fA957DDD953348B011c1FF440b",
     //   ],
     // });
     // await run(`verify:verify`, {
-    //   address: "0x5B714F8eb491453f9cb9D5c4Ba698b34E9b8c0f0",
+    //   address: "0x5a2C88948Ce8d9ba7a5EE8185cC60c70E4e9029a",
     //   constructorArguments: [
-    //     "0x597772c9c0EfE354976B0068296dFcb03583C2be",
-    //     "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
-    //   ],
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4",
-    //   constructorArguments: [
-    //     "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
-    //     "0x0cA150070b99B85B0AF48ed09BBe8a043E256b20",
-    //   ],
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0x23Bace2E9571B7A8598c3314e5f0d8C12DBc674A",
-    //   constructorArguments: [
-    //     "mystringjsoninfo",
+    //     "Chromadin Open Action",
     //     HUB,
     //     MODULE,
-    //     "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
-    //     "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
-    //     "0x597772c9c0EfE354976B0068296dFcb03583C2be",
-    //     "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
-    //     "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
-    //     "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4",
+    //     "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
+    //     "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
+    //     "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //     "0x21607110b7E588d15701B3873cd0b48406427655",
+    //     "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
+    //     "0x2D861E653314f74746Ae1aE86cf3f84B884fbEd9"
     //   ],
     // });
-    // await run(`verify:verify`, {
-    //   address: "0xB7F7cAAf50Bff0d53E5a66134ed218C3B77555F9",
-    //   constructorArguments: [
-    //     "mystringjsoninfo",
-    //     HUB,
-    //     MODULE,
-    //     "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
-    //     "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
-    //     "0x597772c9c0EfE354976B0068296dFcb03583C2be",
-    //     "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
-    //     "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
-    //     "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4",
-    //   ],
-    // });
-    // await run(`verify:verify`, {
-    //   address: "0x9785444E0C3718B499226b89CFb002AB6F31Fc15",
-    //   constructorArguments: [
-    //     "mystringjsoninfo",
-    //     HUB,
-    //     MODULE,
-    //     "0xbC7CeB31979f2DbF77F4B3133366A0378C922B60",
-    //     "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
-    //     "0x597772c9c0EfE354976B0068296dFcb03583C2be",
-    //     "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
-    //     "0x54f621Eaa2a908B259B3c7a8d8afe3290a2e14F1",
-    //     "0x8fEc6133D9Ba8BF2112f524081a6959a832613E4",
-    //   ],
-    // });
+    await run(`verify:verify`, {
+      address: "0x5515aEc4dE195Fd7effEA443b7A5D39025Effc0f",
+      constructorArguments: [
+        "Coin Op Open Action",
+        HUB,
+        MODULE,
+        "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
+        "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
+        "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+        "0x21607110b7E588d15701B3873cd0b48406427655",
+        "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
+        "0x2D861E653314f74746Ae1aE86cf3f84B884fbEd9",
+      ],
+    });
+    await run(`verify:verify`, {
+      address: "0x897fD9cBC9b5aC57F2594231F25EB24BcF577ea2",
+      constructorArguments: [
+        "Lit Listener Open Action",
+        HUB,
+        MODULE,
+        "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
+        "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
+        "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+        "0x21607110b7E588d15701B3873cd0b48406427655",
+        "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
+        "0x2D861E653314f74746Ae1aE86cf3f84B884fbEd9",
+      ],
+    });
   } catch (err: any) {
     console.error(err.message);
   }
