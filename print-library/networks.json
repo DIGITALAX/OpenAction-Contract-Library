@@ -1,17 +1,17 @@
 {
   "matic": {
     "PrintDesignData": {
-      "address": "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219",
+      "address": "0x062aA8B94a308fE84bE7974bAC758bC574145907",
       "startBlock": 50619963
     },
     "PrintOrderData": {
-      "address": "0xa6be95a639Ab4bEbb8D1b9203FC4cED7db23D4c2"
+      "address": "0xe52255fc34d15BA807D4f2eb0e022cD97aDA7767"
     },
     "PrintSplitData": {
-      "address": "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A"
+      "address": "0xeB5116025E17D2E6E27126C104cb455dCa63460D"
     },
     "PrintCommunityData": {
-      "address": "0x2D861E653314f74746Ae1aE86cf3f84B884fbEd9"
+      "address": "0x8fAA6114f8345672DE9e4e4302aD497a52a2fd60"
     }
   }
 }
