@@ -49,7 +49,7 @@ export function handleNFTOnlyOrderCreated(
   entity.transactionHash = event.transaction.hash;
 
   let order = PrintOrderData.bind(
-    Address.fromString("0xa6be95a639Ab4bEbb8D1b9203FC4cED7db23D4c2")
+    Address.fromString("0xe52255fc34d15BA807D4f2eb0e022cD97aDA7767")
   );
   entity.messages = order.getNFTOnlyOrderMessages(entity.orderId);
 
@@ -60,7 +60,7 @@ export function handleNFTOnlyOrderCreated(
   let names: Array<string> = [];
 
   let design = PrintDesignData.bind(
-    Address.fromString("0xCBE04798e01842508B22DcB6d66f7d7D80ccc219")
+    Address.fromString("0x062aA8B94a308fE84bE7974bAC758bC574145907")
   );
 
   for (let i = 0; i < 1; i++) {
@@ -157,7 +157,7 @@ export function handleOrderCreated(event: OrderCreatedEvent): void {
   entity.buyer = event.params.buyer;
 
   let order = PrintOrderData.bind(
-    Address.fromString("0xa6be95a639Ab4bEbb8D1b9203FC4cED7db23D4c2")
+    Address.fromString("0xe52255fc34d15BA807D4f2eb0e022cD97aDA7767")
   );
 
   entity.details = order.getOrderDetails(entity.orderId);
@@ -173,7 +173,7 @@ export function handleOrderCreated(event: OrderCreatedEvent): void {
   let names: Array<string> = [];
 
   let design = PrintDesignData.bind(
-    Address.fromString("0xCBE04798e01842508B22DcB6d66f7d7D80ccc219")
+    Address.fromString("0x062aA8B94a308fE84bE7974bAC758bC574145907")
   );
 
   for (let i = 0; i < subs.length; i++) {
@@ -258,7 +258,7 @@ export function handleSubOrderIsFulfilled(
   entity.subOrderId = event.params.subOrderId;
 
   let order = PrintOrderData.bind(
-    Address.fromString("0xa6be95a639Ab4bEbb8D1b9203FC4cED7db23D4c2")
+    Address.fromString("0xe52255fc34d15BA807D4f2eb0e022cD97aDA7767")
   );
 
   const orderId = order.getSubOrderOrderId(entity.subOrderId);
@@ -392,7 +392,7 @@ export function handleUpdateSubOrderStatus(
   entity.newSubOrderStatus = event.params.newSubOrderStatus;
 
   let order = PrintOrderData.bind(
-    Address.fromString("0xa6be95a639Ab4bEbb8D1b9203FC4cED7db23D4c2")
+    Address.fromString("0xe52255fc34d15BA807D4f2eb0e022cD97aDA7767")
   );
 
   const orderId = order.getSubOrderOrderId(entity.subOrderId);
