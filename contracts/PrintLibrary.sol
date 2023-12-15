@@ -8,6 +8,7 @@ contract PrintLibrary {
         Chromadin,
         Legend,
         Listener,
+        F3M,
         Other
     }
 
@@ -18,7 +19,9 @@ contract PrintLibrary {
         Hoodie,
         Sleeve,
         Crop,
-        NFTOnly
+        NFTOnly,
+        Custom,
+        Other
     }
     enum OrderStatus {
         Fulfilled,

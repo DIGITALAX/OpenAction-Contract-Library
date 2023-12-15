@@ -60,7 +60,7 @@ export function handleNFTOnlyOrderCreated(
   let names: Array<string> = [];
 
   let design = PrintDesignData.bind(
-    Address.fromString("0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F")
+    Address.fromString("0xCBE04798e01842508B22DcB6d66f7d7D80ccc219")
   );
 
   for (let i = 0; i < 1; i++) {
@@ -173,7 +173,7 @@ export function handleOrderCreated(event: OrderCreatedEvent): void {
   let names: Array<string> = [];
 
   let design = PrintDesignData.bind(
-    Address.fromString("0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F")
+    Address.fromString("0xCBE04798e01842508B22DcB6d66f7d7D80ccc219")
   );
 
   for (let i = 0; i < subs.length; i++) {

@@ -33,6 +33,7 @@ const main = async () => {
     const ListenerOpenAction = await ethers.getContractFactory(
       "ListenerOpenAction"
     );
+    const F3MOpenAction = await ethers.getContractFactory("F3MOpenAction");
 
     // const LegendOpenAction = await ethers.getContractFactory(
     //   "LegendOpenAction"
@@ -42,7 +43,7 @@ const main = async () => {
 
     // const printAccessControl = await PrintAccessControl.deploy();
     // const printDesignData = await PrintDesignData.deploy(
-    //   printAccessControl.address
+    //   "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7"
     // );
     // const printOrderData = await PrintOrderData.deploy(
     //   printAccessControl.address,
@@ -52,12 +53,12 @@ const main = async () => {
     //   printAccessControl.address
     // );
     // const nFTCreator = await NFTCreator.deploy(
-    //   "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //   "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219",
     //   "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7"
     // );
     // const collectionCreator = await CollectionCreator.deploy(
     //   nFTCreator.address,
-    //   "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //   "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219",
     //   "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
     //   "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A"
     // );
@@ -66,47 +67,58 @@ const main = async () => {
     //   "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
     //   "0xa6be95a639Ab4bEbb8D1b9203FC4cED7db23D4c2",
     //   collectionCreator.address,
-    //   "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //   "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219",
     //   PKP_FIAT
     // );
     // const communityCreator = await CommunityCreator.deploy(
     //   "0xa6be95a639Ab4bEbb8D1b9203FC4cED7db23D4c2",
     //   "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
-    //   "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F"
+    //   "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219"
     // );
     // const printCommunityData = await PrintCommunityData.deploy(
     //   "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
     //   "0x64c86C41144839fA957DDD953348B011c1FF440b"
     // );
     // const chromadinOpenAction = await ChromadinOpenAction.deploy(
-    //   "Chromadin Open Action",
+    //   "ipfs://QmX5reN5N4D9Rqnxog3RxTRyyP3zhiYactF4PHfQkFgGZr",
     //   HUB,
     //   MODULE,
     //   "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
     //   "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
-    //   "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //   "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219",
     //   "0x21607110b7E588d15701B3873cd0b48406427655",
     //   "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
     //   printCommunityData.address
     // );
     // const coinOpOpenAction = await CoinOpOpenAction.deploy(
-    //   "Coin Op Open Action",
+    //   "ipfs://Qmeq5kckAsaqKJxMPz3GDAMTCbda8LMxX4S1dgVFFSNyb4",
     //   HUB,
     //   MODULE,
     //   "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
     //   "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
-    //   "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //   "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219",
     //   "0x21607110b7E588d15701B3873cd0b48406427655",
     //   "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
     //   "0x2D861E653314f74746Ae1aE86cf3f84B884fbEd9"
     // );
     // const listenerOpenAction = await ListenerOpenAction.deploy(
-    //   "Lit Listener Open Action",
+    //   "ipfs://QmY1Y4hG1DZCGAm6VVCZSjVKS6rkZaQ3nVYqCTmTazmT6E",
     //   HUB,
     //   MODULE,
     //   "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
     //   "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
-    //   "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //   "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219",
+    //   "0x21607110b7E588d15701B3873cd0b48406427655",
+    //   "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
+    //   "0x2D861E653314f74746Ae1aE86cf3f84B884fbEd9"
+    // );
+    // const f3MOpenAction = await F3MOpenAction.deploy(
+    //   "ipfs://QmZ69yjcqwYgU3PmcsjWaaE8CiwXBg66uLZuJyGm8Yu7HM",
+    //   HUB,
+    //   MODULE,
+    //   "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
+    //   "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
+    //   "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219",
     //   "0x21607110b7E588d15701B3873cd0b48406427655",
     //   "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
     //   "0x2D861E653314f74746Ae1aE86cf3f84B884fbEd9"
@@ -143,6 +155,7 @@ const main = async () => {
     // chromadinOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // coinOpOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // listenerOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    // f3MOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
 
     // legendRegister.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // legendMilestone.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
@@ -167,6 +180,7 @@ const main = async () => {
     // console.log(
     //   `ListenerOpenAction deployed at\n${listenerOpenAction.address}`
     // );
+    // console.log(`F3MOpenAction deployed at\n${f3MOpenAction.address}`);
     // console.log(`LegendRegister deployed at\n${legendRegister.address}`);
     // console.log(`LegendMilestone deployed at\n${legendMilestone.address}`);
     // console.log(`LegendOpenAction deployed at\n${legendOpenAction.address}`);
@@ -174,15 +188,15 @@ const main = async () => {
     // await run(`verify:verify`, {
     //   address: "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
     // });
-    // await run(`verify:verify`, {
-    //   address: "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
-    //   constructorArguments: ["0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7"],
-    // });
+    await run(`verify:verify`, {
+      address: "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219",
+      constructorArguments: ["0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7"],
+    });
     // await run(`verify:verify`, {
     //   address: "0xa6be95a639Ab4bEbb8D1b9203FC4cED7db23D4c2",
     //   constructorArguments: [
     //     "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
-    //     "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //     "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219",
     //   ],
     // });
     // await run(`verify:verify`, {
@@ -192,7 +206,7 @@ const main = async () => {
     // await run(`verify:verify`, {
     //   address: "0x3D92B16Bb20A740C5dDcaEda305A7c16B2DdC580",
     //   constructorArguments: [
-    //     "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //     "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219",
     //     "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
     //   ],
     // });
@@ -200,7 +214,7 @@ const main = async () => {
     //   address: "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
     //   constructorArguments: [
     //     "0x3D92B16Bb20A740C5dDcaEda305A7c16B2DdC580",
-    //     "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //     "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219",
     //     "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
     //     "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
     //   ],
@@ -212,7 +226,7 @@ const main = async () => {
     //     "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
     //     "0xa6be95a639Ab4bEbb8D1b9203FC4cED7db23D4c2",
     //     "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
-    //     "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //     "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219",
     //     PKP_FIAT,
     //   ],
     // });
@@ -221,7 +235,7 @@ const main = async () => {
     //   constructorArguments: [
     //     "0xa6be95a639Ab4bEbb8D1b9203FC4cED7db23D4c2",
     //     "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
-    //     "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //     "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219",
     //   ],
     // });
 
@@ -235,35 +249,49 @@ const main = async () => {
     // await run(`verify:verify`, {
     //   address: "0x5a2C88948Ce8d9ba7a5EE8185cC60c70E4e9029a",
     //   constructorArguments: [
-    //     "Chromadin Open Action",
+    //     "ipfs://QmX5reN5N4D9Rqnxog3RxTRyyP3zhiYactF4PHfQkFgGZr",
     //     HUB,
     //     MODULE,
     //     "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
     //     "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
-    //     "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
+    //     "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219",
     //     "0x21607110b7E588d15701B3873cd0b48406427655",
     //     "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
     //     "0x2D861E653314f74746Ae1aE86cf3f84B884fbEd9"
     //   ],
     // });
-    await run(`verify:verify`, {
-      address: "0x5515aEc4dE195Fd7effEA443b7A5D39025Effc0f",
+    // await run(`verify:verify`, {
+    //   address: "0x5515aEc4dE195Fd7effEA443b7A5D39025Effc0f",
+    //   constructorArguments: [
+    //     "ipfs://Qmeq5kckAsaqKJxMPz3GDAMTCbda8LMxX4S1dgVFFSNyb4",
+    //     HUB,
+    //     MODULE,
+    //     "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
+    //     "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
+    //     "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219",
+    //     "0x21607110b7E588d15701B3873cd0b48406427655",
+    //     "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
+    //     "0x2D861E653314f74746Ae1aE86cf3f84B884fbEd9",
+    //   ],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0x897fD9cBC9b5aC57F2594231F25EB24BcF577ea2",
+    //   constructorArguments: [
+    //     "ipfs://QmY1Y4hG1DZCGAm6VVCZSjVKS6rkZaQ3nVYqCTmTazmT6E",
+    //     HUB,
+    //     MODULE,
+    //     "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
+    //     "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
+    //     "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219",
+    //     "0x21607110b7E588d15701B3873cd0b48406427655",
+    //     "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
+    //     "0x2D861E653314f74746Ae1aE86cf3f84B884fbEd9",
+    //   ],
+    // });
+     await run(`verify:verify`, {
+      address: "0x41F910439554cF699a198FBC7d2d586580dbed1b",
       constructorArguments: [
-        "Coin Op Open Action",
-        HUB,
-        MODULE,
-        "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",
-        "0x546Ca148D2d63Ab3d269a8eFea871961C4EbB34A",
-        "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
-        "0x21607110b7E588d15701B3873cd0b48406427655",
-        "0x79bd5f61dC3f0B33Cba544FDEBAC00Ce0d1a4e04",
-        "0x2D861E653314f74746Ae1aE86cf3f84B884fbEd9",
-      ],
-    });
-    await run(`verify:verify`, {
-      address: "0x897fD9cBC9b5aC57F2594231F25EB24BcF577ea2",
-      constructorArguments: [
-        "Lit Listener Open Action",
+        "ipfs://QmZ69yjcqwYgU3PmcsjWaaE8CiwXBg66uLZuJyGm8Yu7HM",
         HUB,
         MODULE,
         "0xBA362C1c23cA0F69E5926e64145cBBf06a46A1B7",

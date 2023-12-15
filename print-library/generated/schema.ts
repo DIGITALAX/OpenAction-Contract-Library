@@ -3352,6 +3352,40 @@ export class CollectionMetadata extends Entity {
     }
   }
 
+  get style(): string | null {
+    let value = this.get("style");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set style(value: string | null) {
+    if (!value) {
+      this.unset("style");
+    } else {
+      this.set("style", Value.fromString(<string>value));
+    }
+  }
+
+  get sex(): string | null {
+    let value = this.get("sex");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set sex(value: string | null) {
+    if (!value) {
+      this.unset("sex");
+    } else {
+      this.set("sex", Value.fromString(<string>value));
+    }
+  }
+
   get mediaTypes(): string | null {
     let value = this.get("mediaTypes");
     if (!value || value.kind == ValueKind.NULL) {
