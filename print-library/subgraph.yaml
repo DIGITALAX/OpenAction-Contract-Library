@@ -8,7 +8,7 @@ dataSources:
     name: PrintDesignData
     network: matic
     source:
-      address: "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F"
+      address: "0xCBE04798e01842508B22DcB6d66f7d7D80ccc219"
       abi: PrintDesignData
       startBlock: 50619963
     mapping:

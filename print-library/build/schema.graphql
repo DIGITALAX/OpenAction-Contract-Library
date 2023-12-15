@@ -316,6 +316,8 @@ type CollectionMetadata @entity {
   visibility: String
   mediaTypes: String
   prompt: String
+  style: String
+  sex: String
 }
 
 type DropMetadata @entity {
