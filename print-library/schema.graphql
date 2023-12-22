@@ -215,8 +215,7 @@ type NFTOnlyOrderCreated @entity(immutable: false) {
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
-  images: [String!]
-  names: [String!]
+  orderMetadata: OrderMetadata
   messages: [String!]
   subOrderPrice: [String!]
   subOrderCollectionIds: [String!]
@@ -234,8 +233,7 @@ type OrderCreated @entity(immutable: false) {
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
-  images: [String!]
-  names: [String!]
+  orderMetadata: OrderMetadata
   messages: [String!]
   details: String
   subOrderPrice: [String!]
@@ -297,6 +295,12 @@ type PrintTypeCollectionRegistry @entity(immutable: false) {
   collectionIds3: [BigInt!]
 }
 
+type OrderMetadata @entity {
+  id: ID!
+  names: [String!]
+  images: [String!]
+}
+
 type CollectionMetadata @entity {
   id: ID!
   title: String
@@ -308,6 +312,7 @@ type CollectionMetadata @entity {
   access: String
   audio: String
   video: String
+  onChromadin: String
   communities: String
   microbrandCover: String
   profileHandle: String

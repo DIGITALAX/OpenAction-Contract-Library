@@ -1113,40 +1113,6 @@ export class NFTOnlyOrderCreated extends Entity {
     this.set("transactionHash", Value.fromBytes(value));
   }
 
-  get images(): Array<string> | null {
-    let value = this.get("images");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
-  }
-
-  set images(value: Array<string> | null) {
-    if (!value) {
-      this.unset("images");
-    } else {
-      this.set("images", Value.fromStringArray(<Array<string>>value));
-    }
-  }
-
-  get names(): Array<string> | null {
-    let value = this.get("names");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
-  }
-
-  set names(value: Array<string> | null) {
-    if (!value) {
-      this.unset("names");
-    } else {
-      this.set("names", Value.fromStringArray(<Array<string>>value));
-    }
-  }
-
   get messages(): Array<string> | null {
     let value = this.get("messages");
     if (!value || value.kind == ValueKind.NULL) {
@@ -1215,6 +1181,23 @@ export class NFTOnlyOrderCreated extends Entity {
       this.unset("subOrderAmount");
     } else {
       this.set("subOrderAmount", Value.fromStringArray(<Array<string>>value));
+    }
+  }
+
+  get orderMetadata(): string | null {
+    let value = this.get("orderMetadata");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set orderMetadata(value: string | null) {
+    if (!value) {
+      this.unset("orderMetadata");
+    } else {
+      this.set("orderMetadata", Value.fromString(<string>value));
     }
   }
 }
@@ -1331,40 +1314,6 @@ export class OrderCreated extends Entity {
 
   set transactionHash(value: Bytes) {
     this.set("transactionHash", Value.fromBytes(value));
-  }
-
-  get images(): Array<string> | null {
-    let value = this.get("images");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
-  }
-
-  set images(value: Array<string> | null) {
-    if (!value) {
-      this.unset("images");
-    } else {
-      this.set("images", Value.fromStringArray(<Array<string>>value));
-    }
-  }
-
-  get names(): Array<string> | null {
-    let value = this.get("names");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
-  }
-
-  set names(value: Array<string> | null) {
-    if (!value) {
-      this.unset("names");
-    } else {
-      this.set("names", Value.fromStringArray(<Array<string>>value));
-    }
   }
 
   get messages(): Array<string> | null {
@@ -1489,6 +1438,23 @@ export class OrderCreated extends Entity {
       this.unset("subOrderAmount");
     } else {
       this.set("subOrderAmount", Value.fromStringArray(<Array<string>>value));
+    }
+  }
+
+  get orderMetadata(): string | null {
+    let value = this.get("orderMetadata");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set orderMetadata(value: string | null) {
+    if (!value) {
+      this.unset("orderMetadata");
+    } else {
+      this.set("orderMetadata", Value.fromString(<string>value));
     }
   }
 }
@@ -3216,6 +3182,23 @@ export class CollectionMetadata extends Entity {
     }
   }
 
+  get onChromadin(): string | null {
+    let value = this.get("onChromadin");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set onChromadin(value: string | null) {
+    if (!value) {
+      this.unset("onChromadin");
+    } else {
+      this.set("onChromadin", Value.fromString(<string>value));
+    }
+  }
+
   get audio(): string | null {
     let value = this.get("audio");
     if (!value || value.kind == ValueKind.NULL) {
@@ -3585,6 +3568,72 @@ export class CommunityMetadata extends Entity {
       this.unset("description");
     } else {
       this.set("description", Value.fromString(<string>value));
+    }
+  }
+}
+
+export class OrderMetadata extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save OrderMetadata entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type OrderMetadata must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("OrderMetadata", id.toString(), this);
+    }
+  }
+
+  static load(id: string): OrderMetadata | null {
+    return changetype<OrderMetadata | null>(store.get("OrderMetadata", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get images(): Array<string> | null {
+    let value = this.get("images");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set images(value: Array<string> | null) {
+    if (!value) {
+      this.unset("images");
+    } else {
+      this.set("images", Value.fromStringArray(<Array<string>>value));
+    }
+  }
+
+  get names(): Array<string> | null {
+    let value = this.get("names");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set names(value: Array<string> | null) {
+    if (!value) {
+      this.unset("names");
+    } else {
+      this.set("names", Value.fromStringArray(<Array<string>>value));
     }
   }
 }

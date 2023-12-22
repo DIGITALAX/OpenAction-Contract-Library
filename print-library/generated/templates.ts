@@ -22,6 +22,16 @@ export class DropMetadata extends DataSourceTemplate {
   }
 }
 
+export class OrderMetadata extends DataSourceTemplate {
+  static create(cid: string): void {
+    DataSourceTemplate.create("OrderMetadata", [cid]);
+  }
+
+  static createWithContext(cid: string, context: DataSourceContext): void {
+    DataSourceTemplate.createWithContext("OrderMetadata", [cid], context);
+  }
+}
+
 export class CommunityMetadata extends DataSourceTemplate {
   static create(cid: string): void {
     DataSourceTemplate.create("CommunityMetadata", [cid]);
