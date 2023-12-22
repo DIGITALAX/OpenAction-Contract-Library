@@ -28,6 +28,7 @@ import {
   UpdateOrderMessage,
   UpdateSubOrderStatus,
 } from "../generated/schema";
+import { OrderMetadata as OrderMetadataTemplate } from "../generated/templates";
 
 export function handleNFTOnlyOrderCreated(
   event: NFTOnlyOrderCreatedEvent
@@ -56,8 +57,6 @@ export function handleNFTOnlyOrderCreated(
   let amounts: Array<string> = [];
   let collectionIds: Array<string> = [];
   let prices: Array<string> = [];
-  let images: Array<string> = [];
-  let names: Array<string> = [];
 
   let design = PrintDesignData.bind(
     Address.fromString("0x062aA8B94a308fE84bE7974bAC758bC574145907")
@@ -106,30 +105,9 @@ export function handleNFTOnlyOrderCreated(
       const uri = design.getCollectionURI(collId);
       if (uri) {
         let ipfsHash = uri.split("/").pop();
-
         if (ipfsHash != null) {
-          let metadata = ipfs.cat(ipfsHash);
-          if (metadata) {
-            const value = json.fromBytes(metadata).toObject();
-            if (value) {
-              let image = value.get("images");
-              if (image && image.kind === JSONValueKind.ARRAY) {
-                images.push(
-                  image.toArray().map<string>((item) => item.toString())[0]
-                );
-              }
-
-              let cover = value.get("cover");
-              if (cover && cover.kind === JSONValueKind.STRING) {
-                images.push(cover.toString());
-              }
-
-              let title = value.get("title");
-              if (title && title.kind === JSONValueKind.STRING) {
-                names.push(title.toString());
-              }
-            }
-          }
+          entity.orderMetadata = ipfsHash;
+          OrderMetadataTemplate.create(ipfsHash);
         }
       }
     }
@@ -138,8 +116,6 @@ export function handleNFTOnlyOrderCreated(
   entity.subOrderAmount = amounts;
   entity.subOrderCollectionIds = collectionIds;
   entity.subOrderPrice = prices;
-  entity.images = images;
-  entity.names = names;
 
   entity.save();
 }
@@ -169,8 +145,6 @@ export function handleOrderCreated(event: OrderCreatedEvent): void {
   let statuses: Array<string> = [];
   let collectionIds: Array<string> = [];
   let prices: Array<string> = [];
-  let images: Array<string> = [];
-  let names: Array<string> = [];
 
   let design = PrintDesignData.bind(
     Address.fromString("0x062aA8B94a308fE84bE7974bAC758bC574145907")
@@ -210,26 +184,11 @@ export function handleOrderCreated(event: OrderCreatedEvent): void {
     collectionIds.push(collId.toString());
     const uri = design.getCollectionURI(collId);
 
-    let ipfsHash = uri.split("/").pop();
-
-    if (ipfsHash != null) {
-      let metadata = ipfs.cat(ipfsHash);
-
-      if (metadata) {
-        const value = json.fromBytes(metadata).toObject();
-        if (value) {
-          let image = value.get("images");
-          if (image) {
-            images.push(
-              image.toArray().map<string>((item) => item.toString())[0]
-            );
-          }
-
-          let title = value.get("title");
-          if (title) {
-            names.push(title.toString());
-          }
-        }
+    if (uri) {
+      let ipfsHash = uri.split("/").pop();
+      if (ipfsHash != null) {
+        entity.orderMetadata = ipfsHash;
+        OrderMetadataTemplate.create(ipfsHash);
       }
     }
   }
@@ -239,8 +198,6 @@ export function handleOrderCreated(event: OrderCreatedEvent): void {
   entity.subOrderStatus = statuses;
   entity.subOrderCollectionIds = collectionIds;
   entity.subOrderPrice = prices;
-  entity.images = images;
-  entity.names = names;
 
   entity.blockNumber = event.block.number;
   entity.blockTimestamp = event.block.timestamp;

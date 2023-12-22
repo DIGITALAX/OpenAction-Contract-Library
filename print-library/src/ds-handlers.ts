@@ -3,12 +3,12 @@ import {
   JSONValueKind,
   dataSource,
   json,
-  log,
 } from "@graphprotocol/graph-ts";
 import {
   CollectionMetadata,
   CommunityMetadata,
   DropMetadata,
+  OrderMetadata,
 } from "../generated/schema";
 
 export function handleCommunityMetadata(content: Bytes): void {
@@ -102,6 +102,10 @@ export function handleCollectionMetadata(content: Bytes): void {
         .map<string>((item) => item.toString())
         .join(", ");
     }
+    let onChromadin = value.get("onChromadin");
+    if (onChromadin && onChromadin.kind === JSONValueKind.STRING) {
+      metadata.onChromadin = onChromadin.toString().substring(0, 2000);
+    }
     let colors = value.get("colors");
     if (colors && colors.kind === JSONValueKind.ARRAY) {
       metadata.colors = colors
@@ -182,6 +186,45 @@ export function handleDropMetadata(content: Bytes): void {
     let title = value.get("title");
     if (title !== null && title.kind === JSONValueKind.STRING) {
       metadata.dropTitle = title.toString();
+    }
+    metadata.save();
+  }
+}
+export function handleOrderMetadata(content: Bytes): void {
+  let metadata = new OrderMetadata(dataSource.stringParam());
+  const value = json.fromString(content.toString()).toObject();
+  if (value) {
+    let cover = value.get("cover");
+    if (
+      cover !== null &&
+      cover.kind === JSONValueKind.STRING &&
+      !cover.toString().includes("base64")
+    ) {
+      if (!metadata.images) {
+        metadata.images = [];
+      }
+      (metadata.images as Array<string>).push(cover.toString() as string);
+    }
+
+    let image = value.get("images");
+    if (image && image.kind === JSONValueKind.ARRAY) {
+      if (!metadata.images) {
+        metadata.images = [];
+      }
+
+      if (image && image.toArray()[0].kind === JSONValueKind.STRING) {
+        (metadata.images as Array<string>).push(
+          image.toArray()[0].toString() as string
+        );
+      }
+    }
+
+    let title = value.get("title");
+    if (title !== null && title.kind === JSONValueKind.STRING) {
+      if (!metadata.names) {
+        metadata.names = [];
+      }
+      (metadata.names as Array<string>).push(title.toString() as string);
     }
     metadata.save();
   }

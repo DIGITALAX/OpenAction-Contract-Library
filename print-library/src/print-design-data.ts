@@ -274,27 +274,23 @@ export function handleDropCollectionsUpdated(
     let ipfsHash = event.params.uri.split("/").pop();
 
     if (ipfsHash != null) {
-      let metadata = ipfs.cat(ipfsHash);
+      entityDrop.dropDetails = ipfsHash;
+      DropMetadataTemplate.create(ipfsHash);
 
-      if (metadata) {
-        entityDrop.dropDetails = ipfsHash;
-        DropMetadataTemplate.create(ipfsHash);
+      let collectionIds = entityDrop.collectionIds;
 
-        let collectionIds = entityDrop.collectionIds;
+      if (collectionIds) {
+        for (let i = 0; i < collectionIds.length; i++) {
+          let collectionId = collectionIds[i];
+          if (collectionId) {
+            let entityCollection = CollectionCreated.load(
+              Bytes.fromByteArray(ByteArray.fromBigInt(collectionId))
+            );
 
-        if (collectionIds) {
-          for (let i = 0; i < collectionIds.length; i++) {
-            let collectionId = collectionIds[i];
-            if (collectionId) {
-              let entityCollection = CollectionCreated.load(
-                Bytes.fromByteArray(ByteArray.fromBigInt(collectionId))
-              );
-
-              if (entityCollection) {
-                entityCollection.dropMetadata = ipfsHash;
-                entityCollection.dropId = entity.dropId;
-                entityCollection.save();
-              }
+            if (entityCollection) {
+              entityCollection.dropMetadata = ipfsHash;
+              entityCollection.dropId = entity.dropId;
+              entityCollection.save();
             }
           }
         }

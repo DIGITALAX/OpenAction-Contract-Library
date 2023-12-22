@@ -1,8 +1,6 @@
 specVersion: 0.0.5
 schema:
   file: schema.graphql
-features:
-  - ipfsOnEthereumContracts
 dataSources:
   - kind: ethereum
     name: PrintDesignData
@@ -191,3 +189,15 @@ templates:
       abis:
         - name: PrintDesignData
           file: CommunityMetadata/abis/PrintDesignData.json
+  - name: OrderMetadata
+    kind: file/ipfs
+    mapping:
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      file: templates/CollectionMetadata/CollectionMetadata.wasm
+      handler: handleOrderMetadata
+      entities:
+        - OrderMetadata
+      abis:
+        - name: PrintDesignData
+          file: OrderMetadata/abis/PrintDesignData.json
