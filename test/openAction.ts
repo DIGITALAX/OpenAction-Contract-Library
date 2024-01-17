@@ -206,7 +206,7 @@ describe("ChromadinOpenAction", () => {
     it("should correctly initialize a publication action", async () => {
       const encodedData = ethers.utils.defaultAbiCoder.encode(
         [
-          "tuple(uint256[] prices, uint256[] communityIds, address[] acceptedTokens, string uri, address fulfiller, address creatorAddress, uint256 amount, uint256 dropId, bool unlimited, bool encrypted)",
+          "tuple(uint256[] prices, uint256[] communityIds, address[] acceptedTokens, string uri, address fulfiller, uint256 amount, uint256 dropId, bool unlimited, bool encrypted)",
         ],
         [
           {
@@ -220,7 +220,6 @@ describe("ChromadinOpenAction", () => {
             ],
             uri: "ipfs://QmVY1588Y98iMKeaDskCq7R3GrbTBSLpoCrzgC1MgXUkgk",
             fulfiller: "0x0000000000000000000000000000000000000000",
-            creatorAddress: await creator.getAddress(),
             amount: 6,
             dropId: 1,
             unlimited: false,
@@ -234,7 +233,7 @@ describe("ChromadinOpenAction", () => {
         .initializePublicationAction(
           50,
           10,
-          await hub.getAddress(),
+          await creator.getAddress(),
           encodedData
         );
 
@@ -343,7 +342,7 @@ describe("ChromadinOpenAction", () => {
 
       const encodedData = ethers.utils.defaultAbiCoder.encode(
         [
-          "tuple(uint256[] prices, uint256[] communityIds, address[] acceptedTokens, string uri, address fulfiller, address creatorAddress, uint256 amount, uint256 dropId, bool unlimited, bool encrypted)",
+          "tuple(uint256[] prices, uint256[] communityIds, address[] acceptedTokens, string uri, address fulfiller, uint256 amount, uint256 dropId, bool unlimited, bool encrypted)",
         ],
         [
           {
@@ -352,7 +351,6 @@ describe("ChromadinOpenAction", () => {
             acceptedTokens: [mona.address, usdt.address],
             uri: "ipfs://QmVY1588Y98iMKeaDskCq7R3GrbTBSLpoCrzgC1MgXUkgk",
             fulfiller: "0x0000000000000000000000000000000000000000",
-            creatorAddress: await creatorTwo.getAddress(),
             amount: 100,
             dropId: 3,
             unlimited: true,
@@ -366,7 +364,7 @@ describe("ChromadinOpenAction", () => {
         .initializePublicationAction(
           20,
           10,
-          await hub.getAddress(),
+          await creatorTwo.getAddress(),
           encodedData
         );
 
@@ -375,7 +373,7 @@ describe("ChromadinOpenAction", () => {
         .initializePublicationAction(
           4001,
           10,
-          await hub.getAddress(),
+          await creatorTwo.getAddress(),
           encodedData
         );
 
@@ -716,7 +714,7 @@ describe("ChromadinOpenAction", () => {
         .createDrop("newcommunitydrop");
       const myEncodedData = ethers.utils.defaultAbiCoder.encode(
         [
-          "tuple(uint256[] prices, uint256[] communityIds, address[] acceptedTokens, string uri, address fulfiller, address creatorAddress, uint256 amount, uint256 dropId, bool unlimited, bool encrypted)",
+          "tuple(uint256[] prices, uint256[] communityIds, address[] acceptedTokens, string uri, address fulfiller, uint256 amount, uint256 dropId, bool unlimited, bool encrypted)",
         ],
         [
           {
@@ -730,7 +728,6 @@ describe("ChromadinOpenAction", () => {
             ],
             uri: "ipfs://QmVY1588Y98iMKeaDskCq7R3GrbTBSLpoCrzgC1MgXUkgk",
             fulfiller: "0x0000000000000000000000000000000000000000",
-            creatorAddress: await creatorTwo.getAddress(),
             amount: 1,
             dropId: 5,
             unlimited: false,
@@ -744,7 +741,7 @@ describe("ChromadinOpenAction", () => {
         .initializePublicationAction(
           100,
           10,
-          await hub.getAddress(),
+          await creatorTwo.getAddress(),
           myEncodedData
         );
 
@@ -808,7 +805,7 @@ describe("ChromadinOpenAction", () => {
         .createDrop("listenerdrop");
       const myEncodedData = ethers.utils.defaultAbiCoder.encode(
         [
-          "tuple(uint256[] prices, uint256[] communityIds, address[] acceptedTokens, string uri, address fulfiller, address creatorAddress, uint256 amount, uint256 dropId, bool unlimited, bool encrypted)",
+          "tuple(uint256[] prices, uint256[] communityIds, address[] acceptedTokens, string uri, address fulfiller, uint256 amount, uint256 dropId, bool unlimited, bool encrypted)",
           "uint8",
         ],
         [
@@ -823,7 +820,6 @@ describe("ChromadinOpenAction", () => {
             ],
             uri: "ipfs://QmVY1588Y98iMKeaDskCq7R3GrbTBSLpoCrzgC1MgXUkgk",
             fulfiller: await fulfiller.getAddress(),
-            creatorAddress: await creatorListener.getAddress(),
             amount: 1,
             dropId: 6,
             unlimited: false,
@@ -838,7 +834,7 @@ describe("ChromadinOpenAction", () => {
         .initializePublicationAction(
           454,
           4789,
-          await hub.getAddress(),
+          await creatorListener.getAddress(),
           myEncodedData
         );
 
@@ -952,7 +948,7 @@ describe("ChromadinOpenAction", () => {
 
       const communityEncoded = ethers.utils.defaultAbiCoder.encode(
         [
-          "tuple(uint256[] prices, uint256[] communityIds, address[] acceptedTokens, string uri, address fulfiller, address creatorAddress, uint256 amount, uint256 dropId, bool unlimited, bool encrypted)",
+          "tuple(uint256[] prices, uint256[] communityIds, address[] acceptedTokens, string uri, address fulfiller, uint256 amount, uint256 dropId, bool unlimited, bool encrypted)",
           "uint8",
         ],
         [
@@ -967,7 +963,6 @@ describe("ChromadinOpenAction", () => {
             ],
             uri: "ipfs://QmVY1588Y98iMKeaDskCq7R3GrbTBSLpoCrzgC1MgXUkgk",
             fulfiller: await fulfiller.getAddress(),
-            creatorAddress: await creatorListener.getAddress(),
             amount: 5,
             dropId: 6,
             unlimited: false,
@@ -982,7 +977,7 @@ describe("ChromadinOpenAction", () => {
         .initializePublicationAction(
           124,
           1337,
-          await hub.getAddress(),
+          await creatorListener.getAddress(),
           communityEncoded
         );
 
@@ -1044,7 +1039,7 @@ describe("ChromadinOpenAction", () => {
       await collectionCreator.connect(creatorCoinOp).createDrop("coinOpdrop");
       const myEncodedData = ethers.utils.defaultAbiCoder.encode(
         [
-          "tuple(uint256[] prices, uint256[] communityIds, address[] acceptedTokens, string uri, address fulfiller, address creatorAddress, uint256 amount, uint256 dropId, bool unlimited, bool encrypted)",
+          "tuple(uint256[] prices, uint256[] communityIds, address[] acceptedTokens, string uri, address fulfiller, uint256 amount, uint256 dropId, bool unlimited, bool encrypted)",
           "uint8",
         ],
         [
@@ -1059,7 +1054,6 @@ describe("ChromadinOpenAction", () => {
             acceptedTokens: [mona.address],
             uri: "ipfs://QmVY1588Y98iMKeaDskCq7R3GrbTBSLpoCrzgC1MgXUkgk",
             fulfiller: await fulfillerCoinOp.getAddress(),
-            creatorAddress: await creatorCoinOp.getAddress(),
             amount: 100,
             dropId: 7,
             unlimited: true,
@@ -1074,7 +1068,7 @@ describe("ChromadinOpenAction", () => {
         .initializePublicationAction(
           127,
           438,
-          await hub.getAddress(),
+          await creatorCoinOp.getAddress(),
           myEncodedData
         );
 
@@ -1240,7 +1234,7 @@ describe("ChromadinOpenAction", () => {
 
       const comEncoded = ethers.utils.defaultAbiCoder.encode(
         [
-          "tuple(uint256[] prices, uint256[] communityIds, address[] acceptedTokens, string uri, address fulfiller, address creatorAddress, uint256 amount, uint256 dropId, bool unlimited, bool encrypted)",
+          "tuple(uint256[] prices, uint256[] communityIds, address[] acceptedTokens, string uri, address fulfiller, uint256 amount, uint256 dropId, bool unlimited, bool encrypted)",
           "uint8",
         ],
         [
@@ -1259,7 +1253,6 @@ describe("ChromadinOpenAction", () => {
             ],
             uri: "ipfs://QmVY1588Y98iMKeaDskCq7R3GrbTBSLpoCrzgC1MgXUkgk",
             fulfiller: await fulfillerCoinOp.getAddress(),
-            creatorAddress: await creatorCoinOp.getAddress(),
             amount: 10,
             dropId: 7,
             unlimited: true,
@@ -1274,7 +1267,7 @@ describe("ChromadinOpenAction", () => {
         .initializePublicationAction(
           19,
           13,
-          await hub.getAddress(),
+          await creatorCoinOp.getAddress(),
           comEncoded
         );
 
@@ -1328,7 +1321,7 @@ describe("ChromadinOpenAction", () => {
 
       const fiatEncoded = ethers.utils.defaultAbiCoder.encode(
         [
-          "tuple(uint256[] prices, uint256[] communityIds, address[] acceptedTokens, string uri, address fulfiller, address creatorAddress, uint256 amount, uint256 dropId, bool unlimited, bool encrypted)",
+          "tuple(uint256[] prices, uint256[] communityIds, address[] acceptedTokens, string uri, address fulfiller, uint256 amount, uint256 dropId, bool unlimited, bool encrypted)",
           "uint8",
         ],
         [
@@ -1347,7 +1340,6 @@ describe("ChromadinOpenAction", () => {
             ],
             uri: "ipfs://QmVY1588Y98iMKeaDskCq7R3GrbTBSLpoCrzgC1MgXUkgk",
             fulfiller: await fulfillerCoinOp.getAddress(),
-            creatorAddress: await creatorCoinOp.getAddress(),
             amount: 10,
             dropId: 7,
             unlimited: true,
@@ -1359,7 +1351,12 @@ describe("ChromadinOpenAction", () => {
 
       await coinOpOpenAction
         .connect(hub)
-        .initializePublicationAction(1, 2, await hub.getAddress(), fiatEncoded);
+        .initializePublicationAction(
+          1,
+          2,
+          await creatorCoinOp.getAddress(),
+          fiatEncoded
+        );
 
       try {
         await coinOpOpenAction.connect(hub).processPublicationAction({

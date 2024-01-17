@@ -79,10 +79,10 @@ contract CommunityCreator {
             address _creator = printDesignData.getCollectionCreator(
                 _tokenIds[i]
             );
-            PrintLibrary.Origin _origin = printDesignData.getCollectionOrigin(
+            uint256 _origin = printDesignData.getCollectionOrigin(
                 _tokenIds[i]
             );
-            PrintLibrary.PrintType _print = printDesignData
+            uint256 _print = printDesignData
                 .getCollectionPrintType(_tokenIds[i]);
 
             if (

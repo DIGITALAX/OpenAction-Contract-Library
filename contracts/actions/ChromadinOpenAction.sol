@@ -99,12 +99,13 @@ contract ChromadinOpenAction is
         PrintLibrary.CollectionValuesParams memory _collectionCreator = abi
             .decode(_data, (PrintLibrary.CollectionValuesParams));
 
-        if (!printAccessControl.isDesigner(_collectionCreator.creatorAddress)) {
+        if (!printAccessControl.isDesigner(_executor)) {
             revert InvalidAddress();
         }
 
         uint256 _collectionId = _configureCollection(
             _collectionCreator,
+            _executor,
             _pubId,
             _profileId
         );
@@ -115,7 +116,7 @@ contract ChromadinOpenAction is
             _collectionId,
             _profileId,
             _pubId,
-            _collectionCreator.creatorAddress,
+            _executor,
             _collectionCreator.prices.length
         );
 
@@ -257,6 +258,7 @@ contract ChromadinOpenAction is
 
     function _configureCollection(
         PrintLibrary.CollectionValuesParams memory _collectionCreator,
+        address _executor,
         uint256 _pubId,
         uint256 _profileId
     ) internal returns (uint256) {
@@ -270,9 +272,9 @@ contract ChromadinOpenAction is
                 pubId: _pubId,
                 profileId: _profileId,
                 dropId: _collectionCreator.dropId,
-                creator: _collectionCreator.creatorAddress,
-                printType: PrintLibrary.PrintType.NFTOnly,
-                origin: PrintLibrary.Origin.Chromadin,
+                creator: _executor,
+                printType: 6,
+                origin: 1,
                 amount: _collectionCreator.amount,
                 unlimited: _collectionCreator.unlimited,
                 encrypted: _collectionCreator.encrypted

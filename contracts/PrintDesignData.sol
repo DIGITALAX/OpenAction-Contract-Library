@@ -231,7 +231,7 @@ contract PrintDesignData {
 
     function getCollectionOrigin(
         uint256 _collectionId
-    ) public view returns (PrintLibrary.Origin) {
+    ) public view returns (uint256) {
         return _collections[_collectionId].origin;
     }
 
@@ -255,7 +255,7 @@ contract PrintDesignData {
 
     function getCollectionPrintType(
         uint256 _collectionId
-    ) public view returns (PrintLibrary.PrintType) {
+    ) public view returns (uint256) {
         return _collections[_collectionId].printType;
     }
 

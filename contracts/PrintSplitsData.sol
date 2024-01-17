@@ -11,13 +11,13 @@ contract PrintSplitsData {
     string public name;
     address[] private _allCurrencies;
 
-    mapping(address => mapping(PrintLibrary.PrintType => uint256))
+    mapping(address => mapping(uint256 => uint256))
         private _designerSplits;
-    mapping(address => mapping(PrintLibrary.PrintType => uint256))
+    mapping(address => mapping(uint256 => uint256))
         private _fulfillerSplits;
-    mapping(address => mapping(PrintLibrary.PrintType => uint256))
+    mapping(address => mapping(uint256 => uint256))
         private _treasurySplits;
-    mapping(address => mapping(PrintLibrary.PrintType => uint256))
+    mapping(address => mapping(uint256 => uint256))
         private _fulfillerBases;
     mapping(address => uint256) private _currencyIndex;
     mapping(address => bool) private _currencies;
@@ -31,22 +31,22 @@ contract PrintSplitsData {
 
     event FulfillerSplitSet(
         address fulfiller,
-        PrintLibrary.PrintType printType,
+        uint256 printType,
         uint256 split
     );
     event FulfillerBaseSet(
         address fulfiller,
-        PrintLibrary.PrintType printType,
+        uint256 printType,
         uint256 split
     );
     event DesignerSplitSet(
         address designer,
-        PrintLibrary.PrintType printType,
+        uint256 printType,
         uint256 split
     );
     event TreasurySplitSet(
         address treasury,
-        PrintLibrary.PrintType printType,
+        uint256 printType,
         uint256 split
     );
     event CurrencyAdded(address indexed currency);
@@ -68,7 +68,7 @@ contract PrintSplitsData {
 
     function setFulfillerSplit(
         address _address,
-        PrintLibrary.PrintType _printType,
+        uint256 _printType,
         uint256 _amount
     ) external onlyAdmin {
         _fulfillerSplits[_address][_printType] = _amount;
@@ -78,7 +78,7 @@ contract PrintSplitsData {
 
     function setFulfillerBase(
         address _address,
-        PrintLibrary.PrintType _printType,
+        uint256 _printType,
         uint256 _amount
     ) external onlyAdmin {
         _fulfillerBases[_address][_printType] = _amount;
@@ -87,7 +87,7 @@ contract PrintSplitsData {
 
     function setDesignerSplit(
         address _address,
-        PrintLibrary.PrintType _printType,
+        uint256 _printType,
         uint256 _amount
     ) external onlyAdmin {
         _designerSplits[_address][_printType] = _amount;
@@ -96,7 +96,7 @@ contract PrintSplitsData {
 
     function setTreasurySplit(
         address _address,
-        PrintLibrary.PrintType _printType,
+        uint256 _printType,
         uint256 _amount
     ) external onlyAdmin {
         _treasurySplits[_address][_printType] = _amount;
@@ -146,28 +146,28 @@ contract PrintSplitsData {
 
     function getFulfillerBase(
         address _address,
-        PrintLibrary.PrintType _printType
+        uint256 _printType
     ) public view returns (uint256) {
         return _fulfillerBases[_address][_printType];
     }
 
     function getFulfillerSplit(
         address _address,
-        PrintLibrary.PrintType _printType
+        uint256 _printType
     ) public view returns (uint256) {
         return _fulfillerSplits[_address][_printType];
     }
 
     function getDesignerSplit(
         address _address,
-        PrintLibrary.PrintType _printType
+        uint256 _printType
     ) public view returns (uint256) {
         return _designerSplits[_address][_printType];
     }
 
     function getTreasurySplit(
         address _address,
-        PrintLibrary.PrintType _printType
+        uint256 _printType
     ) public view returns (uint256) {
         return _treasurySplits[_address][_printType];
     }

@@ -3,26 +3,6 @@
 pragma solidity ^0.8.16;
 
 contract PrintLibrary {
-    enum Origin {
-        CoinOp,
-        Chromadin,
-        Legend,
-        Listener,
-        F3M,
-        Other
-    }
-
-    enum PrintType {
-        Sticker,
-        Poster,
-        Shirt,
-        Hoodie,
-        Sleeve,
-        Crop,
-        NFTOnly,
-        Custom,
-        Other
-    }
     enum OrderStatus {
         Fulfilled,
         Shipped,
@@ -44,8 +24,8 @@ contract PrintLibrary {
         uint256 dropId;
         uint256 mintedTokens;
         uint256 amount;
-        Origin origin;
-        PrintType printType;
+        uint256 origin;
+        uint256 printType;
         bool unlimited;
         bool encrypted;
     }
@@ -94,11 +74,11 @@ contract PrintLibrary {
     struct Community {
         address[] validCreatorKeys;
         address[] valid20AddressKeys;
-        Origin[] validOriginKeys;
-        PrintType[] validPrintTypeKeys;
+        uint256[] validOriginKeys;
+        uint256[] validPrintTypeKeys;
         mapping(address => bool) validCreators;
-        mapping(Origin => bool) validOrigins;
-        mapping(PrintType => bool) validPrintTypes;
+        mapping(uint256 => bool) validOrigins;
+        mapping(uint256 => bool) validPrintTypes;
         mapping(address => uint256) valid20Thresholds;
         CommunityMember[] communityMembers;
         string uri;
@@ -128,8 +108,8 @@ contract PrintLibrary {
         string uri;
         address fulfiller;
         address creator;
-        PrintLibrary.PrintType printType;
-        Origin origin;
+        uint256 printType;
+        uint256 origin;
         uint256 amount;
         uint256 pubId;
         uint256 profileId;
@@ -139,8 +119,8 @@ contract PrintLibrary {
     }
     struct CreateCommunityParams {
         address[] validCreators;
-        Origin[] validOrigins;
-        PrintType[] validPrintTypes;
+        uint256[] validOrigins;
+        uint256[] validPrintTypes;
         address[] valid20Addresses;
         uint256[] valid20Thresholds;
         string uri;
@@ -175,7 +155,6 @@ contract PrintLibrary {
         address[] acceptedTokens;
         string uri;
         address fulfiller;
-        address creatorAddress;
         uint256 amount;
         uint256 dropId;
         bool unlimited;

@@ -269,7 +269,7 @@ contract PrintCommunityData {
 
     function getCommunityValidOriginKeys(
         uint256 _communityId
-    ) public view returns (PrintLibrary.Origin[] memory) {
+    ) public view returns (uint256[] memory) {
         return _communities[_communityId].validOriginKeys;
     }
 
@@ -281,7 +281,7 @@ contract PrintCommunityData {
 
     function getCommunityValidPrintTypeKeys(
         uint256 _communityId
-    ) public view returns (PrintLibrary.PrintType[] memory) {
+    ) public view returns (uint256[] memory) {
         return _communities[_communityId].validPrintTypeKeys;
     }
 
@@ -299,14 +299,14 @@ contract PrintCommunityData {
     }
 
     function getCommunityIsValidOrigin(
-        PrintLibrary.Origin _origin,
+        uint256 _origin,
         uint256 _communityId
     ) public view returns (bool) {
         return _communities[_communityId].validOrigins[_origin];
     }
 
     function getCommunityIsValidPrintType(
-        PrintLibrary.PrintType _printType,
+        uint256 _printType,
         uint256 _communityId
     ) public view returns (bool) {
         return _communities[_communityId].validPrintTypes[_printType];
