@@ -88,18 +88,16 @@ contract CoinOpOpenAction is
     ) external override onlyHub returns (bytes memory) {
         (
             PrintLibrary.CollectionValuesParams memory _collectionCreator,
-            PrintLibrary.PrintType _printType
-        ) = abi.decode(
-                _data,
-                (PrintLibrary.CollectionValuesParams, PrintLibrary.PrintType)
-            );
+            uint256 _printType
+        ) = abi.decode(_data, (PrintLibrary.CollectionValuesParams, uint256));
 
-        if (!printAccessControl.isDesigner(_collectionCreator.creatorAddress)) {
+        if (!printAccessControl.isDesigner(_executor)) {
             revert InvalidAddress();
         }
 
         uint256 _collectionId = _configureCollection(
             _collectionCreator,
+            _executor,
             _printType,
             _pubId,
             _profileId
@@ -111,7 +109,7 @@ contract CoinOpOpenAction is
             _collectionId,
             _profileId,
             _pubId,
-            _collectionCreator.creatorAddress,
+            _executor,
             _collectionCreator.prices.length
         );
 
@@ -199,8 +197,9 @@ contract CoinOpOpenAction is
         address _fulfiller = printDesignData.getCollectionFulfiller(
             _collectionId
         );
-        PrintLibrary.PrintType _printType = printDesignData
-            .getCollectionPrintType(_collectionId);
+        uint256 _printType = printDesignData.getCollectionPrintType(
+            _collectionId
+        );
 
         uint256 _fulfillerBase = printSplitsData.getFulfillerBase(
             _fulfiller,
@@ -278,7 +277,8 @@ contract CoinOpOpenAction is
 
     function _configureCollection(
         PrintLibrary.CollectionValuesParams memory _collectionCreator,
-        PrintLibrary.PrintType _printType,
+        address _executor,
+        uint256 _printType,
         uint256 _pubId,
         uint256 _profileId
     ) internal returns (uint256) {
@@ -292,9 +292,9 @@ contract CoinOpOpenAction is
                 pubId: _pubId,
                 profileId: _profileId,
                 dropId: _collectionCreator.dropId,
-                creator: _collectionCreator.creatorAddress,
+                creator: _executor,
                 printType: _printType,
-                origin: PrintLibrary.Origin.CoinOp,
+                origin: 0,
                 amount: _collectionCreator.amount,
                 unlimited: _collectionCreator.unlimited,
                 encrypted: _collectionCreator.encrypted

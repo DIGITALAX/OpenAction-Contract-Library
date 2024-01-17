@@ -63,65 +63,65 @@ const main = async () => {
     //   printSplitsData.address
     // );
     // const marketCreator = await MarketCreator.deploy(
-    //   printAccessControl.address,
-    //   printSplitsData.address,
-    //   printOrderData.address,
-    //   collectionCreator.address,
-    //   printDesignData.address,
+    //   "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
+    //   "0x5A4A9a99d4736aE024044d17AA989426C76fafFD",
+    //   "0xB2855fC6577CBbd9f71A6A8e992a71e4eEB19809",
+    //   "0xBa75ec6B4660063817C190e08AC635d174076D0B",
+    //   "0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf",
     //   PKP_FIAT
     // );
     // const communityCreator = await CommunityCreator.deploy(
-    //   printOrderData.address,
-    //   printAccessControl.address,
-    //   printDesignData.address
+    //   "0xB2855fC6577CBbd9f71A6A8e992a71e4eEB19809",
+    //   "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
+    //   "0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf",
     // );
     // const printCommunityData = await PrintCommunityData.deploy(
-    //   printAccessControl.address,
+    //   "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
     //   communityCreator.address
     // );
     // const chromadinOpenAction = await ChromadinOpenAction.deploy(
-    //   "ipfs://QmX5reN5N4D9Rqnxog3RxTRyyP3zhiYactF4PHfQkFgGZr",
+    //   "ipfs://QmdRqPYtBP1Vkxy6tLmfUmrYR31xawrxcYnhFjY9q1hF4g",
     //   HUB,
     //   MODULE,
-    //   "0x4931896d9bF48C670FAb6f1b6189DDC122Ff7e2E",
-    //   "0xeB5116025E17D2E6E27126C104cb455dCa63460D",
-    //   "0x062aA8B94a308fE84bE7974bAC758bC574145907",
-    //   "0xA604aEaDC1D0B7110Dba550e2941f599d0fcB9Fe",
-    //   "0x0c585F09765DF503Bf3C83457bC5834FB761E411",
-    //   "0x8fAA6114f8345672DE9e4e4302aD497a52a2fd60"
+    //   "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
+    //   "0x5A4A9a99d4736aE024044d17AA989426C76fafFD",
+    //   "0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf",
+    //   "0xc86f5C3101b64A8873842A26A78dB399e827855e",
+    //   "0xBa75ec6B4660063817C190e08AC635d174076D0B",
+    //   "0x747f62E5A7DEC0f3B20326a78AfC2A30d2478433"
     // );
     // const coinOpOpenAction = await CoinOpOpenAction.deploy(
-    //   "ipfs://Qmeq5kckAsaqKJxMPz3GDAMTCbda8LMxX4S1dgVFFSNyb4",
+    //   "ipfs://QmTrXPiMHYVtHNaMQ7LpfQkBJUe8uyHyjzxh9f8kdXsqyU",
     //   HUB,
     //   MODULE,
-    //   "0x4931896d9bF48C670FAb6f1b6189DDC122Ff7e2E",
-    //   "0xeB5116025E17D2E6E27126C104cb455dCa63460D",
-    //   "0x062aA8B94a308fE84bE7974bAC758bC574145907",
-    //   "0xA604aEaDC1D0B7110Dba550e2941f599d0fcB9Fe",
-    //   "0x0c585F09765DF503Bf3C83457bC5834FB761E411",
-    //   "0x8fAA6114f8345672DE9e4e4302aD497a52a2fd60"
+    //   "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
+    //   "0x5A4A9a99d4736aE024044d17AA989426C76fafFD",
+    //   "0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf",
+    //   "0xc86f5C3101b64A8873842A26A78dB399e827855e",
+    //   "0xBa75ec6B4660063817C190e08AC635d174076D0B",
+    //   "0x747f62E5A7DEC0f3B20326a78AfC2A30d2478433"
     // );
     // const listenerOpenAction = await ListenerOpenAction.deploy(
-    //   "ipfs://QmY1Y4hG1DZCGAm6VVCZSjVKS6rkZaQ3nVYqCTmTazmT6E",
+    //   "ipfs://QmTMDXC3Sd1ViFNLWNpRg6KdRsDoZYFQ97gmuoJjHJHevS",
     //   HUB,
     //   MODULE,
-    //   "0x4931896d9bF48C670FAb6f1b6189DDC122Ff7e2E",
-    //   "0xeB5116025E17D2E6E27126C104cb455dCa63460D",
-    //   "0x062aA8B94a308fE84bE7974bAC758bC574145907",
-    //   "0xA604aEaDC1D0B7110Dba550e2941f599d0fcB9Fe",
-    //   "0x0c585F09765DF503Bf3C83457bC5834FB761E411",
-    //   "0x8fAA6114f8345672DE9e4e4302aD497a52a2fd60"
+    //   "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
+    //   "0x5A4A9a99d4736aE024044d17AA989426C76fafFD",
+    //   "0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf",
+    //   "0xc86f5C3101b64A8873842A26A78dB399e827855e",
+    //   "0xBa75ec6B4660063817C190e08AC635d174076D0B",
+    //   "0x747f62E5A7DEC0f3B20326a78AfC2A30d2478433"
     // );
     // const f3MOpenAction = await F3MOpenAction.deploy(
-    //   "ipfs://QmZ69yjcqwYgU3PmcsjWaaE8CiwXBg66uLZuJyGm8Yu7HM",
+    //   "ipfs://QmdfoEvX3DJPGc6SJhSMfUmDhi8S5QsWfJ4R9pqetL1jiK",
     //   HUB,
     //   MODULE,
-    //   "0x4931896d9bF48C670FAb6f1b6189DDC122Ff7e2E",
-    //   "0xeB5116025E17D2E6E27126C104cb455dCa63460D",
-    //   "0x062aA8B94a308fE84bE7974bAC758bC574145907",
-    //   "0xA604aEaDC1D0B7110Dba550e2941f599d0fcB9Fe",
-    //   "0x0c585F09765DF503Bf3C83457bC5834FB761E411",
-    //   "0x8fAA6114f8345672DE9e4e4302aD497a52a2fd60"
+    //   "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
+    //   "0x5A4A9a99d4736aE024044d17AA989426C76fafFD",
+    //   "0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf",
+    //   "0xc86f5C3101b64A8873842A26A78dB399e827855e",
+    //   "0xBa75ec6B4660063817C190e08AC635d174076D0B",
+    //   "0x747f62E5A7DEC0f3B20326a78AfC2A30d2478433"
     // );
     // const legendRegister = await LegendRegister.deploy(
     //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"
@@ -186,122 +186,122 @@ const main = async () => {
     // console.log(`LegendOpenAction deployed at\n${legendOpenAction.address}`);
 
     // await run(`verify:verify`, {
-    //   address: "0x4931896d9bF48C670FAb6f1b6189DDC122Ff7e2E",
+    //   address: "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
     // });
     // await run(`verify:verify`, {
-    //   address: "0x062aA8B94a308fE84bE7974bAC758bC574145907",
-    //   constructorArguments: ["0x4931896d9bF48C670FAb6f1b6189DDC122Ff7e2E"],
+    //   address: "0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf",
+    //   constructorArguments: ["0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55"],
     // });
     // await run(`verify:verify`, {
-    //   address: "0xe52255fc34d15BA807D4f2eb0e022cD97aDA7767",
+    //   address: "0xB2855fC6577CBbd9f71A6A8e992a71e4eEB19809",
     //   constructorArguments: [
-    //     "0x4931896d9bF48C670FAb6f1b6189DDC122Ff7e2E",
-    //     "0x062aA8B94a308fE84bE7974bAC758bC574145907",
+    //     "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
+    //     "0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf",
     //   ],
     // });
     // await run(`verify:verify`, {
-    //   address: "0xeB5116025E17D2E6E27126C104cb455dCa63460D",
-    //   constructorArguments: ["0x4931896d9bF48C670FAb6f1b6189DDC122Ff7e2E"],
+    //   address: "0x5A4A9a99d4736aE024044d17AA989426C76fafFD",
+    //   constructorArguments: ["0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55"],
     // });
     // await run(`verify:verify`, {
-    //   address: "0x0147435c505390Bb1E657c8EBc373DcEdfDe0F08",
+    //   address: "0x63D98B34BbED5D924E30A84018E860AF75431356",
     //   constructorArguments: [
-    //     "0x062aA8B94a308fE84bE7974bAC758bC574145907",
-    //     "0x4931896d9bF48C670FAb6f1b6189DDC122Ff7e2E",
+    //     "0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf",
+    //     "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
     //   ],
     // });
     // await run(`verify:verify`, {
-    //   address: "0x0c585F09765DF503Bf3C83457bC5834FB761E411",
+    //   address: "0xBa75ec6B4660063817C190e08AC635d174076D0B",
     //   constructorArguments: [
-    //     "0x0147435c505390Bb1E657c8EBc373DcEdfDe0F08",
-    //     "0x062aA8B94a308fE84bE7974bAC758bC574145907",
-    //     "0x4931896d9bF48C670FAb6f1b6189DDC122Ff7e2E",
-    //     "0xeB5116025E17D2E6E27126C104cb455dCa63460D",
+    //     "0x63D98B34BbED5D924E30A84018E860AF75431356",
+    //     "0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf",
+    //     "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
+    //     "0x5A4A9a99d4736aE024044d17AA989426C76fafFD",
     //   ],
     // });
     // await run(`verify:verify`, {
-    //   address: "0xA604aEaDC1D0B7110Dba550e2941f599d0fcB9Fe",
+    //   address: "0xc86f5C3101b64A8873842A26A78dB399e827855e",
     //   constructorArguments: [
-    //     "0x4931896d9bF48C670FAb6f1b6189DDC122Ff7e2E",
-    //     "0xeB5116025E17D2E6E27126C104cb455dCa63460D",
-    //     "0xe52255fc34d15BA807D4f2eb0e022cD97aDA7767",
-    //     "0x0c585F09765DF503Bf3C83457bC5834FB761E411",
-    //     "0x062aA8B94a308fE84bE7974bAC758bC574145907",
+    //     "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
+    //     "0x5A4A9a99d4736aE024044d17AA989426C76fafFD",
+    //     "0xB2855fC6577CBbd9f71A6A8e992a71e4eEB19809",
+    //     "0xBa75ec6B4660063817C190e08AC635d174076D0B",
+    //     "0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf",
     //     PKP_FIAT,
     //   ],
     // });
     // await run(`verify:verify`, {
-    //   address: "0xECfcE204821c52C58CCdB5FE44852058B906a0b3",
+    //   address: "0x1fD1f5aC83Beeac86452Eb8D6C87df43C7a826d0",
     //   constructorArguments: [
-    //     "0xe52255fc34d15BA807D4f2eb0e022cD97aDA7767",
-    //     "0x4931896d9bF48C670FAb6f1b6189DDC122Ff7e2E",
-    //     "0x062aA8B94a308fE84bE7974bAC758bC574145907",
+    //     "0xB2855fC6577CBbd9f71A6A8e992a71e4eEB19809",
+    //     "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
+    //     "0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf",
     //   ],
     // });
 
     // await run(`verify:verify`, {
-    //   address: "0x8fAA6114f8345672DE9e4e4302aD497a52a2fd60",
+    //   address: "0x747f62E5A7DEC0f3B20326a78AfC2A30d2478433",
     //   constructorArguments: [
-    //     "0x4931896d9bF48C670FAb6f1b6189DDC122Ff7e2E",
-    //     "0xECfcE204821c52C58CCdB5FE44852058B906a0b3",
+    //     "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
+    //     "0x1fD1f5aC83Beeac86452Eb8D6C87df43C7a826d0",
     //   ],
     // });
     // await run(`verify:verify`, {
-    //   address: "0x98E067473497B7E7A979A7Fe0D1026D9aeDF3bc3",
+    //   address: "0x9A94C316F644D10641A528904e4a030a77498160",
     //   constructorArguments: [
-    //     "ipfs://QmX5reN5N4D9Rqnxog3RxTRyyP3zhiYactF4PHfQkFgGZr",
+    //     "ipfs://QmdRqPYtBP1Vkxy6tLmfUmrYR31xawrxcYnhFjY9q1hF4g",
     //     HUB,
     //     MODULE,
-    //     "0x4931896d9bF48C670FAb6f1b6189DDC122Ff7e2E",
-    //     "0xeB5116025E17D2E6E27126C104cb455dCa63460D",
-    //     "0x062aA8B94a308fE84bE7974bAC758bC574145907",
-    //     "0xA604aEaDC1D0B7110Dba550e2941f599d0fcB9Fe",
-    //     "0x0c585F09765DF503Bf3C83457bC5834FB761E411",
-    //     "0x8fAA6114f8345672DE9e4e4302aD497a52a2fd60",
+    //     "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
+    //     "0x5A4A9a99d4736aE024044d17AA989426C76fafFD",
+    //     "0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf",
+    //     "0xc86f5C3101b64A8873842A26A78dB399e827855e",
+    //     "0xBa75ec6B4660063817C190e08AC635d174076D0B",
+    //     "0x747f62E5A7DEC0f3B20326a78AfC2A30d2478433",
     //   ],
     // });
     // await run(`verify:verify`, {
-    //   address: "0x179ACb90575CfF001c6c767b197FFe100B6ADc3a",
+    //   address: "0x3710f718f9E78a58FEcfF5Cd9cc41a4b7466BB14",
     //   constructorArguments: [
-    //     "ipfs://Qmeq5kckAsaqKJxMPz3GDAMTCbda8LMxX4S1dgVFFSNyb4",
+    //     "ipfs://QmTrXPiMHYVtHNaMQ7LpfQkBJUe8uyHyjzxh9f8kdXsqyU",
     //     HUB,
     //     MODULE,
-    //     "0x4931896d9bF48C670FAb6f1b6189DDC122Ff7e2E",
-    //     "0xeB5116025E17D2E6E27126C104cb455dCa63460D",
-    //     "0x062aA8B94a308fE84bE7974bAC758bC574145907",
-    //     "0xA604aEaDC1D0B7110Dba550e2941f599d0fcB9Fe",
-    //     "0x0c585F09765DF503Bf3C83457bC5834FB761E411",
-    //     "0x8fAA6114f8345672DE9e4e4302aD497a52a2fd60",
+    //     "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
+    //     "0x5A4A9a99d4736aE024044d17AA989426C76fafFD",
+    //     "0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf",
+    //     "0xc86f5C3101b64A8873842A26A78dB399e827855e",
+    //     "0xBa75ec6B4660063817C190e08AC635d174076D0B",
+    //     "0x747f62E5A7DEC0f3B20326a78AfC2A30d2478433",
     //   ],
     // });
     // await run(`verify:verify`, {
-    //   address: "0xF1e111fD643954234d6C8482fFa5f4dE778e7aD6",
+    //   address: "0x06BB03BAe0dE9A6808cd9AF9c9C3ec8F59e6FE39",
     //   constructorArguments: [
-    //     "ipfs://QmY1Y4hG1DZCGAm6VVCZSjVKS6rkZaQ3nVYqCTmTazmT6E",
+    //     "ipfs://QmTMDXC3Sd1ViFNLWNpRg6KdRsDoZYFQ97gmuoJjHJHevS",
     //     HUB,
     //     MODULE,
-    //     "0x4931896d9bF48C670FAb6f1b6189DDC122Ff7e2E",
-    //     "0xeB5116025E17D2E6E27126C104cb455dCa63460D",
-    //     "0x062aA8B94a308fE84bE7974bAC758bC574145907",
-    //     "0xA604aEaDC1D0B7110Dba550e2941f599d0fcB9Fe",
-    //     "0x0c585F09765DF503Bf3C83457bC5834FB761E411",
-    //     "0x8fAA6114f8345672DE9e4e4302aD497a52a2fd60",
+    //     "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
+    //     "0x5A4A9a99d4736aE024044d17AA989426C76fafFD",
+    //     "0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf",
+    //     "0xc86f5C3101b64A8873842A26A78dB399e827855e",
+    //     "0xBa75ec6B4660063817C190e08AC635d174076D0B",
+    //     "0x747f62E5A7DEC0f3B20326a78AfC2A30d2478433",
     //   ],
     // });
-    // await run(`verify:verify`, {
-    //   address: "0xb92725B5Bea87C7Ed856898AaC3122548aBA6349",
-    //   constructorArguments: [
-    //     "ipfs://QmZ69yjcqwYgU3PmcsjWaaE8CiwXBg66uLZuJyGm8Yu7HM",
-    //     HUB,
-    //     MODULE,
-    //     "0x4931896d9bF48C670FAb6f1b6189DDC122Ff7e2E",
-    //     "0xeB5116025E17D2E6E27126C104cb455dCa63460D",
-    //     "0x75657a8cddF42Fd6BA01Ec5C4eA2C276efb9438F",
-    //     "0xA604aEaDC1D0B7110Dba550e2941f599d0fcB9Fe",
-    //     "0x0c585F09765DF503Bf3C83457bC5834FB761E411",
-    //     "0x8fAA6114f8345672DE9e4e4302aD497a52a2fd60",
-    //   ],
-    // });
+    await run(`verify:verify`, {
+      address: "0xba6a85811336781Bad55E624C40Dc1D5615243C7",
+      constructorArguments: [
+        "ipfs://QmdfoEvX3DJPGc6SJhSMfUmDhi8S5QsWfJ4R9pqetL1jiK",
+        HUB,
+        MODULE,
+        "0xd1e60b639e3c67b64e6f5de44aa079cf9b79ac55",
+        "0x5A4A9a99d4736aE024044d17AA989426C76fafFD",
+        "0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf",
+        "0xc86f5C3101b64A8873842A26A78dB399e827855e",
+        "0xBa75ec6B4660063817C190e08AC635d174076D0B",
+        "0x747f62E5A7DEC0f3B20326a78AfC2A30d2478433",
+      ],
+    });
   } catch (err: any) {
     console.error(err.message);
   }
