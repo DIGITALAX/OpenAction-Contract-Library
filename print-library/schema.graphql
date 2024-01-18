@@ -26,6 +26,7 @@ type CollectionCreated @entity(immutable: false) {
   dropId: BigInt
   orderIds: [BigInt!]
   buyerProfileIds: [BigInt!]
+  dropURI: String
 }
 
 type CollectionDeleted @entity(immutable: false) {

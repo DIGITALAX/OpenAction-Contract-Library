@@ -5,31 +5,27 @@ pragma solidity ^0.8.16;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./LegendRegister.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "./../PrintAccessControl.sol";
+import "./LegendAccessControl.sol";
 import "./../PrintSplitsData.sol";
 import "./LegendRegister.sol";
+import "./LegendErrors.sol";
 
 contract LegendMilestone {
     using Strings for uint256;
-    PrintAccessControl public printAccessControl;
+    LegendAccessControl public legendAccessControl;
     PrintSplitsData public printSplitsData;
     LegendRegister public legendRegister;
 
-    error GranteeNotRegistered();
-    error InvalidClaim();
-    error AlreadyClaimed();
-    error AddressNotAdmin();
-
     modifier onlyGrantee(uint256 _pubId) {
         if (legendRegister.getGranteeSplitAmount(msg.sender, _pubId) == 0) {
-            revert GranteeNotRegistered();
+            revert LegendErrors.GranteeNotRegistered();
         }
         _;
     }
 
     modifier onlyAdmin() {
-        if (!printAccessControl.isAdmin(msg.sender)) {
-            revert AddressNotAdmin();
+        if (!legendAccessControl.isAdmin(msg.sender)) {
+            revert LegendErrors.AddressNotAdmin();
         }
         _;
     }
@@ -38,11 +34,11 @@ contract LegendMilestone {
 
     constructor(
         address _legendRegisterAddress,
-        address _printAccessControlAddress,
+        address _legendAccessControlAddress,
         address _printSplitsDataAddress
     ) {
         legendRegister = LegendRegister(_legendRegisterAddress);
-        printAccessControl = PrintAccessControl(_printAccessControlAddress);
+        legendAccessControl = LegendAccessControl(_legendAccessControlAddress);
         printSplitsData = PrintSplitsData(_printSplitsDataAddress);
     }
 
@@ -58,7 +54,7 @@ contract LegendMilestone {
             block.timestamp >
             legendRegister.getMilestoneSubmitBy(_grantId, _milestone) + 2 weeks
         ) {
-            revert InvalidClaim();
+            revert LegendErrors.InvalidClaim();
         }
         if (
             legendRegister.getGranteeClaimedMilestone(
@@ -67,7 +63,7 @@ contract LegendMilestone {
                 _milestone
             )
         ) {
-            revert AlreadyClaimed();
+            revert LegendErrors.AlreadyClaimed();
         } else {
             address[] memory _currencies = printSplitsData.getAllCurrencies();
             uint256 _splitAmount = legendRegister.getGranteeSplitAmount(
@@ -132,10 +128,10 @@ contract LegendMilestone {
         emit MilestoneClaimed(msg.sender, _milestone, _pubId);
     }
 
-    function setPrintAccessControlAddress(
-        address _newPrintAccessControlAddress
+    function setLegendAccessControlAddress(
+        address _newLegendAccessControlAddress
     ) public onlyAdmin {
-        printAccessControl = PrintAccessControl(_newPrintAccessControlAddress);
+        legendAccessControl = LegendAccessControl(_newLegendAccessControlAddress);
     }
 
     function setPrintSplitsDataAddress(

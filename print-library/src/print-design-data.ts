@@ -67,7 +67,7 @@ export function handleCollectionCreated(event: CollectionCreatedEvent): void {
 
   if (entity.dropId !== null) {
     let dropHash = design.getDropURI(<BigInt>entity.dropId);
-
+    entity.dropURI = dropHash;
     if (dropHash !== null) {
       let hash = dropHash.split("/").pop();
       entity.dropMetadata = hash;

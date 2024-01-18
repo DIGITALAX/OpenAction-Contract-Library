@@ -2,7 +2,8 @@
 
 pragma solidity ^0.8.16;
 
-import "./../PrintAccessControl.sol";
+import "./LegendAccessControl.sol";
+import "./LegendErrors.sol";
 
 enum MilestoneStatus {
     NotClaimed,
@@ -21,8 +22,7 @@ library LegendRegisterLibrary {
 }
 
 contract LegendRegister {
-    PrintAccessControl public printAccessControl;
-    address public legendOpenAction;
+    LegendAccessControl public legendAccessControl;
     address public legendMilestone;
     uint256 private _grantSupply;
 
@@ -40,19 +40,15 @@ contract LegendRegister {
         uint256 profileId;
     }
 
-    error InvalidMilestoneUpdate();
-    error InvalidLengths();
-    error InvalidAddress();
-
     modifier onlyGranteeMilestoneClaim() {
         if (msg.sender != legendMilestone) {
-            revert InvalidAddress();
+            revert LegendErrors.InvalidAddress();
         }
         _;
     }
     modifier onlyOpenAction() {
-        if (msg.sender != legendOpenAction) {
-            revert InvalidAddress();
+        if (!legendAccessControl.isOpenAction(msg.sender)) {
+            revert LegendErrors.InvalidContract();
         }
         _;
     }
@@ -91,21 +87,21 @@ contract LegendRegister {
     );
 
     modifier onlyAdmin() {
-        if (!printAccessControl.isAdmin(msg.sender)) {
-            revert InvalidAddress();
+        if (!legendAccessControl.isAdmin(msg.sender)) {
+            revert LegendErrors.InvalidAddress();
         }
         _;
     }
 
-    constructor(address _printAccessControlAddress) {
-        printAccessControl = PrintAccessControl(_printAccessControlAddress);
+    constructor(address _legendAccessControlAddress) {
+        legendAccessControl = LegendAccessControl(_legendAccessControlAddress);
     }
 
     function registerGrant(
         LegendRegisterLibrary.CreateGrant memory _params
-    ) public {
+    ) external onlyOpenAction {
         if (_params.granteeAddresses.length != _params.splitAmounts.length) {
-            revert InvalidLengths();
+            revert LegendErrors.InvalidLengths();
         }
         bytes32 _grantIdentifier = keccak256(
             abi.encodePacked(_params.granteeAddresses, _params.pubId)
@@ -185,12 +181,10 @@ contract LegendRegister {
         ][_milestone] = true;
     }
 
-    function setGrantAddresses(
-        address _legendMilestoneAddress,
-        address _grantOpenActionAddress
+    function setMilestoneClaimAddress(
+        address _legendMilestoneAddress
     ) public onlyAdmin {
         legendMilestone = _legendMilestoneAddress;
-        legendOpenAction = _grantOpenActionAddress;
     }
 
     function setAllClaimedMilestone(
@@ -200,10 +194,12 @@ contract LegendRegister {
         _grantToMilestone[_grantId][_milestone].allClaimed = true;
     }
 
-    function setPrintAccessControlAddress(
-        address _newPrintAccessControlAddress
+    function setLegendAccessControlAddress(
+        address _newLegendAccessControlAddress
     ) public onlyAdmin {
-        printAccessControl = PrintAccessControl(_newPrintAccessControlAddress);
+        legendAccessControl = LegendAccessControl(
+            _newLegendAccessControlAddress
+        );
     }
 
     function getGrantSupply() public view returns (uint256) {
