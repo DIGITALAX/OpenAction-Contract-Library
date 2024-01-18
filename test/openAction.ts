@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { Contract, Signer } from "ethers";
 import { ethers } from "hardhat";
 
-describe("ChromadinOpenAction", () => {
+describe("PrintOpenActions", () => {
   let chromadinOpenAction: Contract,
     listenerOpenAction: Contract,
     coinOpOpenAction: Contract,

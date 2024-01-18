@@ -350,6 +350,23 @@ export class CollectionCreated extends Entity {
     }
   }
 
+  get dropURI(): string | null {
+    let value = this.get("dropURI");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set dropURI(value: string | null) {
+    if (!value) {
+      this.unset("dropURI");
+    } else {
+      this.set("dropURI", Value.fromString(<string>value));
+    }
+  }
+
   get encrypted(): boolean {
     let value = this.get("encrypted");
     return value!.toBoolean();
