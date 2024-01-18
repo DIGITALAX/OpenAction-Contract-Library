@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: UNLICENSE
 
-pragma solidity ^0.8.16;
+pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./LegendData.sol";
@@ -69,7 +69,6 @@ contract LegendMilestoneEscrow {
 
             for (uint256 i = 0; i < _currencies.length; i++) {
                 uint256 _amount = legendData.getGrantAmountFundedByCurrency(
-                    msg.sender,
                     _currencies[i],
                     _grantId
                 );

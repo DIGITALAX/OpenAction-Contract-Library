@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: UNLICENSE
 
-pragma solidity ^0.8.16;
+pragma solidity ^0.8.19;
 
 import "./LegendAccessControl.sol";
 import "./LegendErrors.sol";
@@ -66,13 +66,15 @@ contract LegendData {
         }
         _grantSupply++;
 
-        _allGrants[_grantSupply] = LegendLibrary.Grant({
-            levelInfo: _params.levelInfo,
-            grantId: _grantSupply,
-            granteeAddresses: _params.granteeAddresses,
-            pubId: _params.pubId,
-            profileId: _params.profileId
-        });
+        LegendLibrary.Grant storage newGrant = _allGrants[_grantSupply];
+
+        newGrant.grantId = _grantSupply;
+        newGrant.pubId = _params.pubId;
+        newGrant.profileId = _params.profileId;
+        newGrant.granteeAddresses = _params.granteeAddresses;
+
+        _setLevels(newGrant, _params.levelInfo);
+
         _lensToGrantId[_params.profileId][_params.pubId] = _grantSupply;
 
         for (uint256 j = 0; j < 3; j++) {
@@ -138,6 +140,17 @@ contract LegendData {
         legendMilestone = _legendMilestoneAddress;
     }
 
+    function _setLevels(
+        LegendLibrary.Grant memory _newGrant,
+        LegendLibrary.LevelInfo[6] memory _levels
+    ) private pure {
+        for (uint256 i = 0; i < _levels.length; i++) {
+            _newGrant.levelInfo[i].collectionIds = _levels[i].collectionIds;
+            _newGrant.levelInfo[i].amounts = _levels[i].amounts;
+            _newGrant.levelInfo[i].level = _levels[i].level;
+        }
+    }
+
     function setLegendAccessControlAddress(
         address _newLegendAccessControlAddress
     ) public onlyAdmin {
@@ -170,10 +183,7 @@ contract LegendData {
         return _lensToGrantId[_profileId][_pubId];
     }
 
-    function getGrantPubId(
-        address _granteeAddress,
-        uint256 _grantId
-    ) public view returns (uint256) {
+    function getGrantPubId(uint256 _grantId) public view returns (uint256) {
         return _allGrants[_grantId].pubId;
     }
 
@@ -217,7 +227,6 @@ contract LegendData {
     }
 
     function getGrantAmountFundedByCurrency(
-        address _granteeAddress,
         address _currency,
         uint256 _grantId
     ) public view returns (uint256) {
