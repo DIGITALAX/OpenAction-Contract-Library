@@ -5,8 +5,8 @@ import { ethers } from "hardhat";
 describe("LegendOpenAction", () => {
   let legendAccessControl: Contract,
     legendOpenAction: Contract,
-    legendMilestoneClaim: Contract,
-    legendRegister: Contract,
+    legendMilestoneEscrow: Contract,
+    legendData: Contract,
     grantee: Signer,
     designer: Signer,
     admin: Signer,
@@ -121,19 +121,19 @@ describe("LegendOpenAction", () => {
     const LegendAccessControl = await ethers.getContractFactory(
       "LegendAccessControl"
     );
-    const LegendMilestoneClaim = await ethers.getContractFactory(
-      "LegendMilestoneClaim"
+    const LegendMilestoneEscrow = await ethers.getContractFactory(
+      "LegendMilestoneEscrow"
     );
-    const LegendRegister = await ethers.getContractFactory("LegendRegister");
+    const LegendData = await ethers.getContractFactory("LegendData");
     const LegendOpenAction = await ethers.getContractFactory(
       "LegendOpenAction"
     );
 
     legendAccessControl = await LegendAccessControl.deploy();
-    legendMilestoneClaim = await LegendMilestoneClaim.deploy(
+    legendMilestoneEscrow = await LegendMilestoneEscrow.deploy(
       legendAccessControl.address
     );
-    legendRegister = await LegendRegister.deploy(legendAccessControl.address);
+    legendData = await LegendData.deploy(legendAccessControl.address);
     legendOpenAction = await LegendOpenAction.deploy(
       "metadataDetails",
       await hub.getAddress(),
@@ -142,12 +142,40 @@ describe("LegendOpenAction", () => {
       printSplitsData.address,
       printDesignData.address,
       marketCreator.address,
-      legendMilestoneClaim.address,
-      legendRegister.address
+      legendMilestoneEscrow.address,
+      legendData.address
     );
 
     await legendAccessControl.addOpenAction(legendOpenAction.address);
+    await legendAccessControl.addGrantee(await grantee.getAddress());
   });
 
-  describe("Initialize Grant", () => {});
+  describe("Initialize Grant", () => {
+    before(async () => {
+      const encodedData = ethers.utils.defaultAbiCoder.encode(
+        [
+          "tuple(uint256[][3] level2, uint256[][3] level3, uint256[][3] level4, uint256[][3] level5, uint256[][3] level6, uint256[][2] level7)",
+        ],
+        [
+          {
+            level2: [],
+            level3: [],
+            level4: [],
+            level5: [],
+            level6: [],
+            level7: [],
+          },
+        ]
+      );
+
+      await legendOpenAction
+        .connect(hub)
+        .initializePublicationAction(
+          50,
+          10,
+          await grantee.getAddress(),
+          encodedData
+        );
+    });
+  });
 });

@@ -39,7 +39,7 @@ const main = async () => {
     //   "LegendOpenAction"
     // );
     // const LegendMilestone = await ethers.getContractFactory("LegendMilestone");
-    // const LegendRegister = await ethers.getContractFactory("LegendRegister");
+    // const LegendData = await ethers.getContractFactory("LegendData");
 
     // const printAccessControl = await PrintAccessControl.deploy();
     // const printDesignData = await PrintDesignData.deploy(
@@ -123,11 +123,11 @@ const main = async () => {
     //   "0xBa75ec6B4660063817C190e08AC635d174076D0B",
     //   "0x747f62E5A7DEC0f3B20326a78AfC2A30d2478433"
     // );
-    // const legendRegister = await LegendRegister.deploy(
+    // const legendData = await LegendData.deploy(
     //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4"
     // );
     // const legendMilestone = await LegendMilestone.deploy(
-    //   legendRegister.address,
+    //   legendData.address,
     //   "0xCF96CeeB6745a9374A8391ED51aF02CddFFacAf4",
     //   "0x456Dfd81673256c358d79307aC400A9586aECA7B"
     // );
@@ -139,7 +139,7 @@ const main = async () => {
     //   "0x813186B4290Ff3240808372b7bB75DBD7881B087",
     //   "0xC2d14bF8B21538183F2Cf0a334d42BA0Bd3233BD",
     //   legendMilestone.address,
-    //   legendRegister.address
+    //   legendData.address
     // );
 
     const WAIT_BLOCK_CONFIRMATIONS = 20;
@@ -157,7 +157,7 @@ const main = async () => {
     // listenerOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // f3MOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
 
-    // legendRegister.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    // legendData.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // legendMilestone.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // legendOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
     // console.log(
@@ -181,7 +181,7 @@ const main = async () => {
     //   `ListenerOpenAction deployed at\n${listenerOpenAction.address}`
     // );
     // console.log(`F3MOpenAction deployed at\n${f3MOpenAction.address}`);
-    // console.log(`LegendRegister deployed at\n${legendRegister.address}`);
+    // console.log(`LegendData deployed at\n${legendData.address}`);
     // console.log(`LegendMilestone deployed at\n${legendMilestone.address}`);
     // console.log(`LegendOpenAction deployed at\n${legendOpenAction.address}`);
 

@@ -3,21 +3,21 @@
 pragma solidity ^0.8.16;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./LegendRegister.sol";
+import "./LegendData.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./LegendAccessControl.sol";
 import "./../PrintSplitsData.sol";
-import "./LegendRegister.sol";
+import "./LegendData.sol";
 import "./LegendErrors.sol";
 
-contract LegendMilestone {
+contract LegendMilestoneEscrow {
     using Strings for uint256;
     LegendAccessControl public legendAccessControl;
     PrintSplitsData public printSplitsData;
-    LegendRegister public legendRegister;
+    LegendData public legendData;
 
-    modifier onlyGrantee(uint256 _pubId) {
-        if (legendRegister.getGranteeSplitAmount(msg.sender, _pubId) == 0) {
+    modifier onlyGrantee(uint256 _grantId) {
+        if (legendData.getGranteeSplitAmount(msg.sender, _grantId) == 0) {
             revert LegendErrors.GranteeNotRegistered();
         }
         _;
@@ -30,52 +30,48 @@ contract LegendMilestone {
         _;
     }
 
-    event MilestoneClaimed(address claimer, uint256 milestone, uint256 pubId);
-
     constructor(
-        address _legendRegisterAddress,
+        address _legendDataAddress,
         address _legendAccessControlAddress,
         address _printSplitsDataAddress
     ) {
-        legendRegister = LegendRegister(_legendRegisterAddress);
+        legendData = LegendData(_legendDataAddress);
         legendAccessControl = LegendAccessControl(_legendAccessControlAddress);
         printSplitsData = PrintSplitsData(_printSplitsDataAddress);
     }
 
     function initiateMilestoneClaim(
-        uint256 _pubId,
+        uint256 _grantId,
         uint256 _milestone
-    ) public onlyGrantee(_pubId) {
-        uint256 _grantId = legendRegister.getGrantId(msg.sender, _pubId);
-
+    ) public onlyGrantee(_grantId) {
         if (
-            legendRegister.getMilestoneStatus(_grantId, _milestone) !=
-            MilestoneStatus.NotClaimed ||
+            legendData.getMilestoneStatus(_grantId, _milestone) !=
+            LegendLibrary.MilestoneStatus.NotClaimed ||
             block.timestamp >
-            legendRegister.getMilestoneSubmitBy(_grantId, _milestone) + 2 weeks
+            legendData.getMilestoneSubmitBy(_grantId, _milestone) + 2 weeks
         ) {
             revert LegendErrors.InvalidClaim();
         }
         if (
-            legendRegister.getGranteeClaimedMilestone(
+            legendData.getGranteeClaimedMilestone(
                 msg.sender,
-                _pubId,
+                _grantId,
                 _milestone
             )
         ) {
             revert LegendErrors.AlreadyClaimed();
         } else {
             address[] memory _currencies = printSplitsData.getAllCurrencies();
-            uint256 _splitAmount = legendRegister.getGranteeSplitAmount(
+            uint256 _splitAmount = legendData.getGranteeSplitAmount(
                 msg.sender,
-                _pubId
+                _grantId
             );
 
             for (uint256 i = 0; i < _currencies.length; i++) {
-                uint256 _amount = legendRegister.getGrantAmountFundedByCurrency(
+                uint256 _amount = legendData.getGrantAmountFundedByCurrency(
                     msg.sender,
                     _currencies[i],
-                    _pubId
+                    _grantId
                 );
                 if (_amount > 0) {
                     IERC20(_currencies[i]).transferFrom(
@@ -86,26 +82,23 @@ contract LegendMilestone {
                 }
             }
 
-            legendRegister.setGranteeClaimedMilestone(
+            legendData.setGranteeClaimedMilestone(
                 msg.sender,
-                _pubId,
+                _grantId,
                 _milestone
             );
         }
 
-        address[] memory _addresses = legendRegister.getGrantAddresses(
-            msg.sender,
-            _pubId
-        );
+        address[] memory _addresses = legendData.getGrantAddresses(_grantId);
 
-        if (!legendRegister.getAllClaimedMilestone(_grantId, _milestone)) {
+        if (!legendData.getAllClaimedMilestone(_grantId, _milestone)) {
             uint256 _hasAllClaimed = 0;
 
             for (uint256 i; i < _addresses.length; i++) {
                 if (
-                    legendRegister.getGranteeClaimedMilestone(
+                    legendData.getGranteeClaimedMilestone(
                         msg.sender,
-                        _pubId,
+                        _grantId,
                         _milestone
                     )
                 ) {
@@ -114,24 +107,24 @@ contract LegendMilestone {
             }
 
             if (_hasAllClaimed == _addresses.length) {
-                legendRegister.setAllClaimedMilestone(_grantId, _milestone);
+                legendData.setAllClaimedMilestone(_grantId, _milestone);
 
-                legendRegister.updateMilestoneStatus(
+                legendData.updateMilestoneStatus(
                     msg.sender,
-                    MilestoneStatus.Claimed,
-                    _pubId,
+                    LegendLibrary.MilestoneStatus.Claimed,
+                    _grantId,
                     _milestone
                 );
             }
         }
-
-        emit MilestoneClaimed(msg.sender, _milestone, _pubId);
     }
 
     function setLegendAccessControlAddress(
         address _newLegendAccessControlAddress
     ) public onlyAdmin {
-        legendAccessControl = LegendAccessControl(_newLegendAccessControlAddress);
+        legendAccessControl = LegendAccessControl(
+            _newLegendAccessControlAddress
+        );
     }
 
     function setPrintSplitsDataAddress(
@@ -140,9 +133,9 @@ contract LegendMilestone {
         printSplitsData = PrintSplitsData(_newPrintSplitsDataAddress);
     }
 
-    function setLegendRegisterAddress(
-        address _newLegendRegisterAddress
+    function setLegendDataAddress(
+        address _newLegendDataAddress
     ) public onlyAdmin {
-        legendRegister = LegendRegister(_newLegendRegisterAddress);
+        legendData = LegendData(_newLegendDataAddress);
     }
 }

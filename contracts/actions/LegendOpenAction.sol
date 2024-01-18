@@ -11,7 +11,7 @@ import {IModuleRegistry} from "./../lens/v2/interfaces/IModuleRegistry.sol";
 import "./../MarketCreator.sol";
 import "./../PrintSplitsData.sol";
 import "./../PrintDesignData.sol";
-import "./../legend/LegendRegister.sol";
+import "./../legend/LegendData.sol";
 import "./../legend/LegendAccessControl.sol";
 import "./../legend/LegendLibrary.sol";
 
@@ -24,7 +24,7 @@ contract LegendOpenAction is
     LegendAccessControl public legendAccessControl;
     PrintSplitsData public printSplitsData;
     PrintDesignData public printDesignData;
-    LegendRegister public legendRegister;
+    LegendData public legendData;
     address public legendMilestone;
     string private _metadata;
 
@@ -35,14 +35,9 @@ contract LegendOpenAction is
         _;
     }
 
-    struct LevelInfo {
-        uint256[] collectionIds;
-        uint256[] amounts;
-    }
-
     IModuleRegistry public immutable MODULE_GLOBALS;
 
-    mapping(uint256 => mapping(uint256 => mapping(uint256 => LevelInfo))) _grantLevelInfo;
+    mapping(uint256 => mapping(uint256 => mapping(uint256 => LegendLibrary.LevelInfo))) _grantGroups;
     mapping(uint256 => mapping(uint256 => address)) _granteeReceiver;
 
     event GrantContributed(
@@ -63,14 +58,14 @@ contract LegendOpenAction is
         address _printDesignDataAddress,
         address _marketCreatorAddress,
         address _legendMilestoneAddress,
-        address _legendRegisterAddress
+        address _legendDataAddress
     ) HubRestricted(_hub) {
         MODULE_GLOBALS = IModuleRegistry(_moduleGlobals);
         marketCreator = MarketCreator(_marketCreatorAddress);
         legendAccessControl = LegendAccessControl(_legendAccessControlAddress);
         printSplitsData = PrintSplitsData(_printSplitsDataAddress);
         printDesignData = PrintDesignData(_printDesignDataAddress);
-        legendRegister = LegendRegister(_legendRegisterAddress);
+        legendData = LegendData(_legendDataAddress);
         legendMilestone = _legendMilestoneAddress;
         _metadata = _metadataDetails;
     }
@@ -85,52 +80,40 @@ contract LegendOpenAction is
             revert LegendErrors.InvalidAddress();
         }
         (
-            uint256[][2] memory _level2,
-            uint256[][2] memory _level3,
-            uint256[][2] memory _level4,
-            uint256[][2] memory _level5,
-            uint256[][2] memory _level6,
-            uint256[][2] memory _level7
+            LegendLibrary.LevelInfo[6] memory _levelInfo,
+            address[] memory _granteeAddresses,
+            uint256[] memory _splitAmounts,
+            uint256[3] memory _amounts,
+            uint256[3] memory _submitBys
         ) = abi.decode(
                 _data,
                 (
-                    uint256[][2],
-                    uint256[][2],
-                    uint256[][2],
-                    uint256[][2],
-                    uint256[][2],
-                    uint256[][2]
+                    LegendLibrary.LevelInfo[6],
+                    address[],
+                    uint256[],
+                    uint256[3],
+                    uint256[3]
                 )
             );
 
-        if (legendRegister.getGrantIdentifier(_executor) == bytes32(0)) {
-            revert LegendErrors.InvalidAddress();
-        }
+        _grantGroups[_profileId][_pubId][0] = _levelInfo[0];
+        _grantGroups[_profileId][_pubId][1] = _levelInfo[1];
+        _grantGroups[_profileId][_pubId][2] = _levelInfo[2];
+        _grantGroups[_profileId][_pubId][3] = _levelInfo[3];
+        _grantGroups[_profileId][_pubId][4] = _levelInfo[4];
+        _grantGroups[_profileId][_pubId][5] = _levelInfo[5];
 
-        _grantLevelInfo[_profileId][_pubId][2] = LevelInfo({
-            collectionIds: _level2[0],
-            amounts: _level2[1]
-        });
-        _grantLevelInfo[_profileId][_pubId][3] = LevelInfo({
-            collectionIds: _level3[0],
-            amounts: _level3[1]
-        });
-        _grantLevelInfo[_profileId][_pubId][4] = LevelInfo({
-            collectionIds: _level4[0],
-            amounts: _level4[1]
-        });
-        _grantLevelInfo[_profileId][_pubId][5] = LevelInfo({
-            collectionIds: _level5[0],
-            amounts: _level5[1]
-        });
-        _grantLevelInfo[_profileId][_pubId][6] = LevelInfo({
-            collectionIds: _level6[0],
-            amounts: _level6[1]
-        });
-        _grantLevelInfo[_profileId][_pubId][7] = LevelInfo({
-            collectionIds: _level7[0],
-            amounts: _level7[1]
-        });
+        legendData.registerGrant(
+            LegendLibrary.CreateGrant({
+                levelInfo: _levelInfo,
+                granteeAddresses: _granteeAddresses,
+                splitAmounts: _splitAmounts,
+                amounts: _amounts,
+                submitBys: _submitBys,
+                pubId: _pubId,
+                profileId: _profileId
+            })
+        );
 
         _granteeReceiver[_profileId][_pubId] = _executor;
 
@@ -155,6 +138,10 @@ contract LegendOpenAction is
         address _granteeReceiverAddress = _granteeReceiver[
             _params.publicationActedProfileId
         ][_params.publicationActedId];
+        uint256 _grantId = legendData.getGrantId(
+            _params.publicationActedProfileId,
+            _params.publicationActedId
+        );
 
         if (
             !MODULE_GLOBALS.isErc20CurrencyRegistered(_currency) ||
@@ -166,9 +153,9 @@ contract LegendOpenAction is
         uint256 _grantAmount = 0;
 
         if (_level != 1) {
-            uint256[] memory _collectionIds = _grantLevelInfo[
+            uint256[] memory _collectionIds = _grantGroups[
                 _params.publicationActedProfileId
-            ][_params.publicationActedId][_level].collectionIds;
+            ][_params.publicationActedId][_level - 2].collectionIds;
 
             for (uint256 i = 0; i < _collectionIds.length; i++) {
                 if (
@@ -190,12 +177,12 @@ contract LegendOpenAction is
 
             PrintLibrary.BuyTokensParams memory _buyTokensParams = PrintLibrary
                 .BuyTokensParams({
-                    collectionIds: _grantLevelInfo[
+                    collectionIds: _grantGroups[
                         _params.publicationActedProfileId
-                    ][_params.publicationActedId][_level].collectionIds,
-                    collectionAmounts: _grantLevelInfo[
+                    ][_params.publicationActedId][_level - 2].collectionIds,
+                    collectionAmounts: _grantGroups[
                         _params.publicationActedProfileId
-                    ][_params.publicationActedId][_level].amounts,
+                    ][_params.publicationActedId][_level - 2].amounts,
                     collectionIndexes: _chosenIndexes,
                     details: _encryptedFulfillment,
                     buyerAddress: _params.actorProfileOwner,
@@ -218,12 +205,7 @@ contract LegendOpenAction is
             _grantAmount
         );
 
-        legendRegister.setGrantAmountFunded(
-            _granteeReceiverAddress,
-            _currency,
-            _params.publicationActedId,
-            _grantAmount
-        );
+        legendData.setGrantAmountFunded(_currency, _grantId, _grantAmount);
 
         emit GrantContributed(
             _granteeReceiverAddress,
@@ -235,9 +217,9 @@ contract LegendOpenAction is
 
         return
             abi.encode(
-                _grantLevelInfo[_params.publicationActedProfileId][
+                _grantGroups[_params.publicationActedProfileId][
                     _params.publicationActedId
-                ][_level],
+                ][_level - 2],
                 _currency,
                 _chosenIndexes
             );
@@ -249,13 +231,11 @@ contract LegendOpenAction is
         address _currency,
         address _buyer
     ) internal returns (uint256) {
-        LegendOpenActionLibrary.SenderInfo memory _info = _getSenderInfo(
-            _collectionId
-        );
+        LegendLibrary.SenderInfo memory _info = _getSenderInfo(_collectionId);
 
         return
             _transferTokens(
-                LegendOpenActionLibrary.TransferTokens({
+                LegendLibrary.TransferTokens({
                     printType: _info.printType,
                     collectionId: _collectionId,
                     chosenIndex: _chosenIndex,
@@ -271,7 +251,7 @@ contract LegendOpenAction is
     }
 
     function _transferTokens(
-        LegendOpenActionLibrary.TransferTokens memory _params
+        LegendLibrary.TransferTokens memory _params
     ) internal returns (uint256) {
         uint256 _totalPrice = printDesignData.getCollectionPrices(
             _params.collectionId
@@ -309,16 +289,14 @@ contract LegendOpenAction is
     }
 
     function _getSenderInfo(
-        uint256 _collectionIds
-    ) internal view returns (LegendOpenActionLibrary.SenderInfo memory) {
+        uint256 _collectionId
+    ) internal view returns (LegendLibrary.SenderInfo memory) {
         address _fulfiller = printDesignData.getCollectionFulfiller(
-            _collectionIds
+            _collectionId
         );
-        address _designer = printDesignData.getCollectionCreator(
-            _collectionIds
-        );
+        address _designer = printDesignData.getCollectionCreator(_collectionId);
         uint256 _printType = printDesignData.getCollectionPrintType(
-            _collectionIds
+            _collectionId
         );
         uint256 _fulfillerBase = printSplitsData.getFulfillerBase(
             _fulfiller,
@@ -334,7 +312,7 @@ contract LegendOpenAction is
         );
 
         return (
-            LegendOpenActionLibrary.SenderInfo({
+            LegendLibrary.SenderInfo({
                 fulfiller: _fulfiller,
                 designer: _designer,
                 printType: _printType,
@@ -343,29 +321,6 @@ contract LegendOpenAction is
                 designerSplit: _designerSplit
             })
         );
-    }
-
-    function getGrantLevelCollectionIds(
-        uint256 _pubId,
-        uint256 _profileId,
-        uint256 _level
-    ) public view returns (uint256[] memory) {
-        return _grantLevelInfo[_profileId][_pubId][_level].collectionIds;
-    }
-
-    function getGrantLevelAmounts(
-        uint256 _pubId,
-        uint256 _profileId,
-        uint256 _level
-    ) public view returns (uint256[] memory) {
-        return _grantLevelInfo[_profileId][_pubId][_level].amounts;
-    }
-
-    function getGranteeReceiverAddress(
-        uint256 _pubId,
-        uint256 _profileId
-    ) public view returns (address) {
-        return _granteeReceiver[_profileId][_pubId];
     }
 
     function setPrintSplitsDataAddress(
@@ -394,10 +349,10 @@ contract LegendOpenAction is
         marketCreator = MarketCreator(_newMarketCreatorAddress);
     }
 
-    function setLegendRegisterAddress(
-        address _newLegendRegisterAddress
+    function setLegendDataAddress(
+        address _newLegendDataAddress
     ) public onlyAdmin {
-        legendRegister = LegendRegister(_newLegendRegisterAddress);
+        legendData = LegendData(_newLegendDataAddress);
     }
 
     function setLegendMilestoneAddress(
@@ -419,6 +374,13 @@ contract LegendOpenAction is
         uint256 _tokenAmount = (_amountInWei / _exchangeRate) * _weiDivisor;
 
         return _tokenAmount;
+    }
+
+    function getGranteeReceiverAddress(
+        uint256 _pubId,
+        uint256 _profileId
+    ) public view returns (address) {
+        return _granteeReceiver[_profileId][_pubId];
     }
 
     function supportsInterface(
