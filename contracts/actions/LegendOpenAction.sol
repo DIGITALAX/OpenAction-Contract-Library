@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: UNLICENSE
 
-pragma solidity ^0.8.16;
+pragma solidity ^0.8.19;
 
 import {HubRestricted} from "./../lens/v2/base/HubRestricted.sol";
 import {Types} from "./../lens/v2/libraries/constants/Types.sol";
@@ -79,37 +79,25 @@ contract LegendOpenAction is
         if (legendAccessControl.isGrantee(_executor)) {
             revert LegendErrors.InvalidAddress();
         }
-        (
-            LegendLibrary.LevelInfo[6] memory _levelInfo,
-            address[] memory _granteeAddresses,
-            uint256[] memory _splitAmounts,
-            uint256[3] memory _amounts,
-            uint256[3] memory _submitBys
-        ) = abi.decode(
-                _data,
-                (
-                    LegendLibrary.LevelInfo[6],
-                    address[],
-                    uint256[],
-                    uint256[3],
-                    uint256[3]
-                )
-            );
+        LegendLibrary.RegisterProps memory _register = abi.decode(
+            _data,
+            (LegendLibrary.RegisterProps)
+        );
 
-        _grantGroups[_profileId][_pubId][0] = _levelInfo[0];
-        _grantGroups[_profileId][_pubId][1] = _levelInfo[1];
-        _grantGroups[_profileId][_pubId][2] = _levelInfo[2];
-        _grantGroups[_profileId][_pubId][3] = _levelInfo[3];
-        _grantGroups[_profileId][_pubId][4] = _levelInfo[4];
-        _grantGroups[_profileId][_pubId][5] = _levelInfo[5];
+        _grantGroups[_profileId][_pubId][0] = _register.levelInfo[0];
+        _grantGroups[_profileId][_pubId][1] = _register.levelInfo[1];
+        _grantGroups[_profileId][_pubId][2] = _register.levelInfo[2];
+        _grantGroups[_profileId][_pubId][3] = _register.levelInfo[3];
+        _grantGroups[_profileId][_pubId][4] = _register.levelInfo[4];
+        _grantGroups[_profileId][_pubId][5] = _register.levelInfo[5];
 
         legendData.registerGrant(
             LegendLibrary.CreateGrant({
-                levelInfo: _levelInfo,
-                granteeAddresses: _granteeAddresses,
-                splitAmounts: _splitAmounts,
-                amounts: _amounts,
-                submitBys: _submitBys,
+                levelInfo: _register.levelInfo,
+                granteeAddresses: _register.granteeAddresses,
+                splitAmounts: _register.splitAmounts,
+                amounts: _register.amounts,
+                submitBys: _register.submitBys,
                 pubId: _pubId,
                 profileId: _profileId
             })

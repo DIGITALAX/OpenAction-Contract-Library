@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: UNLICENSE
 
-pragma solidity ^0.8.16;
+pragma solidity ^0.8.19;
 
 contract LegendLibrary {
     struct TransferTokens {
@@ -28,6 +28,7 @@ contract LegendLibrary {
     struct LevelInfo {
         uint256[] collectionIds;
         uint256[] amounts;
+        uint256 level;
     }
 
     struct CreateGrant {
@@ -53,6 +54,14 @@ contract LegendLibrary {
         uint256 grantId;
         uint256 pubId;
         uint256 profileId;
+    }
+
+    struct RegisterProps {
+        LevelInfo[6] levelInfo;
+        address[] granteeAddresses;
+        uint256[] splitAmounts;
+        uint256[3] amounts;
+        uint256[3] submitBys;
     }
 
     enum MilestoneStatus {
