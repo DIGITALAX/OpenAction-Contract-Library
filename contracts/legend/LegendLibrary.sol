@@ -4,9 +4,9 @@ pragma solidity ^0.8.19;
 
 contract LegendLibrary {
     struct TransferTokens {
-        uint256 printType;
         uint256 collectionId;
         uint256 chosenIndex;
+        uint256 chosenAmount;
         uint256 designerSplit;
         uint256 fulfillerSplit;
         uint256 fulfillerBase;
@@ -19,7 +19,6 @@ contract LegendLibrary {
     struct SenderInfo {
         address fulfiller;
         address designer;
-        uint256 printType;
         uint256 fulfillerBase;
         uint256 fulfillerSplit;
         uint256 designerSplit;
@@ -28,7 +27,7 @@ contract LegendLibrary {
     struct LevelInfo {
         uint256[] collectionIds;
         uint256[] amounts;
-        uint256 level;
+        uint8 level;
     }
 
     struct CreateGrant {

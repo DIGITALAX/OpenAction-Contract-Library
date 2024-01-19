@@ -14,6 +14,7 @@ import "./../PrintDesignData.sol";
 import "./../legend/LegendData.sol";
 import "./../legend/LegendAccessControl.sol";
 import "./../legend/LegendLibrary.sol";
+import "hardhat/console.sol";
 
 contract LegendOpenAction is
     HubRestricted,
@@ -37,7 +38,7 @@ contract LegendOpenAction is
 
     IModuleRegistry public immutable MODULE_GLOBALS;
 
-    mapping(uint256 => mapping(uint256 => mapping(uint256 => LegendLibrary.LevelInfo))) _grantGroups;
+    mapping(uint256 => mapping(uint256 => mapping(uint8 => LegendLibrary.LevelInfo))) _grantGroups;
     mapping(uint256 => mapping(uint256 => address)) _granteeReceiver;
 
     event GrantContributed(
@@ -76,7 +77,7 @@ contract LegendOpenAction is
         address _executor,
         bytes calldata _data
     ) external override onlyHub returns (bytes memory) {
-        if (legendAccessControl.isGrantee(_executor)) {
+        if (!legendAccessControl.isGrantee(_executor)) {
             revert LegendErrors.InvalidAddress();
         }
         LegendLibrary.RegisterProps memory _register = abi.decode(
@@ -115,12 +116,12 @@ contract LegendOpenAction is
     ) external override onlyHub returns (bytes memory) {
         (
             uint256[] memory _chosenIndexes,
+            string memory _encryptedFulfillment,
             address _currency,
-            uint256 _level,
-            string memory _encryptedFulfillment
+            uint8 _level
         ) = abi.decode(
                 _params.actionModuleData,
-                (uint256[], address, uint256, string)
+                (uint256[], string, address, uint8)
             );
 
         address _granteeReceiverAddress = _granteeReceiver[
@@ -132,7 +133,7 @@ contract LegendOpenAction is
         );
 
         if (
-            !MODULE_GLOBALS.isErc20CurrencyRegistered(_currency) ||
+            // !MODULE_GLOBALS.isErc20CurrencyRegistered(_currency) ||
             !printSplitsData.getIsCurrency(_currency)
         ) {
             revert LegendErrors.CurrencyNotWhitelisted();
@@ -144,33 +145,22 @@ contract LegendOpenAction is
             uint256[] memory _collectionIds = _grantGroups[
                 _params.publicationActedProfileId
             ][_params.publicationActedId][_level - 2].collectionIds;
+            uint256[] memory _chosenAmounts = _grantGroups[
+                _params.publicationActedProfileId
+            ][_params.publicationActedId][_level - 2].amounts;
 
-            for (uint256 i = 0; i < _collectionIds.length; i++) {
-                if (
-                    !printDesignData.getIsCollectionTokenAccepted(
-                        _collectionIds[i],
-                        _currency
-                    )
-                ) {
-                    revert LegendErrors.CurrencyNotWhitelisted();
-                }
-
-                _grantAmount += _processLevel(
-                    _collectionIds[i],
-                    _chosenIndexes[i],
-                    _currency,
-                    _params.actorProfileOwner
-                );
-            }
+            _grantAmount = _processLevels(
+                _collectionIds,
+                _chosenIndexes,
+                _chosenAmounts,
+                _currency,
+                _params.actorProfileOwner
+            );
 
             PrintLibrary.BuyTokensParams memory _buyTokensParams = PrintLibrary
                 .BuyTokensParams({
-                    collectionIds: _grantGroups[
-                        _params.publicationActedProfileId
-                    ][_params.publicationActedId][_level - 2].collectionIds,
-                    collectionAmounts: _grantGroups[
-                        _params.publicationActedProfileId
-                    ][_params.publicationActedId][_level - 2].amounts,
+                    collectionIds: _collectionIds,
+                    collectionAmounts: _chosenAmounts,
                     collectionIndexes: _chosenIndexes,
                     details: _encryptedFulfillment,
                     buyerAddress: _params.actorProfileOwner,
@@ -203,30 +193,37 @@ contract LegendOpenAction is
             _grantAmount
         );
 
-        return
-            abi.encode(
-                _grantGroups[_params.publicationActedProfileId][
-                    _params.publicationActedId
-                ][_level - 2],
-                _currency,
-                _chosenIndexes
-            );
+        return abi.encode(_level, _currency, _chosenIndexes);
     }
 
-    function _processLevel(
-        uint256 _collectionId,
-        uint256 _chosenIndex,
+    function _processLevels(
+        uint256[] memory _collectionIds,
+        uint256[] memory _chosenIndexes,
+        uint256[] memory _chosenAmounts,
         address _currency,
         address _buyer
     ) internal returns (uint256) {
-        LegendLibrary.SenderInfo memory _info = _getSenderInfo(_collectionId);
+        uint256 _grantAmount = 0;
 
-        return
-            _transferTokens(
+        for (uint256 i = 0; i < _collectionIds.length; i++) {
+            if (
+                !printDesignData.getIsCollectionTokenAccepted(
+                    _collectionIds[i],
+                    _currency
+                )
+            ) {
+                revert LegendErrors.CurrencyNotWhitelisted();
+            }
+
+            LegendLibrary.SenderInfo memory _info = _getSenderInfo(
+                _collectionIds[i]
+            );
+
+            _grantAmount += _transferTokens(
                 LegendLibrary.TransferTokens({
-                    printType: _info.printType,
-                    collectionId: _collectionId,
-                    chosenIndex: _chosenIndex,
+                    collectionId: _collectionIds[i],
+                    chosenIndex: _chosenIndexes[i],
+                    chosenAmount: _chosenAmounts[i],
                     designerSplit: _info.designerSplit,
                     fulfillerSplit: _info.fulfillerSplit,
                     fulfillerBase: _info.fulfillerBase,
@@ -236,6 +233,9 @@ contract LegendOpenAction is
                     buyer: _buyer
                 })
             );
+        }
+
+        return _grantAmount;
     }
 
     function _transferTokens(
@@ -243,37 +243,39 @@ contract LegendOpenAction is
     ) internal returns (uint256) {
         uint256 _totalPrice = printDesignData.getCollectionPrices(
             _params.collectionId
-        )[_params.chosenIndex];
+        )[_params.chosenIndex] * _params.chosenAmount;
 
-        IERC20(_params.chosenCurrency).transferFrom(
-            _params.buyer,
-            _params.fulfiller,
-            _calculateAmount(
-                _params.chosenCurrency,
-                _params.fulfillerBase + (_totalPrice * _params.fulfillerSplit)
-            )
-        );
-        IERC20(_params.chosenCurrency).transferFrom(
-            _params.buyer,
-            _params.designer,
-            _calculateAmount(
-                _params.chosenCurrency,
-                _totalPrice *
-                    printSplitsData.getDesignerSplit(
-                        _params.designer,
-                        _params.printType
-                    )
-            )
+        uint256 _calculatedPrice = _calculateAmount(
+            _params.chosenCurrency,
+            _totalPrice
         );
 
-        return
-            _calculateAmount(
-                _params.chosenCurrency,
-                (_totalPrice -
-                    (_totalPrice * _params.fulfillerSplit) -
-                    (_totalPrice * _params.designerSplit) -
-                    _params.fulfillerBase)
+        uint256 _calculatedBase = _calculateAmount(
+            _params.chosenCurrency,
+            _params.fulfillerBase * _params.chosenAmount
+        );
+        uint256 _fulfillerAmount = _calculatedBase +
+            ((_params.fulfillerSplit * _calculatedPrice) / 1e20);
+
+        if (_fulfillerAmount > 0) {
+            IERC20(_params.chosenCurrency).transferFrom(
+                _params.buyer,
+                _params.fulfiller,
+                _fulfillerAmount
             );
+        }
+
+        uint256 _designerAmount = ((_calculatedPrice - _fulfillerAmount) * 30) /
+            100;
+
+        if ((_calculatedPrice - _fulfillerAmount) > 0) {
+            IERC20(_params.chosenCurrency).transferFrom(
+                _params.buyer,
+                _params.designer,
+                _designerAmount
+            );
+        }
+        return _calculatedPrice - _fulfillerAmount - _designerAmount;
     }
 
     function _getSenderInfo(
@@ -303,7 +305,6 @@ contract LegendOpenAction is
             LegendLibrary.SenderInfo({
                 fulfiller: _fulfiller,
                 designer: _designer,
-                printType: _printType,
                 fulfillerBase: _fulfillerBase,
                 fulfillerSplit: _fulfillerSplit,
                 designerSplit: _designerSplit
@@ -353,13 +354,14 @@ contract LegendOpenAction is
         address _currency,
         uint256 _amountInWei
     ) internal view returns (uint256) {
-        if (_amountInWei == 0) {
-            revert LegendErrors.InvalidAmounts();
-        }
         uint256 _exchangeRate = printSplitsData.getRateByCurrency(_currency);
 
+        if (_exchangeRate == 0) {
+            revert LegendErrors.InvalidAmounts();
+        }
+
         uint256 _weiDivisor = printSplitsData.getWeiByCurrency(_currency);
-        uint256 _tokenAmount = (_amountInWei / _exchangeRate) * _weiDivisor;
+        uint256 _tokenAmount = (_amountInWei * _weiDivisor) / _exchangeRate;
 
         return _tokenAmount;
     }
