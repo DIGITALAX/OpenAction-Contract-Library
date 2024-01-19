@@ -5,6 +5,7 @@ pragma solidity ^0.8.19;
 import "./LegendAccessControl.sol";
 import "./LegendErrors.sol";
 import "./LegendLibrary.sol";
+import "hardhat/console.sol";
 
 contract LegendData {
     LegendAccessControl public legendAccessControl;
@@ -121,7 +122,7 @@ contract LegendData {
         uint256 _grantId,
         uint256 _amountFunded
     ) external onlyOpenAction {
-        _amountFundedToCurrency[_grantId][_currency] = _amountFunded;
+        _amountFundedToCurrency[_grantId][_currency] += _amountFunded;
     }
 
     function setGranteeClaimedMilestone(
@@ -141,9 +142,9 @@ contract LegendData {
     }
 
     function _setLevels(
-        LegendLibrary.Grant memory _newGrant,
+        LegendLibrary.Grant storage _newGrant,
         LegendLibrary.LevelInfo[6] memory _levels
-    ) private pure {
+    ) private {
         for (uint256 i = 0; i < _levels.length; i++) {
             _newGrant.levelInfo[i].collectionIds = _levels[i].collectionIds;
             _newGrant.levelInfo[i].amounts = _levels[i].amounts;
@@ -193,14 +194,14 @@ contract LegendData {
 
     function getGrantLevelCollectionIds(
         uint256 _grantId,
-        uint256 _level
+        uint8 _level
     ) public view returns (uint256[] memory) {
         return _allGrants[_grantId].levelInfo[_level - 2].collectionIds;
     }
 
     function getGrantLevelAmounts(
         uint256 _grantId,
-        uint256 _level
+        uint8 _level
     ) public view returns (uint256[] memory) {
         return _allGrants[_grantId].levelInfo[_level - 2].amounts;
     }
