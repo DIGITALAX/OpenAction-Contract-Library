@@ -349,7 +349,7 @@ describe("LegendOpenAction", () => {
     before(async () => {
       const encodedData = ethers.utils.defaultAbiCoder.encode(
         [
-          "tuple(tuple(uint256[] collectionIds, uint256[] amounts, uint8 level)[6] levelInfo, address[] granteeAddresses, uint256[] splitAmounts, uint256[3] amounts, uint256[3] submitBys)",
+          "tuple(tuple(uint256[] collectionIds, uint256[] amounts, uint8 level)[6] levelInfo, uint256[3][] goalToCurrency, address[] acceptedCurrencies, address[] granteeAddresses, uint256[] splitAmounts, uint256[3] amounts, uint256[3] submitBys)",
         ],
         [
           {
@@ -385,13 +385,14 @@ describe("LegendOpenAction", () => {
                 level: 7,
               },
             ],
+            goalToCurrency: [["5000000"], ["10000000"], ["5000000"]],
+            acceptedCurrencies: [usdt.address],
             granteeAddresses: [
               await grantee.getAddress(),
               await granteeTwo.getAddress(),
               await granteeThree.getAddress(),
             ],
             splitAmounts: [50, 10, 40],
-            amounts: ["5000000", "10000000", "50000000"],
             submitBys: ["100000000", "200000000", "300000000"],
           },
         ]
@@ -758,6 +759,7 @@ describe("LegendOpenAction", () => {
       // additional should go to digitalax treasury / platform to continue to create fund the fulfillment / platform ?? (how with exchange o no )
       // they should ask for their amounts with tokens attached
       // shared pool adicional? para las maquinas?? bienes publicos con las maquinas se involucran
+      // claim before submit bys / finish before submit bys or goes to machines
     });
 
     it("Delete Grant Without Funding", async () => {

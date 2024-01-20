@@ -32,23 +32,31 @@ contract LegendLibrary {
 
     struct CreateGrant {
         LevelInfo[6] levelInfo;
+        uint256[3][] goalToCurrency;
+        address[] acceptedCurrencies;
         address[] granteeAddresses;
         uint256[] splitAmounts;
-        uint256[3] amounts;
         uint256[3] submitBys;
         uint256 pubId;
         uint256 profileId;
     }
 
     struct Milestone {
-        MilestoneStatus status;
-        uint256 amount;
+        mapping(address => uint256) currencyToGoal;
+        mapping(address => uint256) splitAmounts;
+        mapping(address => bool) hasClaimedMilestone;
         uint256 submitBy;
+        MilestoneStatus status;
         bool allClaimed;
     }
 
     struct Grant {
         LevelInfo[6] levelInfo;
+        Milestone[3] milestones;
+        mapping(address => bool) currencyAccepted;
+        mapping(address => uint256) splitAmounts;
+        mapping(address => uint256) amountFundedToCurrency;
+        address[] acceptedCurrencies;
         address[] granteeAddresses;
         uint256 grantId;
         uint256 pubId;
@@ -57,9 +65,10 @@ contract LegendLibrary {
 
     struct RegisterProps {
         LevelInfo[6] levelInfo;
+        uint256[3][] goalToCurrency;
+        address[] acceptedCurrencies;
         address[] granteeAddresses;
         uint256[] splitAmounts;
-        uint256[3] amounts;
         uint256[3] submitBys;
     }
 
