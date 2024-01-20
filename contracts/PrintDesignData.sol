@@ -6,7 +6,6 @@ import "./PrintAccessControl.sol";
 import "./NFTCreator.sol";
 import "./CollectionCreator.sol";
 import "./PrintLibrary.sol";
-import "hardhat/console.sol";
 
 contract PrintDesignData {
     PrintAccessControl public printAccessControl;

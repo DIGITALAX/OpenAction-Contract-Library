@@ -129,15 +129,17 @@ contract LegendMilestoneEscrow {
             );
 
             for (uint256 i = 0; i < _currencies.length; i++) {
-                uint256 _amount = legendData.getGrantAmountFundedByCurrency(
-                    _currencies[i],
-                    _grantId
-                );
-                if (_amount > 0) {
-                    IERC20(_currencies[i]).transferFrom(
-                        address(this),
+                uint256 _milestoneAmount = legendData
+                    .getMilestoneGoalToCurrency(
+                        _currencies[i],
+                        _grantId,
+                        _milestone
+                    );
+
+                if (_milestoneAmount > 0) {
+                    IERC20(_currencies[i]).transfer(
                         msg.sender,
-                        (_amount * _splitAmount) / 10000
+                        (_milestoneAmount * _splitAmount) / 1e20
                     );
                 }
             }
@@ -157,7 +159,7 @@ contract LegendMilestoneEscrow {
             for (uint256 i; i < _addresses.length; i++) {
                 if (
                     legendData.getGranteeClaimedMilestone(
-                        msg.sender,
+                        _addresses[i],
                         _grantId,
                         _milestone
                     )
