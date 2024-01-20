@@ -5,7 +5,6 @@ pragma solidity ^0.8.19;
 import "./LegendAccessControl.sol";
 import "./LegendErrors.sol";
 import "./LegendLibrary.sol";
-import "hardhat/console.sol";
 
 contract LegendData {
     LegendAccessControl public legendAccessControl;

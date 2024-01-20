@@ -968,7 +968,5 @@ describe("LegendOpenAction", () => {
         expect(err.message).to.include("InvalidClaim()");
       }
     });
-
-    it("Milestone Claim with Machine Swap", async () => {});
   });
 });

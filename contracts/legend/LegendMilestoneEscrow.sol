@@ -129,6 +129,8 @@ contract LegendMilestoneEscrow {
             );
 
             for (uint256 i = 0; i < _currencies.length; i++) {
+                uint256 _totalFunded = legendData
+                    .getGrantAmountFundedByCurrency(_currencies[i], _grantId);
                 uint256 _milestoneAmount = legendData
                     .getMilestoneGoalToCurrency(
                         _currencies[i],
@@ -136,11 +138,13 @@ contract LegendMilestoneEscrow {
                         _milestone
                     );
 
-                if (_milestoneAmount > 0) {
-                    IERC20(_currencies[i]).transfer(
-                        msg.sender,
-                        (_milestoneAmount * _splitAmount) / 1e20
-                    );
+                if (_totalFunded >= _milestoneAmount) {
+                    if (_milestoneAmount > 0) {
+                        IERC20(_currencies[i]).transfer(
+                            msg.sender,
+                            (_milestoneAmount * _splitAmount) / 1e20
+                        );
+                    }
                 }
             }
 
@@ -176,6 +180,45 @@ contract LegendMilestoneEscrow {
                     LegendLibrary.MilestoneStatus.Claimed,
                     _grantId,
                     _milestone
+                );
+            }
+        }
+    }
+
+    function grantRecallCheck(uint256 _grantId) public onlyAdmin {
+        address[] memory _allCurrencies = legendData.getGrantAcceptedCurrencies(
+            _grantId
+        );
+
+        for (uint256 i = 0; i < _allCurrencies.length; i++) {
+            uint256 _totalFunded = legendData.getGrantAmountFundedByCurrency(
+                _allCurrencies[i],
+                _grantId
+            );
+
+            uint256 _goal = 0;
+            for (uint8 i = 0; i < 3; i++) {
+                _goal += legendData.getMilestoneGoalToCurrency(
+                    _allCurrencies[i],
+                    _grantId,
+                    i + 1
+                );
+            }
+
+            if (
+                _totalFunded < _goal &&
+                block.timestamp >
+                legendData.getMilestoneSubmitBy(_grantId, 1) +
+                    legendData.getPeriodClaim()
+            ) {
+                IERC20(_allCurrencies[i]).approve(
+                    address(machineCreditSwap),
+                    _totalFunded
+                );
+
+                machineCreditSwap.receiveAndSwapCredits(
+                    _allCurrencies[i],
+                    _totalFunded
                 );
             }
         }

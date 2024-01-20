@@ -15,7 +15,6 @@ import "./../legend/LegendData.sol";
 import "./../legend/LegendMilestoneEscrow.sol";
 import "./../legend/LegendAccessControl.sol";
 import "./../legend/LegendLibrary.sol";
-import "hardhat/console.sol";
 
 contract LegendOpenAction is
     HubRestricted,
