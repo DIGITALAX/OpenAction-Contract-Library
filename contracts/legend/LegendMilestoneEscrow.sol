@@ -128,7 +128,7 @@ contract LegendMilestoneEscrow {
                 _grantId
             );
 
-            for (uint256 i = 0; i < _currencies.length; i++) {
+            for (uint8 i = 0; i < _currencies.length; i++) {
                 uint256 _totalFunded = legendData
                     .getGrantAmountFundedByCurrency(_currencies[i], _grantId);
                 uint256 _milestoneAmount = legendData
@@ -197,11 +197,11 @@ contract LegendMilestoneEscrow {
             );
 
             uint256 _goal = 0;
-            for (uint8 i = 0; i < 3; i++) {
+            for (uint8 j = 0; j < 3; j++) {
                 _goal += legendData.getMilestoneGoalToCurrency(
                     _allCurrencies[i],
                     _grantId,
-                    i + 1
+                    j + 1
                 );
             }
 
