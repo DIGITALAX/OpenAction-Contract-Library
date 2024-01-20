@@ -221,7 +221,7 @@ contract LegendData {
         }
     }
 
-    function setMilestoneClaimAddress(
+    function setMilestoneEscrowAddress(
         address _legendMilestoneAddress
     ) public onlyAdmin {
         legendMilestone = _legendMilestoneAddress;

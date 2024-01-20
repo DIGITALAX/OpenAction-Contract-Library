@@ -220,6 +220,7 @@ describe("LegendOpenAction", () => {
     await legendMilestoneEscrow.setLegendOpenActionAddress(
       legendOpenAction.address
     );
+    await legendData.setMilestoneEscrowAddress(legendMilestoneEscrow.address);
     await printAccessControl.addDesigner(await designer.getAddress());
     await printAccessControl.addDesigner(await designerTwo.getAddress());
     await printAccessControl.addFulfiller(await fulfiller.getAddress());
@@ -412,8 +413,12 @@ describe("LegendOpenAction", () => {
               await granteeTwo.getAddress(),
               await granteeThree.getAddress(),
             ],
-            splitAmounts: [50, 10, 40],
-            submitBys: ["1805719382", "1905719382", "2005719382"],
+            splitAmounts: [
+              "50000000000000000000",
+              "10000000000000000000",
+              "40000000000000000000",
+            ],
+            submitBys: ["1705727127", "1705727127", "1705727127"],
           },
         ]
       );
@@ -474,13 +479,13 @@ describe("LegendOpenAction", () => {
       expect(await legendData.getMilestoneStatus(1, 3)).to.equal(0);
 
       expect(await legendData.getMilestoneSubmitBy(1, 1)).to.equal(
-        "1805719382"
+        "1705727127"
       );
       expect(await legendData.getMilestoneSubmitBy(1, 2)).to.equal(
-        "1905719382"
+        "1705727127"
       );
       expect(await legendData.getMilestoneSubmitBy(1, 3)).to.equal(
-        "2005719382"
+        "1705727127"
       );
 
       expect(
@@ -495,16 +500,16 @@ describe("LegendOpenAction", () => {
 
       expect(
         await legendData.getGranteeSplitAmount(await grantee.getAddress(), 1)
-      ).to.equal(50);
+      ).to.equal("50000000000000000000");
       expect(
         await legendData.getGranteeSplitAmount(await granteeTwo.getAddress(), 1)
-      ).to.equal(10);
+      ).to.equal("10000000000000000000");
       expect(
         await legendData.getGranteeSplitAmount(
           await granteeThree.getAddress(),
           1
         )
-      ).to.equal(40);
+      ).to.equal("40000000000000000000");
 
       expect(await legendData.getAllClaimedMilestone(1, 1)).to.equal(false);
       expect(await legendData.getAllClaimedMilestone(1, 2)).to.equal(false);
@@ -787,8 +792,6 @@ describe("LegendOpenAction", () => {
       );
     });
 
-    it("Milestone Claim", async () => {});
-
     it("Delete Grant Without Funding", async () => {
       const encodedData = ethers.utils.defaultAbiCoder.encode(
         [
@@ -835,8 +838,12 @@ describe("LegendOpenAction", () => {
               await granteeTwo.getAddress(),
               await granteeThree.getAddress(),
             ],
-            splitAmounts: [50, 10, 40],
-            submitBys: ["1805719382", "1905719382", "2005719382"],
+            splitAmounts: [
+              "50000000000000000000",
+              "10000000000000000000",
+              "40000000000000000000",
+            ],
+            submitBys: ["1705727127", "1705727127", "1705727127"],
           },
         ]
       );
@@ -858,19 +865,18 @@ describe("LegendOpenAction", () => {
         expect(err.message).to.include("InvalidAddress");
       }
 
-
       await legendData.connect(granteeThree).deleteGrant(2);
       expect(await legendData.getGrantId(52, 11)).to.equal(0);
 
       await legendOpenAction
-      .connect(hub)
-      .initializePublicationAction(
-        52,
-        13,
-        await granteeThree.getAddress(),
-        encodedData
-      );
-      
+        .connect(hub)
+        .initializePublicationAction(
+          52,
+          13,
+          await granteeThree.getAddress(),
+          encodedData
+        );
+
       const secondData = ethers.utils.defaultAbiCoder.encode(
         ["uint256[]", "string", "address", "uint8"],
         [[], "my fulfillment encrypted", usdt.address, 1]
@@ -892,6 +898,74 @@ describe("LegendOpenAction", () => {
         await legendData.connect(granteeThree).deleteGrant(3);
       } catch (err: any) {
         expect(err.message).to.include("InvalidDelete()");
+      }
+    });
+
+    it("Milestone Claim", async () => {
+      try {
+        await legendMilestoneEscrow
+          .connect(nonAdmin)
+          .initiateMilestoneClaim(1, 1);
+      } catch (err: any) {
+        expect(err.message).to.include("GranteeNotRegistered()");
+      }
+
+      const granteeBalance = await usdt.balanceOf(await grantee.getAddress());
+      const granteeTwoBalance = await usdt.balanceOf(
+        await granteeTwo.getAddress()
+      );
+      const granteeThreeBalance = await usdt.balanceOf(
+        await granteeThree.getAddress()
+      );
+      const escrowBalance = await usdt.balanceOf(legendMilestoneEscrow.address);
+
+      await legendMilestoneEscrow.connect(grantee).initiateMilestoneClaim(1, 1);
+      await legendMilestoneEscrow
+        .connect(granteeThree)
+        .initiateMilestoneClaim(1, 1);
+
+      expect(await usdt.balanceOf(await grantee.getAddress())).to.equal(
+        granteeBalance.add(ethers.BigNumber.from("500000000").mul(50).div(100))
+      );
+      expect(await usdt.balanceOf(await granteeThree.getAddress())).to.equal(
+        granteeThreeBalance.add(
+          ethers.BigNumber.from("500000000").mul(40).div(100)
+        )
+      );
+
+      try {
+        await legendMilestoneEscrow
+          .connect(grantee)
+          .initiateMilestoneClaim(1, 1);
+      } catch (err: any) {
+        expect(err.message).to.include("AlreadyClaimed()");
+      }
+      try {
+        await legendMilestoneEscrow
+          .connect(granteeThree)
+          .initiateMilestoneClaim(1, 1);
+      } catch (err: any) {
+        expect(err.message).to.include("AlreadyClaimed()");
+      }
+
+      await legendMilestoneEscrow
+        .connect(granteeTwo)
+        .initiateMilestoneClaim(1, 1);
+      expect(await usdt.balanceOf(await granteeTwo.getAddress())).to.equal(
+        granteeTwoBalance.add(
+          ethers.BigNumber.from("500000000").mul(10).div(100)
+        )
+      );
+      expect(await usdt.balanceOf(legendMilestoneEscrow.address)).to.equal(
+        escrowBalance.sub("500000000")
+      );
+
+      try {
+        await legendMilestoneEscrow
+          .connect(granteeThree)
+          .initiateMilestoneClaim(1, 1);
+      } catch (err: any) {
+        expect(err.message).to.include("InvalidClaim()");
       }
     });
 
