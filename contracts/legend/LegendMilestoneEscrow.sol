@@ -6,19 +6,29 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./LegendData.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./LegendAccessControl.sol";
-import "./../PrintSplitsData.sol";
 import "./LegendData.sol";
 import "./LegendErrors.sol";
+import "./LegendMachineCreditSwap.sol";
 
 contract LegendMilestoneEscrow {
     using Strings for uint256;
     LegendAccessControl public legendAccessControl;
-    PrintSplitsData public printSplitsData;
     LegendData public legendData;
+    LegendMachineCreditSwap public machineCreditSwap;
+    string public symbol;
+    string public name;
+    address public legendOpenAction;
 
     modifier onlyGrantee(uint256 _grantId) {
         if (legendData.getGranteeSplitAmount(msg.sender, _grantId) == 0) {
             revert LegendErrors.GranteeNotRegistered();
+        }
+        _;
+    }
+
+    modifier onlyOpenAction() {
+        if (msg.sender != legendOpenAction) {
+            revert LegendErrors.InvalidAddress();
         }
         _;
     }
@@ -33,22 +43,68 @@ contract LegendMilestoneEscrow {
     constructor(
         address _legendDataAddress,
         address _legendAccessControlAddress,
-        address _printSplitsDataAddress
+        address _legendOpenActionAddress,
+        address _machineCreditSwapAddress
     ) {
         legendData = LegendData(_legendDataAddress);
         legendAccessControl = LegendAccessControl(_legendAccessControlAddress);
-        printSplitsData = PrintSplitsData(_printSplitsDataAddress);
+        legendOpenAction = _legendOpenActionAddress;
+        machineCreditSwap = LegendMachineCreditSwap(_machineCreditSwapAddress);
+        symbol = "LME";
+        name = "LegendMilestoneEscrow";
+    }
+
+    function fundGrant(
+        address _currency,
+        address _contributor,
+        uint256 _amount,
+        uint256 _grantId
+    ) external onlyOpenAction {
+        IERC20(_currency).transferFrom(_contributor, address(this), _amount);
+
+        uint256 _idleAmount = 0;
+
+        if (
+            block.timestamp >
+            legendData.getMilestoneSubmitBy(_grantId, 3) +
+                legendData.getPeriodClaim()
+        ) {
+            _idleAmount = _amount;
+        }
+
+        uint256 _totalFunded = legendData.getGrantAmountFundedByCurrency(
+            _currency,
+            _grantId
+        ) + _amount;
+        uint256 _goal = 0;
+        for (uint8 i = 0; i < 3; i++) {
+            _goal += legendData.getMilestoneGoalToCurrency(
+                _currency,
+                _grantId,
+                i + 1
+            );
+        }
+
+        if (_totalFunded > _goal) {
+            _idleAmount += _totalFunded - _goal;
+        }
+
+        machineCreditSwap.receiveAndSwapCredits(address(this), _idleAmount);
     }
 
     function initiateMilestoneClaim(
         uint256 _grantId,
-        uint256 _milestone
+        uint8 _milestone
     ) public onlyGrantee(_grantId) {
         if (
             legendData.getMilestoneStatus(_grantId, _milestone) !=
             LegendLibrary.MilestoneStatus.NotClaimed ||
             block.timestamp >
-            legendData.getMilestoneSubmitBy(_grantId, _milestone) + 2 weeks
+            legendData.getMilestoneSubmitBy(_grantId, _milestone) +
+                legendData.getPeriodClaim() ||
+            block.timestamp <
+            legendData.getMilestoneSubmitBy(_grantId, _milestone) -
+                legendData.getPeriodClaim()
         ) {
             revert LegendErrors.InvalidClaim();
         }
@@ -61,7 +117,8 @@ contract LegendMilestoneEscrow {
         ) {
             revert LegendErrors.AlreadyClaimed();
         } else {
-            address[] memory _currencies = printSplitsData.getAllCurrencies();
+            address[] memory _currencies = legendData
+                .getGrantAcceptedCurrencies(_grantId);
             uint256 _splitAmount = legendData.getGranteeSplitAmount(
                 msg.sender,
                 _grantId
@@ -126,15 +183,23 @@ contract LegendMilestoneEscrow {
         );
     }
 
-    function setPrintSplitsDataAddress(
-        address _newPrintSplitsDataAddress
-    ) public onlyAdmin {
-        printSplitsData = PrintSplitsData(_newPrintSplitsDataAddress);
-    }
-
     function setLegendDataAddress(
         address _newLegendDataAddress
     ) public onlyAdmin {
         legendData = LegendData(_newLegendDataAddress);
+    }
+
+    function setMachineCreditSwapAddress(
+        address _newMachineCreditSwapAddress
+    ) public onlyAdmin {
+        machineCreditSwap = LegendMachineCreditSwap(
+            _newMachineCreditSwapAddress
+        );
+    }
+
+    function setLegendOpenActionAddress(
+        address _newLegendOpenActionAddress
+    ) public onlyAdmin {
+        legendOpenAction = (_newLegendOpenActionAddress);
     }
 }

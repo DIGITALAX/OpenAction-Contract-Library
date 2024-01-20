@@ -12,6 +12,7 @@ import "./../MarketCreator.sol";
 import "./../PrintSplitsData.sol";
 import "./../PrintDesignData.sol";
 import "./../legend/LegendData.sol";
+import "./../legend/LegendMilestoneEscrow.sol";
 import "./../legend/LegendAccessControl.sol";
 import "./../legend/LegendLibrary.sol";
 import "hardhat/console.sol";
@@ -26,7 +27,7 @@ contract LegendOpenAction is
     PrintSplitsData public printSplitsData;
     PrintDesignData public printDesignData;
     LegendData public legendData;
-    address public legendMilestone;
+    LegendMilestoneEscrow public legendMilestone;
     string private _metadata;
 
     modifier onlyAdmin() {
@@ -67,7 +68,7 @@ contract LegendOpenAction is
         printSplitsData = PrintSplitsData(_printSplitsDataAddress);
         printDesignData = PrintDesignData(_printDesignDataAddress);
         legendData = LegendData(_legendDataAddress);
-        legendMilestone = _legendMilestoneAddress;
+        legendMilestone = LegendMilestoneEscrow(_legendMilestoneAddress);
         _metadata = _metadataDetails;
     }
 
@@ -95,9 +96,10 @@ contract LegendOpenAction is
         legendData.registerGrant(
             LegendLibrary.CreateGrant({
                 levelInfo: _register.levelInfo,
+                goalToCurrency: _register.goalToCurrency,
+                acceptedCurrencies: _register.acceptedCurrencies,
                 granteeAddresses: _register.granteeAddresses,
                 splitAmounts: _register.splitAmounts,
-                amounts: _register.amounts,
                 submitBys: _register.submitBys,
                 pubId: _pubId,
                 profileId: _profileId
@@ -134,7 +136,8 @@ contract LegendOpenAction is
 
         if (
             // !MODULE_GLOBALS.isErc20CurrencyRegistered(_currency) ||
-            !printSplitsData.getIsCurrency(_currency)
+            !printSplitsData.getIsCurrency(_currency) ||
+            !legendData.getIsGrantAcceptedCurrency(_currency, _grantId)
         ) {
             revert LegendErrors.CurrencyNotWhitelisted();
         }
@@ -177,10 +180,11 @@ contract LegendOpenAction is
             _grantAmount = printSplitsData.getWeiByCurrency(_currency) * 1;
         }
 
-        IERC20(_currency).transferFrom(
+        legendMilestone.fundGrant(
+            _currency,
             _params.actorProfileOwner,
-            legendMilestone,
-            _grantAmount
+            _grantAmount,
+            _grantId
         );
 
         legendData.setGrantAmountFunded(_currency, _grantId, _grantAmount);
@@ -347,7 +351,7 @@ contract LegendOpenAction is
     function setLegendMilestoneAddress(
         address _newLegendMilestoneAddress
     ) public onlyAdmin {
-        legendMilestone = (_newLegendMilestoneAddress);
+        legendMilestone = LegendMilestoneEscrow(_newLegendMilestoneAddress);
     }
 
     function _calculateAmount(

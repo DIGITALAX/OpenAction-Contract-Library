@@ -15,4 +15,5 @@ contract LegendErrors {
     error InvalidAmounts();
     error Existing();
     error CantRemoveSelf();
+    error InvalidDelete();
 }
