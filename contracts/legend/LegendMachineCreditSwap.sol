@@ -3,21 +3,27 @@
 pragma solidity ^0.8.19;
 
 import "./../MachineAccessControl.sol";
-import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
+import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract LegendMachineCreditSwap {
     MachineAccessControl public machineAccessControl;
-    IUniswapV2Router02 public uniswapRouter;
+    ISwapRouter public immutable swapRouter;
     string public symbol;
     string public name;
-    // address public constant UNISWAP_ROUTER_ADDRESS = "";
     address public legendEscrow;
     address public monaAddress;
+    uint24 public poolFee;
 
     error InvalidAddress();
 
-    event CreditsSwapped(address fromCurrency, address caller, uint256 amount);
+    event CreditsSwapped(
+        address fromCurrency,
+        address caller,
+        uint256 amountIn,
+        uint256 amountOut
+    );
     event CreditsMoved(address moveAddress, address caller, uint256 amount);
 
     modifier onlyLegendEscrow() {
@@ -37,13 +43,14 @@ contract LegendMachineCreditSwap {
         _;
     }
 
-    constructor(address _machineAccessControlAddress) {
+    constructor(address _machineAccessControlAddress, address _routerAddress) {
         machineAccessControl = MachineAccessControl(
             _machineAccessControlAddress
         );
-        // uniswapRouter = IUniswapV2Router02(UNISWAP_ROUTER_ADDRESS);
+        swapRouter = ISwapRouter(_routerAddress);
         symbol = "LMCS";
         name = "LegendMachineCreditSwap";
+        poolFee = 3000;
     }
 
     function receiveAndSwapCredits(
@@ -52,9 +59,9 @@ contract LegendMachineCreditSwap {
     ) external onlyLegendEscrow {
         IERC20(_currency).transferFrom(legendEscrow, address(this), _amount);
 
-        _swapCreditsToMona(_currency, _amount);
+        uint256 _amountOut = _swapCreditsToMona(_currency, _amount);
 
-        emit CreditsSwapped(_currency, msg.sender, _amount);
+        emit CreditsSwapped(_currency, msg.sender, _amount, _amountOut);
     }
 
     function moveCredits(
@@ -66,20 +73,32 @@ contract LegendMachineCreditSwap {
         emit CreditsMoved(_moveAddress, msg.sender, _amount);
     }
 
-    function _swapCreditsToMona(address _currency, uint256 _amount) private {
-        IERC20(_currency).approve(address(uniswapRouter), _amount);
-
-        address[] memory _path = new address[](2);
-        _path[0] = _currency;
-        _path[1] = monaAddress;
-
-        uniswapRouter.swapExactTokensForTokens(
-            _amount,
-            0,
-            _path,
+    function _swapCreditsToMona(
+        address _currency,
+        uint256 _amount
+    ) private returns (uint256) {
+        TransferHelper.safeTransferFrom(
+            _currency,
+            msg.sender,
             address(this),
-            block.timestamp
+            _amount
         );
+
+        TransferHelper.safeApprove(_currency, address(swapRouter), _amount);
+
+        ISwapRouter.ExactInputSingleParams memory params = ISwapRouter
+            .ExactInputSingleParams({
+                tokenIn: _currency,
+                tokenOut: monaAddress,
+                fee: poolFee,
+                recipient: msg.sender,
+                deadline: block.timestamp,
+                amountIn: _amount,
+                amountOutMinimum: 0,
+                sqrtPriceLimitX96: 0
+            });
+
+        return swapRouter.exactInputSingle(params);
     }
 
     function setLegendEscrowAddress(
@@ -98,5 +117,9 @@ contract LegendMachineCreditSwap {
         machineAccessControl = MachineAccessControl(
             _machineAccessControlAddress
         );
+    }
+
+    function changePoolFee(uint24 _newPoolFee) public onlyAdminOrMachine {
+        poolFee = _newPoolFee;
     }
 }
