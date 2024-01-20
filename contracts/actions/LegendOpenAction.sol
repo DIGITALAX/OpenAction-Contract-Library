@@ -86,6 +86,15 @@ contract LegendOpenAction is
             (LegendLibrary.RegisterProps)
         );
 
+        for (uint8 i = 0; i < 3; i++) {
+            if (
+                _register.acceptedCurrencies.length !=
+                _register.goalToCurrency[i].length
+            ) {
+                revert LegendErrors.InvalidLengths();
+            }
+        }
+
         _grantGroups[_profileId][_pubId][0] = _register.levelInfo[0];
         _grantGroups[_profileId][_pubId][1] = _register.levelInfo[1];
         _grantGroups[_profileId][_pubId][2] = _register.levelInfo[2];
@@ -180,12 +189,13 @@ contract LegendOpenAction is
             _grantAmount = printSplitsData.getWeiByCurrency(_currency) * 1;
         }
 
-        legendMilestone.fundGrant(
-            _currency,
+        IERC20(_currency).transferFrom(
             _params.actorProfileOwner,
-            _grantAmount,
-            _grantId
+            address(this),
+            _grantAmount
         );
+        IERC20(_currency).approve(address(legendMilestone), _grantAmount);
+        legendMilestone.fundGrant(_currency, _grantAmount, _grantId);
 
         legendData.setGrantAmountFunded(_currency, _grantId, _grantAmount);
 
