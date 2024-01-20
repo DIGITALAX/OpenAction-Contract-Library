@@ -15,8 +15,14 @@ contract LegendData {
     uint256 public _periodClaim;
     uint256 private _grantSupply;
 
-    modifier onlyGranteeMilestoneClaim() {
+    modifier onlyMilestoneEscrow() {
         if (msg.sender != legendMilestone) {
+            revert LegendErrors.InvalidAddress();
+        }
+        _;
+    }
+    modifier onlyGrantee(uint256 _grantId) {
+        if (_allGrants[_grantId].splitAmounts[msg.sender] == 0) {
             revert LegendErrors.InvalidAddress();
         }
         _;
@@ -103,7 +109,14 @@ contract LegendData {
         );
     }
 
-    function deleteGrant(uint256 _grantId) external onlyGranteeMilestoneClaim {
+    function deleteGrant(uint256 _grantId) external onlyGrantee(_grantId) {
+        if (
+            _lensToGrantId[_allGrants[_grantId].profileId][
+                _allGrants[_grantId].pubId
+            ] == 0
+        ) {
+            revert LegendErrors.InvalidDelete();
+        }
         for (
             uint256 i = 0;
             i < _allGrants[_grantId].acceptedCurrencies.length;
@@ -130,7 +143,7 @@ contract LegendData {
         LegendLibrary.MilestoneStatus _status,
         uint256 _grantId,
         uint8 _milestone
-    ) external onlyGranteeMilestoneClaim {
+    ) external onlyMilestoneEscrow {
         _allGrants[_grantId].milestones[_milestone - 1].status = _status;
 
         emit MilestoneStatusUpdated(
@@ -155,7 +168,7 @@ contract LegendData {
         address _granteeAddress,
         uint256 _grantId,
         uint8 _milestone
-    ) external onlyGranteeMilestoneClaim {
+    ) external onlyMilestoneEscrow {
         _allGrants[_grantId].milestones[_milestone - 1].hasClaimedMilestone[
                 _granteeAddress
             ] = true;
@@ -166,7 +179,7 @@ contract LegendData {
     function setAllClaimedMilestone(
         uint256 _grantId,
         uint8 _milestone
-    ) external onlyGranteeMilestoneClaim {
+    ) external onlyMilestoneEscrow {
         _allGrants[_grantId].milestones[_milestone - 1].allClaimed = true;
 
         emit AllClaimedMilestone(_grantId, _milestone);
@@ -178,7 +191,7 @@ contract LegendData {
 
     function _setMilestones(
         LegendLibrary.Grant storage _newGrant,
-        uint256[3][] memory _goalToCurrency,
+        uint256[][3] memory _goalToCurrency,
         address[] memory _acceptedCurrencies,
         uint256[3] memory _submitBys
     ) private {

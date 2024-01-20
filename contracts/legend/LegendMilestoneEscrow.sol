@@ -43,12 +43,10 @@ contract LegendMilestoneEscrow {
     constructor(
         address _legendDataAddress,
         address _legendAccessControlAddress,
-        address _legendOpenActionAddress,
         address _machineCreditSwapAddress
     ) {
         legendData = LegendData(_legendDataAddress);
         legendAccessControl = LegendAccessControl(_legendAccessControlAddress);
-        legendOpenAction = _legendOpenActionAddress;
         machineCreditSwap = LegendMachineCreditSwap(_machineCreditSwapAddress);
         symbol = "LME";
         name = "LegendMilestoneEscrow";
@@ -56,11 +54,14 @@ contract LegendMilestoneEscrow {
 
     function fundGrant(
         address _currency,
-        address _contributor,
         uint256 _amount,
         uint256 _grantId
     ) external onlyOpenAction {
-        IERC20(_currency).transferFrom(_contributor, address(this), _amount);
+        IERC20(_currency).transferFrom(
+            legendOpenAction,
+            address(this),
+            _amount
+        );
 
         uint256 _idleAmount = 0;
 
@@ -88,8 +89,11 @@ contract LegendMilestoneEscrow {
         if (_totalFunded > _goal) {
             _idleAmount += _totalFunded - _goal;
         }
+        if (_idleAmount > 0) {
+            IERC20(_currency).approve(address(machineCreditSwap), _idleAmount);
 
-        machineCreditSwap.receiveAndSwapCredits(address(this), _idleAmount);
+            machineCreditSwap.receiveAndSwapCredits(_currency, _idleAmount);
+        }
     }
 
     function initiateMilestoneClaim(

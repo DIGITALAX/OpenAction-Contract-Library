@@ -6,6 +6,8 @@ describe("LegendOpenAction", () => {
   let legendAccessControl: Contract,
     legendOpenAction: Contract,
     legendMilestoneEscrow: Contract,
+    machineAccessControl: Contract,
+    legendMachineCreditSwap: Contract,
     legendData: Contract,
     grantee: Signer,
     granteeTwo: Signer,
@@ -171,6 +173,12 @@ describe("LegendOpenAction", () => {
     const LegendAccessControl = await ethers.getContractFactory(
       "LegendAccessControl"
     );
+    const MachineAccessControl = await ethers.getContractFactory(
+      "MachineAccessControl"
+    );
+    const LegendMachineCreditSwap = await ethers.getContractFactory(
+      "LegendMachineCreditSwap"
+    );
     const LegendMilestoneEscrow = await ethers.getContractFactory(
       "LegendMilestoneEscrow"
     );
@@ -179,12 +187,16 @@ describe("LegendOpenAction", () => {
       "LegendOpenAction"
     );
 
+    machineAccessControl = await MachineAccessControl.deploy();
+    legendMachineCreditSwap = await LegendMachineCreditSwap.deploy(
+      machineAccessControl.address
+    );
     legendAccessControl = await LegendAccessControl.deploy();
     legendData = await LegendData.deploy(legendAccessControl.address);
     legendMilestoneEscrow = await LegendMilestoneEscrow.deploy(
-      legendAccessControl.address,
       legendData.address,
-      printSplitsData.address
+      legendAccessControl.address,
+      legendMachineCreditSwap.address
     );
     legendOpenAction = await LegendOpenAction.deploy(
       "metadataDetails",
@@ -200,6 +212,14 @@ describe("LegendOpenAction", () => {
 
     await legendAccessControl.addOpenAction(legendOpenAction.address);
     await legendAccessControl.addGrantee(await grantee.getAddress());
+    await legendAccessControl.addGrantee(await granteeThree.getAddress());
+
+    await legendMachineCreditSwap.setLegendEscrowAddress(
+      legendMilestoneEscrow.address
+    );
+    await legendMilestoneEscrow.setLegendOpenActionAddress(
+      legendOpenAction.address
+    );
     await printAccessControl.addDesigner(await designer.getAddress());
     await printAccessControl.addDesigner(await designerTwo.getAddress());
     await printAccessControl.addFulfiller(await fulfiller.getAddress());
@@ -349,7 +369,7 @@ describe("LegendOpenAction", () => {
     before(async () => {
       const encodedData = ethers.utils.defaultAbiCoder.encode(
         [
-          "tuple(tuple(uint256[] collectionIds, uint256[] amounts, uint8 level)[6] levelInfo, uint256[3][] goalToCurrency, address[] acceptedCurrencies, address[] granteeAddresses, uint256[] splitAmounts, uint256[3] amounts, uint256[3] submitBys)",
+          "tuple(tuple(uint256[] collectionIds, uint256[] amounts, uint8 level)[6] levelInfo, uint256[][3] goalToCurrency, address[] acceptedCurrencies, address[] granteeAddresses, uint256[] splitAmounts, uint256[3] submitBys)",
         ],
         [
           {
@@ -385,7 +405,7 @@ describe("LegendOpenAction", () => {
                 level: 7,
               },
             ],
-            goalToCurrency: [["5000000"], ["10000000"], ["5000000"]],
+            goalToCurrency: [["500000000"], ["100000000"], ["500000000"]],
             acceptedCurrencies: [usdt.address],
             granteeAddresses: [
               await grantee.getAddress(),
@@ -393,7 +413,7 @@ describe("LegendOpenAction", () => {
               await granteeThree.getAddress(),
             ],
             splitAmounts: [50, 10, 40],
-            submitBys: ["100000000", "200000000", "300000000"],
+            submitBys: ["1805719382", "1905719382", "2005719382"],
           },
         ]
       );
@@ -453,13 +473,25 @@ describe("LegendOpenAction", () => {
       expect(await legendData.getMilestoneStatus(1, 2)).to.equal(0);
       expect(await legendData.getMilestoneStatus(1, 3)).to.equal(0);
 
-      expect(await legendData.getMilestoneSubmitBy(1, 1)).to.equal("100000000");
-      expect(await legendData.getMilestoneSubmitBy(1, 2)).to.equal("200000000");
-      expect(await legendData.getMilestoneSubmitBy(1, 3)).to.equal("300000000");
+      expect(await legendData.getMilestoneSubmitBy(1, 1)).to.equal(
+        "1805719382"
+      );
+      expect(await legendData.getMilestoneSubmitBy(1, 2)).to.equal(
+        "1905719382"
+      );
+      expect(await legendData.getMilestoneSubmitBy(1, 3)).to.equal(
+        "2005719382"
+      );
 
-      expect(await legendData.getMilestoneAmount(1, 1)).to.equal("5000000");
-      expect(await legendData.getMilestoneAmount(1, 2)).to.equal("10000000");
-      expect(await legendData.getMilestoneAmount(1, 3)).to.equal("50000000");
+      expect(
+        await legendData.getMilestoneGoalToCurrency(usdt.address, 1, 1)
+      ).to.equal("500000000");
+      expect(
+        await legendData.getMilestoneGoalToCurrency(usdt.address, 1, 2)
+      ).to.equal("100000000");
+      expect(
+        await legendData.getMilestoneGoalToCurrency(usdt.address, 1, 3)
+      ).to.equal("500000000");
 
       expect(
         await legendData.getGranteeSplitAmount(await grantee.getAddress(), 1)
@@ -755,15 +787,114 @@ describe("LegendOpenAction", () => {
       );
     });
 
-    it("Milestone Claim", async () => {
-      // additional should go to digitalax treasury / platform to continue to create fund the fulfillment / platform ?? (how with exchange o no )
-      // they should ask for their amounts with tokens attached
-      // shared pool adicional? para las maquinas?? bienes publicos con las maquinas se involucran
-      // claim before submit bys / finish before submit bys or goes to machines
-    });
+    it("Milestone Claim", async () => {});
 
     it("Delete Grant Without Funding", async () => {
-      // if grant has no funding then it can be deleted
+      const encodedData = ethers.utils.defaultAbiCoder.encode(
+        [
+          "tuple(tuple(uint256[] collectionIds, uint256[] amounts, uint8 level)[6] levelInfo, uint256[][3] goalToCurrency, address[] acceptedCurrencies, address[] granteeAddresses, uint256[] splitAmounts, uint256[3] submitBys)",
+        ],
+        [
+          {
+            levelInfo: [
+              {
+                collectionIds: [1],
+                amounts: [1],
+                level: 2,
+              },
+              {
+                collectionIds: [2],
+                amounts: [2],
+                level: 3,
+              },
+              {
+                collectionIds: [3],
+                amounts: [3],
+                level: 4,
+              },
+              {
+                collectionIds: [4, 5],
+                amounts: [1, 2],
+                level: 5,
+              },
+              {
+                collectionIds: [6, 7, 8],
+                amounts: [1, 1, 1],
+                level: 6,
+              },
+              {
+                collectionIds: [1, 2, 3],
+                amounts: [2, 3, 4],
+                level: 7,
+              },
+            ],
+            goalToCurrency: [["500000000"], ["100000000"], ["500000000"]],
+            acceptedCurrencies: [usdt.address],
+            granteeAddresses: [
+              await grantee.getAddress(),
+              await granteeTwo.getAddress(),
+              await granteeThree.getAddress(),
+            ],
+            splitAmounts: [50, 10, 40],
+            submitBys: ["1805719382", "1905719382", "2005719382"],
+          },
+        ]
+      );
+
+      await legendOpenAction
+        .connect(hub)
+        .initializePublicationAction(
+          52,
+          11,
+          await granteeThree.getAddress(),
+          encodedData
+        );
+
+      expect(await legendData.getGrantSupply()).to.equal(2);
+
+      try {
+        await legendData.connect(admin).deleteGrant(2);
+      } catch (err: any) {
+        expect(err.message).to.include("InvalidAddress");
+      }
+
+
+      await legendData.connect(granteeThree).deleteGrant(2);
+      expect(await legendData.getGrantId(52, 11)).to.equal(0);
+
+      await legendOpenAction
+      .connect(hub)
+      .initializePublicationAction(
+        52,
+        13,
+        await granteeThree.getAddress(),
+        encodedData
+      );
+      
+      const secondData = ethers.utils.defaultAbiCoder.encode(
+        ["uint256[]", "string", "address", "uint8"],
+        [[], "my fulfillment encrypted", usdt.address, 1]
+      );
+
+      await legendOpenAction.connect(hub).processPublicationAction({
+        publicationActedProfileId: 52,
+        publicationActedId: 13,
+        actorProfileId: 400,
+        actorProfileOwner: await contributor.getAddress(),
+        transactionExecutor: await hub.getAddress(),
+        referrerProfileIds: [],
+        referrerPubIds: [],
+        referrerPubTypes: [],
+        actionModuleData: secondData,
+      });
+
+      try {
+        await legendData.connect(granteeThree).deleteGrant(3);
+      } catch (err: any) {
+        expect(err.message).to.include("InvalidDelete()");
+      }
     });
+
+    it("Milestone Claim with Machine Swap", async () => {});
   });
 });

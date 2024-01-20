@@ -5,13 +5,14 @@ pragma solidity ^0.8.19;
 import "./../MachineAccessControl.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "hardhat/console.sol";
 
 contract LegendMachineCreditSwap {
     MachineAccessControl public machineAccessControl;
     IUniswapV2Router02 public uniswapRouter;
     string public symbol;
     string public name;
-    address public constant UNISWAP_ROUTER_ADDRESS = "";
+    // address public constant UNISWAP_ROUTER_ADDRESS = "";
     address public legendEscrow;
     address public monaAddress;
 
@@ -37,9 +38,11 @@ contract LegendMachineCreditSwap {
         _;
     }
 
-    constructor(address _legendEscrowAddress) {
-        legendEscrow = _legendEscrowAddress;
-        uniswapRouter = IUniswapV2Router02(UNISWAP_ROUTER_ADDRESS);
+    constructor(address _machineAccessControlAddress) {
+        machineAccessControl = MachineAccessControl(
+            _machineAccessControlAddress
+        );
+        // uniswapRouter = IUniswapV2Router02(UNISWAP_ROUTER_ADDRESS);
         symbol = "LMCS";
         name = "LegendMachineCreditSwap";
     }

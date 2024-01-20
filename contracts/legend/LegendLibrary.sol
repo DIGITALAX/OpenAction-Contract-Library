@@ -32,7 +32,7 @@ contract LegendLibrary {
 
     struct CreateGrant {
         LevelInfo[6] levelInfo;
-        uint256[3][] goalToCurrency;
+        uint256[][3] goalToCurrency;
         address[] acceptedCurrencies;
         address[] granteeAddresses;
         uint256[] splitAmounts;
@@ -65,7 +65,7 @@ contract LegendLibrary {
 
     struct RegisterProps {
         LevelInfo[6] levelInfo;
-        uint256[3][] goalToCurrency;
+        uint256[][3] goalToCurrency;
         address[] acceptedCurrencies;
         address[] granteeAddresses;
         uint256[] splitAmounts;
