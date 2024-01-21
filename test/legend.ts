@@ -15,7 +15,7 @@ describe("LegendOpenAction", () => {
     designer: Signer,
     admin: Signer,
     nonAdmin: Signer,
-    nonDesigner: Signer,
+    router: Signer,
     contributor: Signer,
     hub: Signer,
     pkpFiat: Signer,
@@ -46,7 +46,7 @@ describe("LegendOpenAction", () => {
       designer,
       admin,
       nonAdmin,
-      nonDesigner,
+      router,
       hub,
       pkpFiat,
       moduleGlobals,
@@ -189,7 +189,8 @@ describe("LegendOpenAction", () => {
 
     machineAccessControl = await MachineAccessControl.deploy();
     legendMachineCreditSwap = await LegendMachineCreditSwap.deploy(
-      machineAccessControl.address
+      machineAccessControl.address,
+      await router.getAddress()
     );
     legendAccessControl = await LegendAccessControl.deploy();
     legendData = await LegendData.deploy(legendAccessControl.address);
@@ -370,7 +371,7 @@ describe("LegendOpenAction", () => {
     before(async () => {
       const encodedData = ethers.utils.defaultAbiCoder.encode(
         [
-          "tuple(tuple(uint256[] collectionIds, uint256[] amounts, uint8 level)[6] levelInfo, uint256[][3] goalToCurrency, address[] acceptedCurrencies, address[] granteeAddresses, uint256[] splitAmounts, uint256[3] submitBys)",
+          "tuple(tuple(uint256[] collectionIds, uint256[] amounts, uint8 level)[6] levelInfo, uint256[][3] goalToCurrency, address[] acceptedCurrencies, address[] granteeAddresses, uint256[] splitAmounts, uint256[3] submitBys, string uri)",
         ],
         [
           {
@@ -419,6 +420,7 @@ describe("LegendOpenAction", () => {
               "40000000000000000000",
             ],
             submitBys: ["1705727127", "1705727127", "1705727127"],
+            uri: "some uri here",
           },
         ]
       );
@@ -795,7 +797,7 @@ describe("LegendOpenAction", () => {
     it("Delete Grant Without Funding", async () => {
       const encodedData = ethers.utils.defaultAbiCoder.encode(
         [
-          "tuple(tuple(uint256[] collectionIds, uint256[] amounts, uint8 level)[6] levelInfo, uint256[][3] goalToCurrency, address[] acceptedCurrencies, address[] granteeAddresses, uint256[] splitAmounts, uint256[3] submitBys)",
+          "tuple(tuple(uint256[] collectionIds, uint256[] amounts, uint8 level)[6] levelInfo, uint256[][3] goalToCurrency, address[] acceptedCurrencies, address[] granteeAddresses, uint256[] splitAmounts, uint256[3] submitBys, string uri)",
         ],
         [
           {
@@ -844,6 +846,7 @@ describe("LegendOpenAction", () => {
               "40000000000000000000",
             ],
             submitBys: ["1705727127", "1705727127", "1705727127"],
+            uri: "some uri here",
           },
         ]
       );

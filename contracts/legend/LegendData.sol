@@ -82,6 +82,7 @@ contract LegendData {
         newGrant.profileId = _params.profileId;
         newGrant.acceptedCurrencies = _params.acceptedCurrencies;
         newGrant.granteeAddresses = _params.granteeAddresses;
+        newGrant.uri = _params.uri;
 
         for (uint256 i = 0; i < _params.acceptedCurrencies.length; i++) {
             newGrant.currencyAccepted[_params.acceptedCurrencies[i]] = true;
@@ -270,6 +271,10 @@ contract LegendData {
 
     function getGrantProfileId(uint256 _grantId) public view returns (uint256) {
         return _allGrants[_grantId].profileId;
+    }
+
+    function getGrantURI(uint256 _grantId) public view returns (string memory) {
+        return _allGrants[_grantId].uri;
     }
 
     function getGrantLevelCollectionIds(
