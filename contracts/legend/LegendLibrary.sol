@@ -37,6 +37,7 @@ contract LegendLibrary {
         address[] granteeAddresses;
         uint256[] splitAmounts;
         uint256[3] submitBys;
+        string uri;
         uint256 pubId;
         uint256 profileId;
     }
@@ -58,6 +59,7 @@ contract LegendLibrary {
         mapping(address => uint256) amountFundedToCurrency;
         address[] acceptedCurrencies;
         address[] granteeAddresses;
+        string uri;
         uint256 grantId;
         uint256 pubId;
         uint256 profileId;
@@ -70,6 +72,7 @@ contract LegendLibrary {
         address[] granteeAddresses;
         uint256[] splitAmounts;
         uint256[3] submitBys;
+        string uri;
     }
 
     enum MilestoneStatus {

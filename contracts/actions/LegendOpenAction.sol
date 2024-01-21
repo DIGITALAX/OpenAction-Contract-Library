@@ -109,6 +109,7 @@ contract LegendOpenAction is
                 granteeAddresses: _register.granteeAddresses,
                 splitAmounts: _register.splitAmounts,
                 submitBys: _register.submitBys,
+                uri: _register.uri,
                 pubId: _pubId,
                 profileId: _profileId
             })
