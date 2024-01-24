@@ -318,10 +318,8 @@ export function handleDropCreated(event: DropCreatedEvent): void {
 
   let ipfsHash = event.params.uri.split("/").pop();
   if (ipfsHash != null) {
-    if (ipfsHash != null) {
-      entity.dropDetails = ipfsHash;
-      DropMetadataTemplate.create(ipfsHash);
-    }
+    entity.dropDetails = ipfsHash;
+    DropMetadataTemplate.create(ipfsHash);
   }
 
   let design = PrintDesignData.bind(

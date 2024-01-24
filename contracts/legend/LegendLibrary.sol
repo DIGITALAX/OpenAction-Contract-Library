@@ -44,7 +44,6 @@ contract LegendLibrary {
 
     struct Milestone {
         mapping(address => uint256) currencyToGoal;
-        mapping(address => uint256) splitAmounts;
         mapping(address => bool) hasClaimedMilestone;
         uint256 submitBy;
         MilestoneStatus status;
