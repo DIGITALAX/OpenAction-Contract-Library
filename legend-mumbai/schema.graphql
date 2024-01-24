@@ -1,0 +1,100 @@
+type AllClaimedMilestone @entity(immutable: false) {
+  id: Bytes!
+  grantId: BigInt! # uint256
+  milestone: Int! # uint8
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type GrantCreated @entity(immutable: false) {
+  id: Bytes!
+  grantId: BigInt! # uint256
+  creator: Bytes! # address
+  pubId: BigInt! # uint256
+  profileId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  levelInfo: [LevelInfo!]!
+  milestones: [Milestone!]!
+  acceptedCurrencies: [Bytes!]!
+  granteeAddresses: [Bytes!]!
+  splits: [BigInt!]!
+  uri: String!
+  grantMetadata: GrantMetadata
+}
+
+type GrantDeleted @entity(immutable: false) {
+  id: Bytes!
+  grantId: BigInt! # uint256
+  deleter: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type GrantFunded @entity(immutable: false) {
+  id: Bytes!
+  currency: Bytes! # address
+  grantId: BigInt! # uint256
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type MilestoneClaimed @entity(immutable: false) {
+  id: Bytes!
+  claimer: Bytes! # address
+  milestone: Int! # uint8
+  grantId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type MilestoneStatusUpdated @entity(immutable: false) {
+  id: Bytes!
+  updater: Bytes! # address
+  grantId: BigInt! # uint256
+  milestone: Int! # uint8
+  status: Int! # uint8
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Milestone @entity(immutable: false) {
+  id: String!
+  currencyGoal: [CurrencyGoal!]
+  granteeClaimed: [Boolean!]
+  submitBy: BigInt!
+  status: BigInt!
+  allClaimed: Boolean!
+}
+
+type LevelInfo @entity(immutable: false) {
+  id: String!
+  collectionIds: [BigInt!]
+  amounts: [BigInt!]
+  level: BigInt!
+}
+
+type GrantMetadata @entity(immutable: false) {
+  id: String!
+  title: String
+  description: String
+  team: String
+  tech: String
+  strategy: String
+  cover: String
+  experience: String
+  milestones: [String!]
+}
+
+type CurrencyGoal @entity(immutable: false) {
+  id: String!
+  currency: Bytes!
+  amount: BigInt!
+}
