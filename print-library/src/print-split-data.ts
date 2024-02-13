@@ -33,7 +33,7 @@ export function handleCurrencyAdded(event: CurrencyAddedEvent): void {
   entity.transactionHash = event.transaction.hash;
 
   let splits = PrintSplitData.bind(
-    Address.fromString("0xeB5116025E17D2E6E27126C104cb455dCa63460D")
+    Address.fromString("0x5A4A9a99d4736aE024044d17AA989426C76fafFD")
   );
 
   const currency = Address.fromBytes(event.params.currency);

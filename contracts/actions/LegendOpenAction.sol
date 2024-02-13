@@ -144,9 +144,8 @@ contract LegendOpenAction is
         );
 
         if (
-            // !MODULE_GLOBALS.isErc20CurrencyRegistered(_currency) ||
-            !printSplitsData.getIsCurrency(_currency) ||
-            !legendData.getIsGrantAcceptedCurrency(_currency, _grantId)
+            !MODULE_GLOBALS.isErc20CurrencyRegistered(_currency) ||
+            !printSplitsData.getIsCurrency(_currency)
         ) {
             revert LegendErrors.CurrencyNotWhitelisted();
         }
@@ -154,6 +153,10 @@ contract LegendOpenAction is
         uint256 _grantAmount = 0;
 
         if (_level != 1) {
+            if (!legendData.getIsGrantAcceptedCurrency(_currency, _grantId)) {
+                revert LegendErrors.CurrencyNotWhitelisted();
+            }
+
             uint256[] memory _collectionIds = _grantGroups[
                 _params.publicationActedProfileId
             ][_params.publicationActedId][_level - 2].collectionIds;

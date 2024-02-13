@@ -37,7 +37,7 @@ export function handleCommunityCreated(event: CommunityCreatedEvent): void {
   }
 
   let community = PrintCommunityData.bind(
-    Address.fromString("0x8fAA6114f8345672DE9e4e4302aD497a52a2fd60")
+    Address.fromString("0x747f62E5A7DEC0f3B20326a78AfC2A30d2478433")
   );
 
   entity.validPrintTypes = community
@@ -186,7 +186,7 @@ export function handleCommunityUpdated(event: CommunityUpdatedEvent): void {
     }
 
     let community = PrintCommunityData.bind(
-      Address.fromString("0x8fAA6114f8345672DE9e4e4302aD497a52a2fd60")
+      Address.fromString("0x747f62E5A7DEC0f3B20326a78AfC2A30d2478433")
     );
 
     entityOrder.validPrintTypes = community
