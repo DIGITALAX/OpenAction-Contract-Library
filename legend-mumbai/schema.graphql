@@ -23,6 +23,7 @@ type GrantCreated @entity(immutable: false) {
   splits: [BigInt!]!
   uri: String!
   grantMetadata: GrantMetadata
+  fundedAmount: [Funded!]
 }
 
 type GrantDeleted @entity(immutable: false) {
@@ -97,4 +98,10 @@ type CurrencyGoal @entity(immutable: false) {
   id: String!
   currency: Bytes!
   amount: BigInt!
+}
+
+type Funded @entity(immutable: false) {
+  id: String!
+  currency: Bytes!
+  funded: BigInt!
 }

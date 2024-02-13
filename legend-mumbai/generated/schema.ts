@@ -256,6 +256,23 @@ export class GrantCreated extends Entity {
       this.set("grantMetadata", Value.fromString(<string>value));
     }
   }
+
+  get fundedAmount(): Array<string> | null {
+    let value = this.get("fundedAmount");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set fundedAmount(value: Array<string> | null) {
+    if (!value) {
+      this.unset("fundedAmount");
+    } else {
+      this.set("fundedAmount", Value.fromStringArray(<Array<string>>value));
+    }
+  }
 }
 
 export class GrantDeleted extends Entity {
@@ -996,5 +1013,56 @@ export class CurrencyGoal extends Entity {
 
   set amount(value: BigInt) {
     this.set("amount", Value.fromBigInt(value));
+  }
+}
+
+
+export class Funded extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Funded entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Funded must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Funded", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Funded | null {
+    return changetype<Funded | null>(store.get("Funded", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get currency(): Bytes {
+    let value = this.get("currency");
+    return value!.toBytes();
+  }
+
+  set currency(value: Bytes) {
+    this.set("currency", Value.fromBytes(value));
+  }
+
+  get funded(): BigInt {
+    let value = this.get("funded");
+    return value!.toBigInt();
+  }
+
+  set funded(value: BigInt) {
+    this.set("funded", Value.fromBigInt(value));
   }
 }
