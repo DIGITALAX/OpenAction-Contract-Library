@@ -50,10 +50,10 @@ export function handleCollectionCreated(event: CollectionCreatedEvent): void {
   entity.owner = event.params.owner;
 
   let design = PrintDesignData.bind(
-    Address.fromString("0x062aA8B94a308fE84bE7974bAC758bC574145907")
+    Address.fromString("0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf")
   );
   let splits = PrintSplitData.bind(
-    Address.fromString("0xeB5116025E17D2E6E27126C104cb455dCa63460D")
+    Address.fromString("0x5A4A9a99d4736aE024044d17AA989426C76fafFD")
   );
 
   let ipfsHash = event.params.uri.split("/").pop();
@@ -87,18 +87,32 @@ export function handleCollectionCreated(event: CollectionCreatedEvent): void {
     .map<Bytes>((target: Bytes) => target);
   entity.pubId = design.getCollectionPubId(entity.collectionId);
   entity.unlimited = design.getCollectionUnlimited(entity.collectionId);
-  entity.fulfillerPercent = splits.getFulfillerSplit(
-    Address.fromBytes(entity.fulfiller),
-    printType
-  );
-  entity.fulfillerBase = splits.getFulfillerBase(
-    Address.fromBytes(entity.fulfiller),
-    printType
-  );
-  entity.designerPercent = splits.getDesignerSplit(
-    Address.fromBytes(entity.owner),
-    printType
-  );
+
+  if (entity.fulfiller && printType) {
+    let split = splits.try_getFulfillerSplit(
+      Address.fromBytes(entity.fulfiller),
+      printType
+    );
+    if (!split.reverted) {
+      entity.fulfillerPercent = split.value;
+    }
+
+    let base = splits.try_getFulfillerBase(
+      Address.fromBytes(entity.fulfiller),
+      printType
+    );
+    if (!base.reverted) {
+      entity.fulfillerBase = base.value;
+    }
+
+    let designer = splits.try_getDesignerSplit(
+      Address.fromBytes(entity.fulfiller),
+      printType
+    );
+    if (!designer.reverted) {
+      entity.designerPercent = designer.value;
+    }
+  }
 
   entity.blockNumber = event.block.number;
   entity.blockTimestamp = event.block.timestamp;
@@ -323,7 +337,7 @@ export function handleDropCreated(event: DropCreatedEvent): void {
   }
 
   let design = PrintDesignData.bind(
-    Address.fromString("0x062aA8B94a308fE84bE7974bAC758bC574145907")
+    Address.fromString("0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf")
   );
   entity.collectionIds = design.getDropCollectionIds(<BigInt>entity.dropId);
 
@@ -345,7 +359,7 @@ export function handleDropDeleted(event: DropDeletedEvent): void {
     Bytes.fromByteArray(ByteArray.fromBigInt(event.params.dropId))
   );
   let design = PrintDesignData.bind(
-    Address.fromString("0x062aA8B94a308fE84bE7974bAC758bC574145907")
+    Address.fromString("0x86B39A6D9AD0DDEBC53928e7150003e7C76F42bf")
   );
   let collectionIds = design.getDropCollectionIds(event.params.dropId);
 
