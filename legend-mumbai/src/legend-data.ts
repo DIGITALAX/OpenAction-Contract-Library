@@ -17,6 +17,7 @@ import {
 import {
   AllClaimedMilestone,
   CurrencyGoal,
+  Funded,
   GrantCreated,
   GrantDeleted,
   GrantFunded,
@@ -63,9 +64,13 @@ export function handleGrantCreated(event: GrantCreatedEvent): void {
 
   let ipfsHash = data.getGrantURI(entity.grantId);
   if (ipfsHash != null) {
-    ipfsHash = ipfsHash.split("/").pop();
-    entity.uri = ipfsHash;
-    GrantMetadataTemplate.create(ipfsHash);
+    if (ipfsHash.includes("/")) {
+      ipfsHash = ipfsHash.split("/").pop();
+    }
+    if (ipfsHash) {
+      entity.uri = ipfsHash;
+      GrantMetadataTemplate.create(ipfsHash);
+    }
   }
 
   entity.acceptedCurrencies = data
@@ -220,6 +225,7 @@ export function handleGrantFunded(event: GrantFundedEvent): void {
   let entity = new GrantFunded(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   );
+
   entity.currency = event.params.currency;
   entity.grantId = event.params.grantId;
   entity.amount = event.params.amount;
@@ -227,6 +233,37 @@ export function handleGrantFunded(event: GrantFundedEvent): void {
   entity.blockNumber = event.block.number;
   entity.blockTimestamp = event.block.timestamp;
   entity.transactionHash = event.transaction.hash;
+
+  let grantEntity = GrantCreated.load(
+    Bytes.fromByteArray(ByteArray.fromBigInt(event.params.grantId))
+  );
+
+  if (grantEntity !== null) {
+    let fundedId = entity.grantId.toString() + entity.currency.toString();
+
+    let funded = Funded.load(fundedId);
+
+    if (funded !== null) {
+      funded.funded = funded.funded.plus(entity.amount);
+      funded.save();
+    } else {
+      let fundedAmounts: Array<string> = [];
+      if (grantEntity.fundedAmount !== null) {
+        fundedAmounts = <Array<string>>grantEntity.fundedAmount;
+      }
+
+      let funded = new Funded(fundedId);
+      funded.currency = entity.currency;
+      funded.funded = entity.amount;
+      funded.save();
+
+      fundedAmounts.push(fundedId);
+
+      grantEntity.fundedAmount = fundedAmounts;
+    }
+
+    grantEntity.save();
+  }
 
   entity.save();
 }
