@@ -3,6 +3,9 @@
     "LegendData": {
       "address": "0x04D891EDD599DE3a19bBA5A3a180479b658908AC",
       "startBlock": 45088402
+    },
+    "PrintDesignData": {
+      "address": "0x597772c9c0EfE354976B0068296dFcb03583C2be"
     }
   }
 }

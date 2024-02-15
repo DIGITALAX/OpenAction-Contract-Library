@@ -28,6 +28,7 @@ import {
   MilestoneStatusUpdated,
 } from "../generated/schema";
 import { GrantMetadata as GrantMetadataTemplate } from "../generated/templates";
+import { PrintDesignData } from "../generated/PrintDesignData/PrintDesignData";
 
 export function handleAllClaimedMilestone(
   event: AllClaimedMilestoneEvent
@@ -150,22 +151,48 @@ export function handleGrantCreated(event: GrantCreatedEvent): void {
     );
 
     const collections: Array<BigInt> | null = levelInfo.collectionIds;
+    let printData = PrintDesignData.bind(
+      Address.fromString("0x597772c9c0EfE354976B0068296dFcb03583C2be")
+    );
 
     if (collections !== null) {
       for (let k = 0; k < collections.length; k++) {
+        let printType = printData.getCollectionPrintType(collections[k]);
+
+        if (!entity.sticker && printType == 0) {
+          entity.sticker = true;
+        }
+        if (!entity.poster && printType == 1) {
+          entity.poster = true;
+        }
+        if (!entity.shirt && printType == 2) {
+          entity.shirt = true;
+        }
+        if (!entity.hoodie && printType == 3) {
+          entity.hoodie = true;
+        }
+
         let collectionGrant = CollectionGrantId.load(collections[k].toString());
 
         if (collectionGrant !== null) {
           let grants = collectionGrant.grants;
 
-          if (!grants.includes(entity.grantId)) {
-            grants.push(entity.grantId);
+          if (
+            !grants.includes(
+              Bytes.fromByteArray(ByteArray.fromBigInt(entity.grantId))
+            )
+          ) {
+            grants.push(
+              Bytes.fromByteArray(ByteArray.fromBigInt(entity.grantId))
+            );
           }
           collectionGrant.grants = grants;
         } else {
           collectionGrant = new CollectionGrantId(collections[k].toString());
           collectionGrant.collectionId = collections[k];
-          collectionGrant.grants = [entity.grantId];
+          collectionGrant.grants = [
+            Bytes.fromByteArray(ByteArray.fromBigInt(entity.grantId)),
+          ];
         }
 
         collectionGrant.save();

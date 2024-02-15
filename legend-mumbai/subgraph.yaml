@@ -37,6 +37,47 @@ dataSources:
         - event: MilestoneStatusUpdated(address,uint256,uint8,uint8)
           handler: handleMilestoneStatusUpdated
       file: ./src/legend-data.ts
+  - kind: ethereum
+    name: PrintDesignData
+    network: mumbai
+    source:
+      address: "0x597772c9c0EfE354976B0068296dFcb03583C2be"
+      abi: PrintDesignData
+      startBlock: 42968241
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - CollectionCreated
+        - CollectionDeleted
+        - CollectionMintedTokensSet
+        - CollectionTokenIdsSet
+        - DropCollectionsUpdated
+        - DropCreated
+        - DropDeleted
+        - TokensMinted
+      abis:
+        - name: PrintDesignData
+          file: ./abis/PrintDesignData.json
+      eventHandlers:
+        - event: CollectionCreated(indexed uint256,uint256,uint256,string,uint256,address)
+          handler: handleCollectionCreated
+        - event: CollectionDeleted(uint256)
+          handler: handleCollectionDeleted
+        - event: CollectionMintedTokensSet(indexed uint256,uint256)
+          handler: handleCollectionMintedTokensSet
+        - event: CollectionTokenIdsSet(indexed uint256,uint256[])
+          handler: handleCollectionTokenIdsSet
+        - event: DropCollectionsUpdated(uint256,uint256[],uint256[],string)
+          handler: handleDropCollectionsUpdated
+        - event: DropCreated(uint256,string,address)
+          handler: handleDropCreated
+        - event: DropDeleted(uint256)
+          handler: handleDropDeleted
+        - event: TokensMinted(indexed uint256,uint256)
+          handler: handleTokensMinted
+      file: ./src/print-design-data.ts
 templates:
   - name: GrantMetadata
     kind: file/ipfs
