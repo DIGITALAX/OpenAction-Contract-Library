@@ -24,6 +24,10 @@ type GrantCreated @entity(immutable: false) {
   uri: String!
   grantMetadata: GrantMetadata
   fundedAmount: [Funded!]
+  sticker: Boolean
+  poster: Boolean
+  shirt: Boolean
+  hoodie: Boolean
 }
 
 type GrantDeleted @entity(immutable: false) {
@@ -110,4 +114,80 @@ type CollectionGrantId @entity(immutable: false) {
   id: String!
   collectionId: BigInt!
   grants: [GrantCreated!]!
+}
+type CollectionCreated @entity(immutable: true) {
+  id: Bytes!
+  collectionId: BigInt! # uint256
+  pubId: BigInt! # uint256
+  profileId: BigInt! # uint256
+  uri: String! # string
+  amount: BigInt! # uint256
+  owner: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CollectionDeleted @entity(immutable: true) {
+  id: Bytes!
+  collectionId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CollectionMintedTokensSet @entity(immutable: true) {
+  id: Bytes!
+  collectionId: BigInt! # uint256
+  mintedTokensAmount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CollectionTokenIdsSet @entity(immutable: true) {
+  id: Bytes!
+  collectionId: BigInt! # uint256
+  tokenIds: [BigInt!]! # uint256[]
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DropCollectionsUpdated @entity(immutable: true) {
+  id: Bytes!
+  dropId: BigInt! # uint256
+  collectionIds: [BigInt!]! # uint256[]
+  oldCollectionIds: [BigInt!]! # uint256[]
+  uri: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DropCreated @entity(immutable: true) {
+  id: Bytes!
+  dropId: BigInt! # uint256
+  uri: String! # string
+  creator: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DropDeleted @entity(immutable: true) {
+  id: Bytes!
+  dropId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TokensMinted @entity(immutable: true) {
+  id: Bytes!
+  tokenId: BigInt! # uint256
+  collectionId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
 }
