@@ -16,6 +16,7 @@ import {
 } from "../generated/LegendData/LegendData";
 import {
   AllClaimedMilestone,
+  CollectionGrantId,
   CurrencyGoal,
   Funded,
   GrantCreated,
@@ -147,6 +148,30 @@ export function handleGrantCreated(event: GrantCreatedEvent): void {
       entity.grantId,
       i + 2
     );
+
+    const collections: Array<BigInt> | null = levelInfo.collectionIds;
+
+    if (collections !== null) {
+      for (let k = 0; k < collections.length; k++) {
+        let collectionGrant = CollectionGrantId.load(collections[k].toString());
+
+        if (collectionGrant !== null) {
+          let grants = collectionGrant.grants;
+
+          if (!grants.includes(entity.grantId)) {
+            grants.push(entity.grantId);
+          }
+          collectionGrant.grants = grants;
+        } else {
+          collectionGrant = new CollectionGrantId(collections[k].toString());
+          collectionGrant.collectionId = collections[k];
+          collectionGrant.grants = [entity.grantId];
+        }
+
+        collectionGrant.save();
+      }
+    }
+
     levelInfo.level = BigInt.fromI32(i + 2);
 
     levelInfo.save();

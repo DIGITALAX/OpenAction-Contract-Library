@@ -105,3 +105,9 @@ type Funded @entity(immutable: false) {
   currency: Bytes!
   funded: BigInt!
 }
+
+type CollectionGrantId @entity(immutable: false) {
+  id: String!
+  collectionId: BigInt!
+  grants: [GrantCreated!]!
+}

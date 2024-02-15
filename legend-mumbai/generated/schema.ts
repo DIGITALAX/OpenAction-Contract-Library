@@ -8,7 +8,7 @@ import {
   store,
   Bytes,
   BigInt,
-  BigDecimal
+  BigDecimal,
 } from "@graphprotocol/graph-ts";
 
 export class AllClaimedMilestone extends Entity {
@@ -1016,7 +1016,6 @@ export class CurrencyGoal extends Entity {
   }
 }
 
-
 export class Funded extends Entity {
   constructor(id: string) {
     super();
@@ -1064,5 +1063,57 @@ export class Funded extends Entity {
 
   set funded(value: BigInt) {
     this.set("funded", Value.fromBigInt(value));
+  }
+}
+
+export class CollectionGrantId extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save CollectionGrantId entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type CollectionGrantId must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("CollectionGrantId", id.toString(), this);
+    }
+  }
+
+  static load(id: string): CollectionGrantId | null {
+    return changetype<CollectionGrantId | null>(
+      store.get("CollectionGrantId", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get collectionId(): BigInt {
+    let value = this.get("collectionId");
+    return value!.toBigInt();
+  }
+
+  set collectionId(value: BigInt) {
+    this.set("collectionId", Value.fromBigInt(value));
+  }
+
+  get grants(): Array<BigInt> {
+    let value = this.get("grants");
+    return value!.toBigIntArray();
+  }
+
+  set grants(value: Array<BigInt>) {
+    this.set("grants", Value.fromBigIntArray(value));
   }
 }
