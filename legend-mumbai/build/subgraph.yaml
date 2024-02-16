@@ -23,6 +23,8 @@ dataSources:
       abis:
         - name: LegendData
           file: LegendData/abis/LegendData.json
+        - name: PrintDesignData
+          file: LegendData/abis/PrintDesignData.json
       eventHandlers:
         - event: AllClaimedMilestone(uint256,uint8)
           handler: handleAllClaimedMilestone

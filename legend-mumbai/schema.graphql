@@ -43,6 +43,8 @@ type GrantFunded @entity(immutable: false) {
   id: Bytes!
   currency: Bytes! # address
   grantId: BigInt! # uint256
+  grant: GrantCreated!
+  funder: Bytes
   amount: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
