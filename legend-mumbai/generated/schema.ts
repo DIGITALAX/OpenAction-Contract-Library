@@ -8,7 +8,7 @@ import {
   store,
   Bytes,
   BigInt,
-  BigDecimal
+  BigDecimal,
 } from "@graphprotocol/graph-ts";
 
 export class AllClaimedMilestone extends Entity {
@@ -450,6 +450,15 @@ export class GrantFunded extends Entity {
     this.set("amount", Value.fromBigInt(value));
   }
 
+  get funder(): Bytes {
+    let value = this.get("funder");
+    return value!.toBytes();
+  }
+
+  set funder(value: Bytes) {
+    this.set("funder", Value.fromBytes(value));
+  }
+
   get blockNumber(): BigInt {
     let value = this.get("blockNumber");
     return value!.toBigInt();
@@ -475,6 +484,15 @@ export class GrantFunded extends Entity {
 
   set transactionHash(value: Bytes) {
     this.set("transactionHash", Value.fromBytes(value));
+  }
+
+  get grant(): Bytes {
+    let value = this.get("grant");
+    return value!.toBytes();
+  }
+
+  set grant(value: Bytes) {
+    this.set("grant", Value.fromBytes(value));
   }
 }
 

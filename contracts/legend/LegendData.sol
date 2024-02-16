@@ -41,7 +41,12 @@ contract LegendData {
         uint256 pubId,
         uint256 profileId
     );
-    event GrantFunded(address currency, uint256 grantId, uint256 amount);
+    event GrantFunded(
+        address currency,
+        address funder,
+        uint256 grantId,
+        uint256 amount
+    );
     event AllClaimedMilestone(uint256 grantId, uint8 milestone);
     event GrantDeleted(uint256 grantId, address deleter);
     event MilestoneClaimed(address claimer, uint8 milestone, uint256 grantId);
@@ -156,12 +161,13 @@ contract LegendData {
 
     function setGrantAmountFunded(
         address _currency,
+        address _funder,
         uint256 _grantId,
         uint256 _amountFunded
     ) external onlyOpenAction {
         _allGrants[_grantId].amountFundedToCurrency[_currency] += _amountFunded;
 
-        emit GrantFunded(_currency, _grantId, _amountFunded);
+        emit GrantFunded(_currency, _funder, _grantId, _amountFunded);
     }
 
     function setGranteeClaimedMilestone(

@@ -157,19 +157,21 @@ export function handleGrantCreated(event: GrantCreatedEvent): void {
 
     if (collections !== null) {
       for (let k = 0; k < collections.length; k++) {
-        let printType = printData.getCollectionPrintType(collections[k]);
+        if (collections[k].toI32() !== 0) {
+          let printType = printData.getCollectionPrintType(collections[k]);
 
-        if (!entity.sticker && printType == 0) {
-          entity.sticker = true;
-        }
-        if (!entity.poster && printType == 1) {
-          entity.poster = true;
-        }
-        if (!entity.shirt && printType == 2) {
-          entity.shirt = true;
-        }
-        if (!entity.hoodie && printType == 3) {
-          entity.hoodie = true;
+          if (!entity.sticker && printType == 0) {
+            entity.sticker = true;
+          }
+          if (!entity.poster && printType == 1) {
+            entity.poster = true;
+          }
+          if (!entity.shirt && printType == 2) {
+            entity.shirt = true;
+          }
+          if (!entity.hoodie && printType == 3) {
+            entity.hoodie = true;
+          }
         }
 
         let collectionGrant = CollectionGrantId.load(collections[k].toString());
@@ -281,10 +283,15 @@ export function handleGrantFunded(event: GrantFundedEvent): void {
   entity.currency = event.params.currency;
   entity.grantId = event.params.grantId;
   entity.amount = event.params.amount;
+  // entity.funder = event.params.funder;
 
   entity.blockNumber = event.block.number;
   entity.blockTimestamp = event.block.timestamp;
   entity.transactionHash = event.transaction.hash;
+
+  entity.grant = Bytes.fromByteArray(
+    ByteArray.fromBigInt(event.params.grantId)
+  );
 
   let grantEntity = GrantCreated.load(
     Bytes.fromByteArray(ByteArray.fromBigInt(event.params.grantId))

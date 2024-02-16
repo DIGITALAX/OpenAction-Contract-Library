@@ -197,7 +197,12 @@ contract LegendOpenAction is
         IERC20(_currency).approve(address(legendMilestone), _grantAmount);
         legendMilestone.fundGrant(_currency, _grantAmount, _grantId);
 
-        legendData.setGrantAmountFunded(_currency, _grantId, _grantAmount);
+        legendData.setGrantAmountFunded(
+            _currency,
+            _params.actorProfileOwner,
+            _grantId,
+            _grantAmount
+        );
 
         emit GrantContributed(
             _granteeReceiverAddress,
