@@ -8,7 +8,7 @@ import {
   store,
   Bytes,
   BigInt,
-  BigDecimal,
+  BigDecimal
 } from "@graphprotocol/graph-ts";
 
 export class AllClaimedMilestone extends Entity {
@@ -441,13 +441,13 @@ export class GrantFunded extends Entity {
     this.set("grantId", Value.fromBigInt(value));
   }
 
-  get amount(): BigInt {
-    let value = this.get("amount");
-    return value!.toBigInt();
+  get grant(): Bytes {
+    let value = this.get("grant");
+    return value!.toBytes();
   }
 
-  set amount(value: BigInt) {
-    this.set("amount", Value.fromBigInt(value));
+  set grant(value: Bytes) {
+    this.set("grant", Value.fromBytes(value));
   }
 
   get funder(): Bytes {
@@ -457,6 +457,600 @@ export class GrantFunded extends Entity {
 
   set funder(value: Bytes) {
     this.set("funder", Value.fromBytes(value));
+  }
+
+  get amount(): BigInt {
+    let value = this.get("amount");
+    return value!.toBigInt();
+  }
+
+  set amount(value: BigInt) {
+    this.set("amount", Value.fromBigInt(value));
+  }
+
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
+    return value!.toBigInt();
+  }
+
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
+  }
+
+  get blockTimestamp(): BigInt {
+    let value = this.get("blockTimestamp");
+    return value!.toBigInt();
+  }
+
+  set blockTimestamp(value: BigInt) {
+    this.set("blockTimestamp", Value.fromBigInt(value));
+  }
+
+  get transactionHash(): Bytes {
+    let value = this.get("transactionHash");
+    return value!.toBytes();
+  }
+
+  set transactionHash(value: Bytes) {
+    this.set("transactionHash", Value.fromBytes(value));
+  }
+}
+
+export class Collection extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Collection entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type Collection must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Collection", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static load(id: Bytes): Collection | null {
+    return changetype<Collection | null>(
+      store.get("Collection", id.toHexString())
+    );
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    return value!.toBytes();
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get collectionId(): BigInt {
+    let value = this.get("collectionId");
+    return value!.toBigInt();
+  }
+
+  set collectionId(value: BigInt) {
+    this.set("collectionId", Value.fromBigInt(value));
+  }
+
+  get prices(): Array<BigInt> {
+    let value = this.get("prices");
+    return value!.toBigIntArray();
+  }
+
+  set prices(value: Array<BigInt>) {
+    this.set("prices", Value.fromBigIntArray(value));
+  }
+
+  get uri(): string {
+    let value = this.get("uri");
+    return value!.toString();
+  }
+
+  set uri(value: string) {
+    this.set("uri", Value.fromString(value));
+  }
+
+  get collectionMetadata(): string | null {
+    let value = this.get("collectionMetadata");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set collectionMetadata(value: string | null) {
+    if (!value) {
+      this.unset("collectionMetadata");
+    } else {
+      this.set("collectionMetadata", Value.fromString(<string>value));
+    }
+  }
+}
+
+export class CollectionMetadata extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save CollectionMetadata entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type CollectionMetadata must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("CollectionMetadata", id.toString(), this);
+    }
+  }
+
+  static load(id: string): CollectionMetadata | null {
+    return changetype<CollectionMetadata | null>(
+      store.get("CollectionMetadata", id)
+    );
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get title(): string | null {
+    let value = this.get("title");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set title(value: string | null) {
+    if (!value) {
+      this.unset("title");
+    } else {
+      this.set("title", Value.fromString(<string>value));
+    }
+  }
+
+  get description(): string | null {
+    let value = this.get("description");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set description(value: string | null) {
+    if (!value) {
+      this.unset("description");
+    } else {
+      this.set("description", Value.fromString(<string>value));
+    }
+  }
+
+  get images(): Array<string> | null {
+    let value = this.get("images");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set images(value: Array<string> | null) {
+    if (!value) {
+      this.unset("images");
+    } else {
+      this.set("images", Value.fromStringArray(<Array<string>>value));
+    }
+  }
+
+  get tags(): string | null {
+    let value = this.get("tags");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set tags(value: string | null) {
+    if (!value) {
+      this.unset("tags");
+    } else {
+      this.set("tags", Value.fromString(<string>value));
+    }
+  }
+
+  get colors(): string | null {
+    let value = this.get("colors");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set colors(value: string | null) {
+    if (!value) {
+      this.unset("colors");
+    } else {
+      this.set("colors", Value.fromString(<string>value));
+    }
+  }
+
+  get sizes(): string | null {
+    let value = this.get("sizes");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set sizes(value: string | null) {
+    if (!value) {
+      this.unset("sizes");
+    } else {
+      this.set("sizes", Value.fromString(<string>value));
+    }
+  }
+
+  get access(): string | null {
+    let value = this.get("access");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set access(value: string | null) {
+    if (!value) {
+      this.unset("access");
+    } else {
+      this.set("access", Value.fromString(<string>value));
+    }
+  }
+
+  get audio(): string | null {
+    let value = this.get("audio");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set audio(value: string | null) {
+    if (!value) {
+      this.unset("audio");
+    } else {
+      this.set("audio", Value.fromString(<string>value));
+    }
+  }
+
+  get video(): string | null {
+    let value = this.get("video");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set video(value: string | null) {
+    if (!value) {
+      this.unset("video");
+    } else {
+      this.set("video", Value.fromString(<string>value));
+    }
+  }
+
+  get onChromadin(): string | null {
+    let value = this.get("onChromadin");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set onChromadin(value: string | null) {
+    if (!value) {
+      this.unset("onChromadin");
+    } else {
+      this.set("onChromadin", Value.fromString(<string>value));
+    }
+  }
+
+  get communities(): string | null {
+    let value = this.get("communities");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set communities(value: string | null) {
+    if (!value) {
+      this.unset("communities");
+    } else {
+      this.set("communities", Value.fromString(<string>value));
+    }
+  }
+
+  get microbrandCover(): string | null {
+    let value = this.get("microbrandCover");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set microbrandCover(value: string | null) {
+    if (!value) {
+      this.unset("microbrandCover");
+    } else {
+      this.set("microbrandCover", Value.fromString(<string>value));
+    }
+  }
+
+  get profileHandle(): string | null {
+    let value = this.get("profileHandle");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set profileHandle(value: string | null) {
+    if (!value) {
+      this.unset("profileHandle");
+    } else {
+      this.set("profileHandle", Value.fromString(<string>value));
+    }
+  }
+
+  get microbrand(): string | null {
+    let value = this.get("microbrand");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set microbrand(value: string | null) {
+    if (!value) {
+      this.unset("microbrand");
+    } else {
+      this.set("microbrand", Value.fromString(<string>value));
+    }
+  }
+
+  get mediaCover(): string | null {
+    let value = this.get("mediaCover");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set mediaCover(value: string | null) {
+    if (!value) {
+      this.unset("mediaCover");
+    } else {
+      this.set("mediaCover", Value.fromString(<string>value));
+    }
+  }
+
+  get visibility(): string | null {
+    let value = this.get("visibility");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set visibility(value: string | null) {
+    if (!value) {
+      this.unset("visibility");
+    } else {
+      this.set("visibility", Value.fromString(<string>value));
+    }
+  }
+
+  get mediaTypes(): string | null {
+    let value = this.get("mediaTypes");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set mediaTypes(value: string | null) {
+    if (!value) {
+      this.unset("mediaTypes");
+    } else {
+      this.set("mediaTypes", Value.fromString(<string>value));
+    }
+  }
+
+  get prompt(): string | null {
+    let value = this.get("prompt");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set prompt(value: string | null) {
+    if (!value) {
+      this.unset("prompt");
+    } else {
+      this.set("prompt", Value.fromString(<string>value));
+    }
+  }
+
+  get style(): string | null {
+    let value = this.get("style");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set style(value: string | null) {
+    if (!value) {
+      this.unset("style");
+    } else {
+      this.set("style", Value.fromString(<string>value));
+    }
+  }
+
+  get sex(): string | null {
+    let value = this.get("sex");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set sex(value: string | null) {
+    if (!value) {
+      this.unset("sex");
+    } else {
+      this.set("sex", Value.fromString(<string>value));
+    }
+  }
+}
+
+export class GrantOrder extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save GrantOrder entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type GrantOrder must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("GrantOrder", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static load(id: Bytes): GrantOrder | null {
+    return changetype<GrantOrder | null>(
+      store.get("GrantOrder", id.toHexString())
+    );
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    return value!.toBytes();
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get orderId(): BigInt {
+    let value = this.get("orderId");
+    return value!.toBigInt();
+  }
+
+  set orderId(value: BigInt) {
+    this.set("orderId", Value.fromBigInt(value));
+  }
+
+  get level(): BigInt {
+    let value = this.get("level");
+    return value!.toBigInt();
+  }
+
+  set level(value: BigInt) {
+    this.set("level", Value.fromBigInt(value));
+  }
+
+  get encryptedFulfillment(): string {
+    let value = this.get("encryptedFulfillment");
+    return value!.toString();
+  }
+
+  set encryptedFulfillment(value: string) {
+    this.set("encryptedFulfillment", Value.fromString(value));
+  }
+
+  get currency(): Bytes {
+    let value = this.get("currency");
+    return value!.toBytes();
+  }
+
+  set currency(value: Bytes) {
+    this.set("currency", Value.fromBytes(value));
+  }
+
+  get grantId(): BigInt {
+    let value = this.get("grantId");
+    return value!.toBigInt();
+  }
+
+  set grantId(value: BigInt) {
+    this.set("grantId", Value.fromBigInt(value));
+  }
+
+  get grant(): Bytes {
+    let value = this.get("grant");
+    return value!.toBytes();
+  }
+
+  set grant(value: Bytes) {
+    this.set("grant", Value.fromBytes(value));
+  }
+
+  get funder(): Bytes {
+    let value = this.get("funder");
+    return value!.toBytes();
+  }
+
+  set funder(value: Bytes) {
+    this.set("funder", Value.fromBytes(value));
+  }
+
+  get amount(): BigInt {
+    let value = this.get("amount");
+    return value!.toBigInt();
+  }
+
+  set amount(value: BigInt) {
+    this.set("amount", Value.fromBigInt(value));
   }
 
   get blockNumber(): BigInt {
@@ -486,13 +1080,21 @@ export class GrantFunded extends Entity {
     this.set("transactionHash", Value.fromBytes(value));
   }
 
-  get grant(): Bytes {
-    let value = this.get("grant");
-    return value!.toBytes();
+  get orderCollections(): Array<Bytes> | null {
+    let value = this.get("orderCollections");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytesArray();
+    }
   }
 
-  set grant(value: Bytes) {
-    this.set("grant", Value.fromBytes(value));
+  set orderCollections(value: Array<Bytes> | null) {
+    if (!value) {
+      this.unset("orderCollections");
+    } else {
+      this.set("orderCollections", Value.fromBytesArray(<Array<Bytes>>value));
+    }
   }
 }
 

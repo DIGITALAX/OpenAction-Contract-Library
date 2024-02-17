@@ -74,44 +74,44 @@ const main = async () => {
     // );
 
     await run(`verify:verify`, {
-      address: "0x04D891EDD599DE3a19bBA5A3a180479b658908AC",
-      constructorArguments: ["0xC23150522E366DD884729754ebAD412A2EdF0c24"],
+      address: "0x3903349184eb51E65531d36e459F3c8CdF9A53C6",
+      constructorArguments: ["0x1592a6AdFFFDAB03E812F8F8ae63Af8EDE7C49c9"],
     });
     await run(`verify:verify`, {
-      address: "0xC23150522E366DD884729754ebAD412A2EdF0c24",
+      address: "0x1592a6AdFFFDAB03E812F8F8ae63Af8EDE7C49c9",
       constructorArguments: [],
     });
     await run(`verify:verify`, {
-      address: "0x6592b20e44C1E6A49E156d43CDF9b85fadAEfBD8",
+      address: "0xbea8eE7323e41b632d8912b714Be16EF4259f5a5",
       constructorArguments: [],
     });
     await run(`verify:verify`, {
-      address: "0xdFFC4a7136a44261Bd7562B84de1c2312C4B2C6b",
+      address: "0x5fd843B3B1aF984396734333D072BcD1156A523a",
       constructorArguments: [
-        "0x6592b20e44C1E6A49E156d43CDF9b85fadAEfBD8",
+        "0xbea8eE7323e41b632d8912b714Be16EF4259f5a5",
         ROUTER_MUMBAI,
       ],
     });
     await run(`verify:verify`, {
-      address: "0xf340B1610FeE6c0e6b19299403CAb40b6BDE65b2",
+      address: "0x9421654DbA368a4e164ddBD3C4a83f1a83643D97",
       constructorArguments: [
-        "0x04D891EDD599DE3a19bBA5A3a180479b658908AC",
-        "0xC23150522E366DD884729754ebAD412A2EdF0c24",
-        '0xdFFC4a7136a44261Bd7562B84de1c2312C4B2C6b'
+        "0x3903349184eb51E65531d36e459F3c8CdF9A53C6",
+        "0x1592a6AdFFFDAB03E812F8F8ae63Af8EDE7C49c9",
+        '0x5fd843B3B1aF984396734333D072BcD1156A523a'
       ],
     });
     await run(`verify:verify`, {
-      address: "0x639b8178DCf393Fb37B2212a0C2431A262622f98",
+      address: "0x699cb4DbeE7C7a3ceaf2201b8C4F21036A1442cC",
       constructorArguments: [
         "metadataDetails",
         HUB_MUMBAI,
         MODULE_MUMBAI,
-        "0xC23150522E366DD884729754ebAD412A2EdF0c24",
+        "0x1592a6AdFFFDAB03E812F8F8ae63Af8EDE7C49c9",
         "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
         "0x597772c9c0EfE354976B0068296dFcb03583C2be",
         "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
-        "0xf340B1610FeE6c0e6b19299403CAb40b6BDE65b2",
-        "0x04D891EDD599DE3a19bBA5A3a180479b658908AC"
+        "0x9421654DbA368a4e164ddBD3C4a83f1a83643D97",
+        "0x3903349184eb51E65531d36e459F3c8CdF9A53C6"
       ],
     });
 

@@ -110,6 +110,12 @@
       },
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "funder",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "grantId",
         "type": "uint256"
@@ -122,6 +128,55 @@
       }
     ],
     "name": "GrantFunded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "encryptedFulfillment",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "currency",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "funder",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "grantId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "orderId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "level",
+        "type": "uint256"
+      }
+    ],
+    "name": "GrantOrder",
     "type": "event"
   },
   {
@@ -589,6 +644,133 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_orderId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getOrderAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_orderId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getOrderCurrency",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_orderId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getOrderEncryptedFulfillment",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_orderId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getOrderFunder",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_orderId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getOrderGrantId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_orderId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getOrderLevel",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getOrderSupply",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "getPeriodClaim",
     "outputs": [
@@ -751,8 +933,18 @@
   {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "_fulfillment",
+        "type": "string"
+      },
+      {
         "internalType": "address",
         "name": "_currency",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_funder",
         "type": "address"
       },
       {
@@ -763,6 +955,11 @@
       {
         "internalType": "uint256",
         "name": "_amountFunded",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_level",
         "type": "uint256"
       }
     ],

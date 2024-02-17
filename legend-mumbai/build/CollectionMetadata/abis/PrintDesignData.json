@@ -3,7 +3,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_legendAccessControlAddress",
+        "name": "_printAccessControlAddress",
         "type": "address"
       }
     ],
@@ -17,52 +17,17 @@
   },
   {
     "inputs": [],
-    "name": "InvalidContract",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "InvalidDelete",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "InvalidLengths",
+    "name": "InvalidDrop",
     "type": "error"
   },
   {
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
-        "name": "grantId",
+        "name": "collectionId",
         "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint8",
-        "name": "milestone",
-        "type": "uint8"
-      }
-    ],
-    "name": "AllClaimedMilestone",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "grantId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "creator",
-        "type": "address"
       },
       {
         "indexed": false,
@@ -75,59 +40,27 @@
         "internalType": "uint256",
         "name": "profileId",
         "type": "uint256"
-      }
-    ],
-    "name": "GrantCreated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "grantId",
-        "type": "uint256"
       },
       {
         "indexed": false,
-        "internalType": "address",
-        "name": "deleter",
-        "type": "address"
-      }
-    ],
-    "name": "GrantDeleted",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "currency",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "funder",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "grantId",
-        "type": "uint256"
+        "internalType": "string",
+        "name": "uri",
+        "type": "string"
       },
       {
         "indexed": false,
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
       }
     ],
-    "name": "GrantFunded",
+    "name": "CollectionCreated",
     "type": "event"
   },
   {
@@ -135,48 +68,106 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "uint256",
+        "name": "collectionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "CollectionDeleted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "collectionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "mintedTokensAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "CollectionMintedTokensSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "collectionId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "tokenIds",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "CollectionTokenIdsSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "dropId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "collectionIds",
+        "type": "uint256[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "oldCollectionIds",
+        "type": "uint256[]"
+      },
+      {
+        "indexed": false,
         "internalType": "string",
-        "name": "encryptedFulfillment",
+        "name": "uri",
+        "type": "string"
+      }
+    ],
+    "name": "DropCollectionsUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "dropId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "uri",
         "type": "string"
       },
       {
         "indexed": false,
         "internalType": "address",
-        "name": "currency",
+        "name": "creator",
         "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "funder",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "grantId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "orderId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "level",
-        "type": "uint256"
       }
     ],
-    "name": "GrantOrder",
+    "name": "DropCreated",
     "type": "event"
   },
   {
@@ -184,65 +175,41 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "address",
-        "name": "claimer",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint8",
-        "name": "milestone",
-        "type": "uint8"
-      },
-      {
-        "indexed": false,
         "internalType": "uint256",
-        "name": "grantId",
+        "name": "dropId",
         "type": "uint256"
       }
     ],
-    "name": "MilestoneClaimed",
+    "name": "DropDeleted",
     "type": "event"
   },
   {
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "updater",
-        "type": "address"
-      },
-      {
-        "indexed": false,
+        "indexed": true,
         "internalType": "uint256",
-        "name": "grantId",
+        "name": "tokenId",
         "type": "uint256"
       },
       {
         "indexed": false,
-        "internalType": "uint8",
-        "name": "milestone",
-        "type": "uint8"
-      },
-      {
-        "indexed": false,
-        "internalType": "enum LegendLibrary.MilestoneStatus",
-        "name": "status",
-        "type": "uint8"
+        "internalType": "uint256",
+        "name": "collectionId",
+        "type": "uint256"
       }
     ],
-    "name": "MilestoneStatusUpdated",
+    "name": "TokensMinted",
     "type": "event"
   },
   {
     "inputs": [],
-    "name": "_periodClaim",
+    "name": "collectionCreator",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "contract CollectionCreator",
         "name": "",
-        "type": "uint256"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -251,12 +218,17 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_grantId",
-        "type": "uint256"
+        "internalType": "string",
+        "name": "_uri",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "_creator",
+        "type": "address"
       }
     ],
-    "name": "deleteGrant",
+    "name": "createDrop",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -265,35 +237,37 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_grantId",
+        "name": "_collectionId",
         "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_milestone",
-        "type": "uint8"
       }
     ],
-    "name": "getAllClaimedMilestone",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
+    "name": "deleteCollection",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_grantId",
+        "name": "_dropId",
         "type": "uint256"
       }
     ],
-    "name": "getGrantAcceptedCurrencies",
+    "name": "deleteDrop",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_collectionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCollectionAcceptedTokens",
     "outputs": [
       {
         "internalType": "address[]",
@@ -308,35 +282,11 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_grantId",
+        "name": "_collectionId",
         "type": "uint256"
       }
     ],
-    "name": "getGrantAddresses",
-    "outputs": [
-      {
-        "internalType": "address[]",
-        "name": "",
-        "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_currency",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_grantId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getGrantAmountFundedByCurrency",
+    "name": "getCollectionAmount",
     "outputs": [
       {
         "internalType": "uint256",
@@ -351,40 +301,11 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_profileId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_pubId",
+        "name": "_collectionId",
         "type": "uint256"
       }
     ],
-    "name": "getGrantId",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_grantId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_level",
-        "type": "uint8"
-      }
-    ],
-    "name": "getGrantLevelAmounts",
+    "name": "getCollectionCommunityIds",
     "outputs": [
       {
         "internalType": "uint256[]",
@@ -399,16 +320,106 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_grantId",
+        "name": "_collectionId",
         "type": "uint256"
-      },
+      }
+    ],
+    "name": "getCollectionCreator",
+    "outputs": [
       {
-        "internalType": "uint8",
-        "name": "_level",
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_collectionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCollectionDropId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_collectionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCollectionEncrypted",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_collectionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCollectionFulfiller",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_collectionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCollectionOrigin",
+    "outputs": [
+      {
+        "internalType": "enum PrintLibrary.Origin",
+        "name": "",
         "type": "uint8"
       }
     ],
-    "name": "getGrantLevelCollectionIds",
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_collectionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCollectionPrices",
     "outputs": [
       {
         "internalType": "uint256[]",
@@ -423,11 +434,30 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_grantId",
+        "name": "_collectionId",
         "type": "uint256"
       }
     ],
-    "name": "getGrantProfileId",
+    "name": "getCollectionPrintType",
+    "outputs": [
+      {
+        "internalType": "enum PrintLibrary.PrintType",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_collectionId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCollectionProfileId",
     "outputs": [
       {
         "internalType": "uint256",
@@ -442,11 +472,11 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_grantId",
+        "name": "_collectionId",
         "type": "uint256"
       }
     ],
-    "name": "getGrantPubId",
+    "name": "getCollectionPubId",
     "outputs": [
       {
         "internalType": "uint256",
@@ -459,7 +489,7 @@
   },
   {
     "inputs": [],
-    "name": "getGrantSupply",
+    "name": "getCollectionSupply",
     "outputs": [
       {
         "internalType": "uint256",
@@ -474,16 +504,16 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_grantId",
+        "name": "_collectionId",
         "type": "uint256"
       }
     ],
-    "name": "getGrantURI",
+    "name": "getCollectionTokenIds",
     "outputs": [
       {
-        "internalType": "string",
+        "internalType": "uint256[]",
         "name": "",
-        "type": "string"
+        "type": "uint256[]"
       }
     ],
     "stateMutability": "view",
@@ -492,99 +522,12 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_granteeAddress",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
-        "name": "_grantId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_milestone",
-        "type": "uint8"
-      }
-    ],
-    "name": "getGranteeClaimedMilestone",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_granteeAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_grantId",
+        "name": "_collectionId",
         "type": "uint256"
       }
     ],
-    "name": "getGranteeSplitAmount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_currency",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_grantId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getIsGrantAcceptedCurrency",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_currency",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_grantId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_milestone",
-        "type": "uint8"
-      }
-    ],
-    "name": "getMilestoneGoalToCurrency",
+    "name": "getCollectionTokensMinted",
     "outputs": [
       {
         "internalType": "uint256",
@@ -599,97 +542,11 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_grantId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_milestone",
-        "type": "uint8"
-      }
-    ],
-    "name": "getMilestoneStatus",
-    "outputs": [
-      {
-        "internalType": "enum LegendLibrary.MilestoneStatus",
-        "name": "",
-        "type": "uint8"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_grantId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_milestone",
-        "type": "uint8"
-      }
-    ],
-    "name": "getMilestoneSubmitBy",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
+        "name": "_collectionId",
         "type": "uint256"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_orderId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getOrderAmount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_orderId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getOrderCurrency",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_orderId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getOrderEncryptedFulfillment",
+    "name": "getCollectionURI",
     "outputs": [
       {
         "internalType": "string",
@@ -704,11 +561,49 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_orderId",
+        "name": "_collectionId",
         "type": "uint256"
       }
     ],
-    "name": "getOrderFunder",
+    "name": "getCollectionUnlimited",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_dropId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getDropCollectionIds",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_dropId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getDropCreator",
     "outputs": [
       {
         "internalType": "address",
@@ -720,14 +615,8 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_orderId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getOrderGrantId",
+    "inputs": [],
+    "name": "getDropSupply",
     "outputs": [
       {
         "internalType": "uint256",
@@ -742,71 +631,155 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_orderId",
+        "name": "_dropId",
         "type": "uint256"
       }
     ],
-    "name": "getOrderLevel",
+    "name": "getDropURI",
     "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "_collectionId",
         "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getOrderSupply",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getPeriodClaim",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "legendAccessControl",
-    "outputs": [
-      {
-        "internalType": "contract LegendAccessControl",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "legendMilestone",
-    "outputs": [
+      },
       {
         "internalType": "address",
-        "name": "",
+        "name": "_tokenAddress",
         "type": "address"
       }
     ],
+    "name": "getIsCollectionTokenAccepted",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getTokenCollection",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getTokenId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getTokenIndex",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTokenSupply",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getTokenURI",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "_collectionIds",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "string",
+        "name": "_uri",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_dropId",
+        "type": "uint256"
+      }
+    ],
+    "name": "modifyCollectionsInDrop",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -823,60 +796,74 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "nftCreator",
+    "outputs": [
+      {
+        "internalType": "contract NFTCreator",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "printAccessControl",
+    "outputs": [
+      {
+        "internalType": "contract PrintAccessControl",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "components": [
           {
-            "components": [
-              {
-                "internalType": "uint256[]",
-                "name": "collectionIds",
-                "type": "uint256[]"
-              },
-              {
-                "internalType": "uint256[]",
-                "name": "amounts",
-                "type": "uint256[]"
-              },
-              {
-                "internalType": "uint8",
-                "name": "level",
-                "type": "uint8"
-              }
-            ],
-            "internalType": "struct LegendLibrary.LevelInfo[6]",
-            "name": "levelInfo",
-            "type": "tuple[6]"
-          },
-          {
-            "internalType": "uint256[][3]",
-            "name": "goalToCurrency",
-            "type": "uint256[][3]"
-          },
-          {
             "internalType": "address[]",
-            "name": "acceptedCurrencies",
-            "type": "address[]"
-          },
-          {
-            "internalType": "address[]",
-            "name": "granteeAddresses",
+            "name": "acceptedTokens",
             "type": "address[]"
           },
           {
             "internalType": "uint256[]",
-            "name": "splitAmounts",
+            "name": "prices",
             "type": "uint256[]"
           },
           {
-            "internalType": "uint256[3]",
-            "name": "submitBys",
-            "type": "uint256[3]"
+            "internalType": "uint256[]",
+            "name": "tokenIds",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "communityIds",
+            "type": "uint256[]"
           },
           {
             "internalType": "string",
             "name": "uri",
             "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "fulfiller",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "creator",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "collectionId",
+            "type": "uint256"
           },
           {
             "internalType": "uint256",
@@ -887,84 +874,56 @@
             "internalType": "uint256",
             "name": "profileId",
             "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "dropId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "mintedTokens",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "enum PrintLibrary.Origin",
+            "name": "origin",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum PrintLibrary.PrintType",
+            "name": "printType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bool",
+            "name": "unlimited",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "encrypted",
+            "type": "bool"
           }
         ],
-        "internalType": "struct LegendLibrary.CreateGrant",
-        "name": "_params",
+        "internalType": "struct PrintLibrary.Collection",
+        "name": "_collectionData",
         "type": "tuple"
       }
     ],
-    "name": "registerGrant",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+    "name": "setCollection",
+    "outputs": [
       {
         "internalType": "uint256",
-        "name": "_period",
+        "name": "",
         "type": "uint256"
       }
     ],
-    "name": "setAdditionalPeriodClaim",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_grantId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_milestone",
-        "type": "uint8"
-      }
-    ],
-    "name": "setAllClaimedMilestone",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_fulfillment",
-        "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "_currency",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_funder",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_grantId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amountFunded",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_level",
-        "type": "uint256"
-      }
-    ],
-    "name": "setGrantAmountFunded",
-    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -972,21 +931,11 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_granteeAddress",
+        "name": "_newCollectionCreatorAddress",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_grantId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_milestone",
-        "type": "uint8"
       }
     ],
-    "name": "setGranteeClaimedMilestone",
+    "name": "setCollectionCreatorAddress",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -994,12 +943,75 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_newLegendAccessControlAddress",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "_collectionId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_mintedTokens",
+        "type": "uint256"
       }
     ],
-    "name": "setLegendAccessControlAddress",
+    "name": "setCollectionMintedTokens",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_collectionId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "_newTokenIds",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "setCollectionTokenIds",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "uri",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "chosenCurrency",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tokenId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "collectionId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "index",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct PrintLibrary.Token",
+        "name": "_tokenData",
+        "type": "tuple"
+      }
+    ],
+    "name": "setNFT",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1008,11 +1020,24 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_legendMilestoneAddress",
+        "name": "_newNFTCreatorAddress",
         "type": "address"
       }
     ],
-    "name": "setMilestoneEscrowAddress",
+    "name": "setNFTCreatorAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_newPrintAccessControlAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setPrintAccessControlAddress",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1028,34 +1053,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_granteeAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "enum LegendLibrary.MilestoneStatus",
-        "name": "_status",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_grantId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_milestone",
-        "type": "uint8"
-      }
-    ],
-    "name": "updateMilestoneStatus",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]

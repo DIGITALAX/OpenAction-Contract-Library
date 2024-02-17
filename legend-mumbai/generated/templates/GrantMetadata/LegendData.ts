@@ -101,12 +101,58 @@ export class GrantFunded__Params {
     return this._event.parameters[0].value.toAddress();
   }
 
+  get funder(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
   get grantId(): BigInt {
-    return this._event.parameters[1].value.toBigInt();
+    return this._event.parameters[2].value.toBigInt();
   }
 
   get amount(): BigInt {
-    return this._event.parameters[2].value.toBigInt();
+    return this._event.parameters[3].value.toBigInt();
+  }
+}
+
+export class GrantOrder extends ethereum.Event {
+  get params(): GrantOrder__Params {
+    return new GrantOrder__Params(this);
+  }
+}
+
+export class GrantOrder__Params {
+  _event: GrantOrder;
+
+  constructor(event: GrantOrder) {
+    this._event = event;
+  }
+
+  get encryptedFulfillment(): string {
+    return this._event.parameters[0].value.toString();
+  }
+
+  get currency(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+
+  get funder(): Address {
+    return this._event.parameters[2].value.toAddress();
+  }
+
+  get grantId(): BigInt {
+    return this._event.parameters[3].value.toBigInt();
+  }
+
+  get amount(): BigInt {
+    return this._event.parameters[4].value.toBigInt();
+  }
+
+  get orderId(): BigInt {
+    return this._event.parameters[5].value.toBigInt();
+  }
+
+  get level(): BigInt {
+    return this._event.parameters[6].value.toBigInt();
   }
 }
 
@@ -684,6 +730,165 @@ export class LegendData extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  getOrderAmount(_orderId: BigInt): BigInt {
+    let result = super.call(
+      "getOrderAmount",
+      "getOrderAmount(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(_orderId)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getOrderAmount(_orderId: BigInt): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getOrderAmount",
+      "getOrderAmount(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(_orderId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getOrderCurrency(_orderId: BigInt): Address {
+    let result = super.call(
+      "getOrderCurrency",
+      "getOrderCurrency(uint256):(address)",
+      [ethereum.Value.fromUnsignedBigInt(_orderId)]
+    );
+
+    return result[0].toAddress();
+  }
+
+  try_getOrderCurrency(_orderId: BigInt): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "getOrderCurrency",
+      "getOrderCurrency(uint256):(address)",
+      [ethereum.Value.fromUnsignedBigInt(_orderId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  getOrderEncryptedFulfillment(_orderId: BigInt): string {
+    let result = super.call(
+      "getOrderEncryptedFulfillment",
+      "getOrderEncryptedFulfillment(uint256):(string)",
+      [ethereum.Value.fromUnsignedBigInt(_orderId)]
+    );
+
+    return result[0].toString();
+  }
+
+  try_getOrderEncryptedFulfillment(
+    _orderId: BigInt
+  ): ethereum.CallResult<string> {
+    let result = super.tryCall(
+      "getOrderEncryptedFulfillment",
+      "getOrderEncryptedFulfillment(uint256):(string)",
+      [ethereum.Value.fromUnsignedBigInt(_orderId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toString());
+  }
+
+  getOrderFunder(_orderId: BigInt): Address {
+    let result = super.call(
+      "getOrderFunder",
+      "getOrderFunder(uint256):(address)",
+      [ethereum.Value.fromUnsignedBigInt(_orderId)]
+    );
+
+    return result[0].toAddress();
+  }
+
+  try_getOrderFunder(_orderId: BigInt): ethereum.CallResult<Address> {
+    let result = super.tryCall(
+      "getOrderFunder",
+      "getOrderFunder(uint256):(address)",
+      [ethereum.Value.fromUnsignedBigInt(_orderId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  getOrderGrantId(_orderId: BigInt): BigInt {
+    let result = super.call(
+      "getOrderGrantId",
+      "getOrderGrantId(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(_orderId)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getOrderGrantId(_orderId: BigInt): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getOrderGrantId",
+      "getOrderGrantId(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(_orderId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getOrderLevel(_orderId: BigInt): BigInt {
+    let result = super.call(
+      "getOrderLevel",
+      "getOrderLevel(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(_orderId)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getOrderLevel(_orderId: BigInt): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getOrderLevel",
+      "getOrderLevel(uint256):(uint256)",
+      [ethereum.Value.fromUnsignedBigInt(_orderId)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getOrderSupply(): BigInt {
+    let result = super.call("getOrderSupply", "getOrderSupply():(uint256)", []);
+
+    return result[0].toBigInt();
+  }
+
+  try_getOrderSupply(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getOrderSupply",
+      "getOrderSupply():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   getPeriodClaim(): BigInt {
     let result = super.call("getPeriodClaim", "getPeriodClaim():(uint256)", []);
 
@@ -1005,16 +1210,28 @@ export class SetGrantAmountFundedCall__Inputs {
     this._call = call;
   }
 
+  get _fulfillment(): string {
+    return this._call.inputValues[0].value.toString();
+  }
+
   get _currency(): Address {
-    return this._call.inputValues[0].value.toAddress();
+    return this._call.inputValues[1].value.toAddress();
+  }
+
+  get _funder(): Address {
+    return this._call.inputValues[2].value.toAddress();
   }
 
   get _grantId(): BigInt {
-    return this._call.inputValues[1].value.toBigInt();
+    return this._call.inputValues[3].value.toBigInt();
   }
 
   get _amountFunded(): BigInt {
-    return this._call.inputValues[2].value.toBigInt();
+    return this._call.inputValues[4].value.toBigInt();
+  }
+
+  get _level(): BigInt {
+    return this._call.inputValues[5].value.toBigInt();
   }
 }
 

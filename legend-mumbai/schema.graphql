@@ -44,11 +44,59 @@ type GrantFunded @entity(immutable: false) {
   currency: Bytes! # address
   grantId: BigInt! # uint256
   grant: GrantCreated!
-  funder: Bytes
+  funder: Bytes!
   amount: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
+}
+
+type Collection @entity(immutable: false) {
+  id: Bytes!
+  collectionId: BigInt!
+  prices: [BigInt!]!
+  uri: String!
+  collectionMetadata: CollectionMetadata
+}
+
+type CollectionMetadata @entity {
+  id: ID!
+  title: String
+  description: String
+  images: [String!]
+  tags: String
+  colors: String
+  sizes: String
+  access: String
+  audio: String
+  video: String
+  onChromadin: String
+  communities: String
+  microbrandCover: String
+  profileHandle: String
+  microbrand: String
+  mediaCover: String
+  visibility: String
+  mediaTypes: String
+  prompt: String
+  style: String
+  sex: String
+}
+
+type GrantOrder @entity(immutable: false) {
+  id: Bytes!
+  orderId: BigInt!
+  level: BigInt!
+  encryptedFulfillment: String!
+  currency: Bytes! # address
+  grantId: BigInt! # uint256
+  grant: GrantCreated!
+  funder: Bytes!
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  orderCollections: [Collection!]
 }
 
 type MilestoneClaimed @entity(immutable: false) {
