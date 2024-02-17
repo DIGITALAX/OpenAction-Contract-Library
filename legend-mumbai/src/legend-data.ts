@@ -11,23 +11,29 @@ import {
   GrantDeleted as GrantDeletedEvent,
   GrantFunded as GrantFundedEvent,
   LegendData,
+  GrantOrder as GrantOrderEvent,
   MilestoneClaimed as MilestoneClaimedEvent,
   MilestoneStatusUpdated as MilestoneStatusUpdatedEvent,
 } from "../generated/LegendData/LegendData";
 import {
   AllClaimedMilestone,
+  Collection,
   CollectionGrantId,
   CurrencyGoal,
   Funded,
   GrantCreated,
   GrantDeleted,
   GrantFunded,
+  GrantOrder,
   LevelInfo,
   Milestone,
   MilestoneClaimed,
   MilestoneStatusUpdated,
 } from "../generated/schema";
-import { GrantMetadata as GrantMetadataTemplate } from "../generated/templates";
+import {
+  GrantMetadata as GrantMetadataTemplate,
+  CollectionMetadata as CollectionMetadataTemplate,
+} from "../generated/templates";
 import { PrintDesignData } from "../generated/PrintDesignData/PrintDesignData";
 
 export function handleAllClaimedMilestone(
@@ -61,7 +67,7 @@ export function handleGrantCreated(event: GrantCreatedEvent): void {
   entity.transactionHash = event.transaction.hash;
 
   let data = LegendData.bind(
-    Address.fromString("0x04D891EDD599DE3a19bBA5A3a180479b658908AC")
+    Address.fromString("0x3903349184eb51E65531d36e459F3c8CdF9A53C6")
   );
 
   let ipfsHash = data.getGrantURI(entity.grantId);
@@ -289,7 +295,7 @@ export function handleGrantFunded(event: GrantFundedEvent): void {
   entity.currency = event.params.currency;
   entity.grantId = event.params.grantId;
   entity.amount = event.params.amount;
-  // entity.funder = event.params.funder;
+  entity.funder = event.params.funder;
 
   entity.blockNumber = event.block.number;
   entity.blockTimestamp = event.block.timestamp;
@@ -329,6 +335,113 @@ export function handleGrantFunded(event: GrantFundedEvent): void {
 
     grantEntity.save();
   }
+  entity.save();
+}
+
+export function handleGrantOrder(event: GrantOrderEvent): void {
+  let entity = new GrantOrder(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+
+  entity.currency = event.params.currency;
+  entity.grantId = event.params.grantId;
+  entity.amount = event.params.amount;
+  entity.funder = event.params.funder;
+  entity.orderId = event.params.orderId;
+  entity.encryptedFulfillment = event.params.encryptedFulfillment;
+  entity.level = event.params.level;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.grant = Bytes.fromByteArray(
+    ByteArray.fromBigInt(event.params.grantId)
+  );
+
+  let grantEntity = GrantCreated.load(
+    Bytes.fromByteArray(ByteArray.fromBigInt(event.params.grantId))
+  );
+
+  if (grantEntity !== null) {
+    let fundedId = entity.grantId.toString() + entity.currency.toString();
+
+    let funded = Funded.load(fundedId);
+
+    if (funded !== null) {
+      funded.funded = funded.funded.plus(entity.amount);
+      funded.save();
+    } else {
+      let fundedAmounts: Array<string> = [];
+      if (grantEntity.fundedAmount !== null) {
+        fundedAmounts = <Array<string>>grantEntity.fundedAmount;
+      }
+
+      let funded = new Funded(fundedId);
+      funded.currency = entity.currency;
+      funded.funded = entity.amount;
+      funded.save();
+
+      fundedAmounts.push(fundedId);
+
+      grantEntity.fundedAmount = fundedAmounts;
+    }
+
+    grantEntity.save();
+  }
+
+  let data = LegendData.bind(
+    Address.fromString("0x3903349184eb51E65531d36e459F3c8CdF9A53C6")
+  );
+
+  let collectionIds = data.getGrantLevelCollectionIds(
+    entity.grantId,
+    entity.level.toI32()
+  );
+
+  let collectionOrders: Array<Bytes> = [];
+
+  if (collectionIds !== null && collectionIds.length > 0) {
+    for (let k = 0; k < collectionIds.length; k++) {
+      if (collectionIds[k] !== null) {
+        let collection = Collection.load(
+          Bytes.fromByteArray(ByteArray.fromBigInt(collectionIds[k]))
+        );
+
+        if (collection == null) {
+          collection = new Collection(
+            Bytes.fromByteArray(ByteArray.fromBigInt(collectionIds[k]))
+          );
+
+          let printData = PrintDesignData.bind(
+            Address.fromString("0x597772c9c0EfE354976B0068296dFcb03583C2be")
+          );
+
+          let uri = printData.getCollectionURI(collectionIds[k]);
+
+          collection.uri = uri;
+          collection.collectionId = collectionIds[k];
+          collection.prices = printData.getCollectionPrices(collectionIds[k]);
+
+          if (uri) {
+            let ipfsHash = uri.split("/").pop();
+            if (ipfsHash != null) {
+              collection.collectionMetadata = ipfsHash;
+              CollectionMetadataTemplate.create(ipfsHash);
+            }
+          }
+
+          collection.save();
+        }
+
+        collectionOrders.push(
+          Bytes.fromByteArray(ByteArray.fromBigInt(collectionIds[k]))
+        );
+      }
+    }
+  }
+
+  entity.orderCollections = collectionOrders;
 
   entity.save();
 }

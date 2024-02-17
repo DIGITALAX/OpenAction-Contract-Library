@@ -11,3 +11,13 @@ export class GrantMetadata extends DataSourceTemplate {
     DataSourceTemplate.createWithContext("GrantMetadata", [cid], context);
   }
 }
+
+export class CollectionMetadata extends DataSourceTemplate {
+  static create(cid: string): void {
+    DataSourceTemplate.create("CollectionMetadata", [cid]);
+  }
+
+  static createWithContext(cid: string, context: DataSourceContext): void {
+    DataSourceTemplate.createWithContext("CollectionMetadata", [cid], context);
+  }
+}
