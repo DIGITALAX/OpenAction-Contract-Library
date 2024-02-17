@@ -198,10 +198,12 @@ contract LegendOpenAction is
         legendMilestone.fundGrant(_currency, _grantAmount, _grantId);
 
         legendData.setGrantAmountFunded(
+            _encryptedFulfillment,
             _currency,
             _params.actorProfileOwner,
             _grantId,
-            _grantAmount
+            _grantAmount,
+            _level - 2
         );
 
         emit GrantContributed(

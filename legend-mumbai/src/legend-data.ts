@@ -150,27 +150,33 @@ export function handleGrantCreated(event: GrantCreatedEvent): void {
       i + 2
     );
 
+    entity.hoodie = false;
+    entity.sticker = false;
+    entity.poster = false;
+    entity.shirt = false;
+
     const collections: Array<BigInt> | null = levelInfo.collectionIds;
     let printData = PrintDesignData.bind(
       Address.fromString("0x597772c9c0EfE354976B0068296dFcb03583C2be")
     );
-
     if (collections !== null) {
       for (let k = 0; k < collections.length; k++) {
         if (collections[k].toI32() !== 0) {
-          let printType = printData.getCollectionPrintType(collections[k]);
+          if (printData !== null) {
+            let printType = printData.getCollectionPrintType(collections[k]);
 
-          if (!entity.sticker && printType == 0) {
-            entity.sticker = true;
-          }
-          if (!entity.poster && printType == 1) {
-            entity.poster = true;
-          }
-          if (!entity.shirt && printType == 2) {
-            entity.shirt = true;
-          }
-          if (!entity.hoodie && printType == 3) {
-            entity.hoodie = true;
+            if (!entity.sticker && printType == 0) {
+              entity.sticker = true;
+            }
+            if (!entity.poster && printType == 1) {
+              entity.poster = true;
+            }
+            if (!entity.shirt && printType == 2) {
+              entity.shirt = true;
+            }
+            if (!entity.hoodie && printType == 3) {
+              entity.hoodie = true;
+            }
           }
         }
 
