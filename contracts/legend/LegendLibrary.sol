@@ -78,4 +78,14 @@ contract LegendLibrary {
         NotClaimed,
         Claimed
     }
+
+    struct Order {
+        string encryptedFulfillment;
+        address funder;
+        address currency;
+        uint256 orderId;
+        uint256 level;
+        uint256 amountFunded;
+        uint256 grantId;
+    }
 }

@@ -24,10 +24,10 @@ type GrantCreated @entity(immutable: false) {
   uri: String!
   grantMetadata: GrantMetadata
   fundedAmount: [Funded!]
-  sticker: Boolean
-  poster: Boolean
-  shirt: Boolean
-  hoodie: Boolean
+  sticker: Boolean!
+  poster: Boolean!
+  shirt: Boolean!
+  hoodie: Boolean!
 }
 
 type GrantDeleted @entity(immutable: false) {
@@ -44,6 +44,7 @@ type GrantFunded @entity(immutable: false) {
   currency: Bytes! # address
   grantId: BigInt! # uint256
   grant: GrantCreated!
+  funder: Bytes
   amount: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!

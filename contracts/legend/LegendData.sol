@@ -13,6 +13,7 @@ contract LegendData {
     address public legendMilestone;
     uint256 public _periodClaim;
     uint256 private _grantSupply;
+    uint256 private _orderSupply;
 
     modifier onlyMilestoneEscrow() {
         if (msg.sender != legendMilestone) {
@@ -33,6 +34,7 @@ contract LegendData {
         _;
     }
     mapping(uint256 => LegendLibrary.Grant) private _allGrants;
+    mapping(uint256 => LegendLibrary.Order) private _grantOrders;
     mapping(uint256 => mapping(uint256 => uint256)) private _lensToGrantId;
 
     event GrantCreated(
@@ -46,6 +48,15 @@ contract LegendData {
         address funder,
         uint256 grantId,
         uint256 amount
+    );
+    event GrantOrder(
+        string encryptedFulfillment,
+        address currency,
+        address funder,
+        uint256 grantId,
+        uint256 amount,
+        uint256 orderId,
+        uint256 level
     );
     event AllClaimedMilestone(uint256 grantId, uint8 milestone);
     event GrantDeleted(uint256 grantId, address deleter);
@@ -69,6 +80,8 @@ contract LegendData {
         symbol = "LD";
         name = "LegendData";
         _periodClaim = 2 weeks;
+        _orderSupply = 0;
+        _grantSupply = 0;
     }
 
     function registerGrant(
@@ -160,13 +173,37 @@ contract LegendData {
     }
 
     function setGrantAmountFunded(
+        string memory _fulfillment,
         address _currency,
         address _funder,
         uint256 _grantId,
-        uint256 _amountFunded
+        uint256 _amountFunded,
+        uint256 _level
     ) external onlyOpenAction {
         _allGrants[_grantId].amountFundedToCurrency[_currency] += _amountFunded;
 
+        _orderSupply++;
+
+        LegendLibrary.Order memory _order = LegendLibrary.Order({
+            encryptedFulfillment: _fulfillment,
+            funder: _funder,
+            currency: _currency,
+            orderId: _orderSupply,
+            level: _level,
+            amountFunded: _amountFunded,
+            grantId: _grantId
+        });
+
+        _grantOrders[_orderSupply] = _order;
+        emit GrantOrder(
+            _fulfillment,
+            _currency,
+            _funder,
+            _grantId,
+            _amountFunded,
+            _orderSupply,
+            _level
+        );
         emit GrantFunded(_currency, _funder, _grantId, _amountFunded);
     }
 
@@ -356,5 +393,35 @@ contract LegendData {
 
     function getPeriodClaim() public view returns (uint256) {
         return _periodClaim;
+    }
+
+    function getOrderSupply() public view returns (uint256) {
+        return _orderSupply;
+    }
+
+    function getOrderFunder(uint256 _orderId) public view returns (address) {
+        return _grantOrders[_orderId].funder;
+    }
+
+    function getOrderCurrency(uint256 _orderId) public view returns (address) {
+        return _grantOrders[_orderId].currency;
+    }
+
+    function getOrderLevel(uint256 _orderId) public view returns (uint256) {
+        return _grantOrders[_orderId].level;
+    }
+
+    function getOrderAmount(uint256 _orderId) public view returns (uint256) {
+        return _grantOrders[_orderId].amountFunded;
+    }
+
+    function getOrderGrantId(uint256 _orderId) public view returns (uint256) {
+        return _grantOrders[_orderId].grantId;
+    }
+
+    function getOrderEncryptedFulfillment(
+        uint256 _orderId
+    ) public view returns (string memory) {
+        return _grantOrders[_orderId].encryptedFulfillment;
     }
 }
