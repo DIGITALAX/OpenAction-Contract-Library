@@ -186,7 +186,9 @@ contract LegendOpenAction is
 
             marketCreator.buyTokens(_buyTokensParams);
         } else {
-            _grantAmount = printSplitsData.getWeiByCurrency(_currency) * 1;
+            _grantAmount =
+                (10 ** 18 * printSplitsData.getWeiByCurrency(_currency)) /
+                printSplitsData.getRateByCurrency(_currency);
         }
 
         IERC20(_currency).transferFrom(
@@ -203,7 +205,7 @@ contract LegendOpenAction is
             _params.actorProfileOwner,
             _grantId,
             _grantAmount,
-            _level - 2
+            _level
         );
 
         emit GrantContributed(
