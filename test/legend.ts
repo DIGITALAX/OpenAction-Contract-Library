@@ -419,7 +419,7 @@ describe("LegendOpenAction", () => {
               "10000000000000000000",
               "40000000000000000000",
             ],
-            submitBys: ["1705727127", "1705727127", "1705727127"],
+            submitBys: ["1708727127", "1708727127", "1708727127"],
             uri: "some uri here",
           },
         ]
@@ -481,13 +481,13 @@ describe("LegendOpenAction", () => {
       expect(await legendData.getMilestoneStatus(1, 3)).to.equal(0);
 
       expect(await legendData.getMilestoneSubmitBy(1, 1)).to.equal(
-        "1705727127"
+        "1708727127"
       );
       expect(await legendData.getMilestoneSubmitBy(1, 2)).to.equal(
-        "1705727127"
+        "1708727127"
       );
       expect(await legendData.getMilestoneSubmitBy(1, 3)).to.equal(
-        "1705727127"
+        "1708727127"
       );
 
       expect(
@@ -845,7 +845,7 @@ describe("LegendOpenAction", () => {
               "10000000000000000000",
               "40000000000000000000",
             ],
-            submitBys: ["1705727127", "1705727127", "1705727127"],
+            submitBys: ["1708727127", "1708727127", "1708727127"],
             uri: "some uri here",
           },
         ]

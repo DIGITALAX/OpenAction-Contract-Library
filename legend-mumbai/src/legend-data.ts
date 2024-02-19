@@ -67,7 +67,7 @@ export function handleGrantCreated(event: GrantCreatedEvent): void {
   entity.transactionHash = event.transaction.hash;
 
   let data = LegendData.bind(
-    Address.fromString("0x3903349184eb51E65531d36e459F3c8CdF9A53C6")
+    Address.fromString("0x34DBdb22FAC996d3c96ba8a0bBDE02cbE3F097E4")
   );
 
   let ipfsHash = data.getGrantURI(entity.grantId);
@@ -391,7 +391,7 @@ export function handleGrantOrder(event: GrantOrderEvent): void {
   }
 
   let data = LegendData.bind(
-    Address.fromString("0x3903349184eb51E65531d36e459F3c8CdF9A53C6")
+    Address.fromString("0x34DBdb22FAC996d3c96ba8a0bBDE02cbE3F097E4")
   );
 
   let collectionIds = data.getGrantLevelCollectionIds(

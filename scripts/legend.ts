@@ -8,113 +8,112 @@ const ROUTER_MUMBAI = "0xE592427A0AEce92De3Edee1F18E0157C05861564";
 const ROUTER = "0xE592427A0AEce92De3Edee1F18E0157C05861564";
 const main = async () => {
   try {
-    // const LegendAccessControl = await ethers.getContractFactory(
-    //   "LegendAccessControl"
-    // );
-    // const MachineAccessControl = await ethers.getContractFactory(
-    //   "MachineAccessControl"
-    // );
-    // const LegendMachineCreditSwap = await ethers.getContractFactory(
-    //   "LegendMachineCreditSwap"
-    // );
-    // const LegendMilestoneEscrow = await ethers.getContractFactory(
-    //   "LegendMilestoneEscrow"
-    // );
-    // const LegendData = await ethers.getContractFactory("LegendData");
-    // const LegendOpenAction = await ethers.getContractFactory(
-    //   "LegendOpenAction"
-    // );
+    const LegendAccessControl = await ethers.getContractFactory(
+      "LegendAccessControl"
+    );
+    const MachineAccessControl = await ethers.getContractFactory(
+      "MachineAccessControl"
+    );
+    const LegendMachineCreditSwap = await ethers.getContractFactory(
+      "LegendMachineCreditSwap"
+    );
+    const LegendMilestoneEscrow = await ethers.getContractFactory(
+      "LegendMilestoneEscrow"
+    );
+    const LegendData = await ethers.getContractFactory("LegendData");
+    const LegendOpenAction = await ethers.getContractFactory(
+      "LegendOpenAction"
+    );
 
-    // const machineAccessControl = await MachineAccessControl.deploy();
-    // const legendMachineCreditSwap = await LegendMachineCreditSwap.deploy(
-    //   machineAccessControl.address,
-    //   ROUTER_MUMBAI
-    // );
-    // const legendAccessControl = await LegendAccessControl.deploy();
-    // const legendData = await LegendData.deploy(legendAccessControl.address);
-    // const legendMilestoneEscrow = await LegendMilestoneEscrow.deploy(
-    //   legendData.address,
-    //   legendAccessControl.address,
-    //   legendMachineCreditSwap.address
-    // );
-    // const legendOpenAction = await LegendOpenAction.deploy(
-    //   "metadataDetails",
-    //   HUB_MUMBAI,
-    //   MODULE_MUMBAI,
-    //   legendAccessControl.address,
-    //   "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
-    //   "0x597772c9c0EfE354976B0068296dFcb03583C2be",
-    //   "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
-    //   legendMilestoneEscrow.address,
-    //   legendData.address
-    // );
+    const machineAccessControl = await MachineAccessControl.deploy();
+    const legendMachineCreditSwap = await LegendMachineCreditSwap.deploy(
+      machineAccessControl.address,
+      ROUTER_MUMBAI
+    );
+    const legendAccessControl = await LegendAccessControl.deploy();
+    const legendData = await LegendData.deploy(legendAccessControl.address);
+    const legendMilestoneEscrow = await LegendMilestoneEscrow.deploy(
+      legendData.address,
+      legendAccessControl.address,
+      legendMachineCreditSwap.address
+    );
+    const legendOpenAction = await LegendOpenAction.deploy(
+      "metadataDetails",
+      HUB_MUMBAI,
+      MODULE_MUMBAI,
+      legendAccessControl.address,
+      "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
+      "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+      "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
+      legendMilestoneEscrow.address,
+      legendData.address
+    );
 
-    // const WAIT_BLOCK_CONFIRMATIONS = 20;
+    const WAIT_BLOCK_CONFIRMATIONS = 20;
 
-    // legendData.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
-    // legendMilestoneEscrow.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
-    // machineAccessControl.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
-    // legendMachineCreditSwap.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
-    // legendAccessControl.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
-    // legendOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    legendData.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    legendMilestoneEscrow.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    machineAccessControl.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    legendMachineCreditSwap.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    legendAccessControl.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
+    legendOpenAction.deployTransaction.wait(WAIT_BLOCK_CONFIRMATIONS);
 
-    // console.log(`LegendData deployed at\n${legendData.address}`);
-    // console.log(
-    //   `LegendMilestoneEscrow deployed at\n${legendMilestoneEscrow.address}`
-    // );
-    // console.log(`LegendOpenAction deployed at\n${legendOpenAction.address}`);
-    // console.log(
-    //   `MachineAccessControl deployed at\n${machineAccessControl.address}`
-    // );
-    // console.log(
-    //   `LegendAccessControl deployed at\n${legendAccessControl.address}`
-    // );
-    // console.log(
-    //   `MachineCreditSwap deployed at\n${legendMachineCreditSwap.address}`
-    // );
+    console.log(`LegendData deployed at\n${legendData.address}`);
+    console.log(
+      `LegendMilestoneEscrow deployed at\n${legendMilestoneEscrow.address}`
+    );
+    console.log(`LegendOpenAction deployed at\n${legendOpenAction.address}`);
+    console.log(
+      `MachineAccessControl deployed at\n${machineAccessControl.address}`
+    );
+    console.log(
+      `LegendAccessControl deployed at\n${legendAccessControl.address}`
+    );
+    console.log(
+      `MachineCreditSwap deployed at\n${legendMachineCreditSwap.address}`
+    );
 
-    await run(`verify:verify`, {
-      address: "0x3903349184eb51E65531d36e459F3c8CdF9A53C6",
-      constructorArguments: ["0x1592a6AdFFFDAB03E812F8F8ae63Af8EDE7C49c9"],
-    });
-    await run(`verify:verify`, {
-      address: "0x1592a6AdFFFDAB03E812F8F8ae63Af8EDE7C49c9",
-      constructorArguments: [],
-    });
-    await run(`verify:verify`, {
-      address: "0xbea8eE7323e41b632d8912b714Be16EF4259f5a5",
-      constructorArguments: [],
-    });
-    await run(`verify:verify`, {
-      address: "0x5fd843B3B1aF984396734333D072BcD1156A523a",
-      constructorArguments: [
-        "0xbea8eE7323e41b632d8912b714Be16EF4259f5a5",
-        ROUTER_MUMBAI,
-      ],
-    });
-    await run(`verify:verify`, {
-      address: "0x9421654DbA368a4e164ddBD3C4a83f1a83643D97",
-      constructorArguments: [
-        "0x3903349184eb51E65531d36e459F3c8CdF9A53C6",
-        "0x1592a6AdFFFDAB03E812F8F8ae63Af8EDE7C49c9",
-        '0x5fd843B3B1aF984396734333D072BcD1156A523a'
-      ],
-    });
-    await run(`verify:verify`, {
-      address: "0x699cb4DbeE7C7a3ceaf2201b8C4F21036A1442cC",
-      constructorArguments: [
-        "metadataDetails",
-        HUB_MUMBAI,
-        MODULE_MUMBAI,
-        "0x1592a6AdFFFDAB03E812F8F8ae63Af8EDE7C49c9",
-        "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
-        "0x597772c9c0EfE354976B0068296dFcb03583C2be",
-        "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
-        "0x9421654DbA368a4e164ddBD3C4a83f1a83643D97",
-        "0x3903349184eb51E65531d36e459F3c8CdF9A53C6"
-      ],
-    });
-
+    // await run(`verify:verify`, {
+    //   address: "0x34DBdb22FAC996d3c96ba8a0bBDE02cbE3F097E4",
+    //   constructorArguments: ["0xBaF0E255da704bcB3fC1ACFbA0094d60A37c099d"],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0xBaF0E255da704bcB3fC1ACFbA0094d60A37c099d",
+    //   constructorArguments: [],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0xa273843F9Fa6bc8E890E3CD84C9eD20bfD4aE755",
+    //   constructorArguments: [],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0xB348b1AFcD537cEcdb7a15A9336f322B8282cDAf",
+    //   constructorArguments: [
+    //     "0xa273843F9Fa6bc8E890E3CD84C9eD20bfD4aE755",
+    //     ROUTER_MUMBAI,
+    //   ],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0x3Aa7e5402400A8e040B87B5BFd8d7361561a095a",
+    //   constructorArguments: [
+    //     "0x34DBdb22FAC996d3c96ba8a0bBDE02cbE3F097E4",
+    //     "0xBaF0E255da704bcB3fC1ACFbA0094d60A37c099d",
+    //     "0xB348b1AFcD537cEcdb7a15A9336f322B8282cDAf",
+    //   ],
+    // });
+    // await run(`verify:verify`, {
+    //   address: "0xCD03bC8F7F03C75D229a18f7388Eb0355fe646CB",
+    //   constructorArguments: [
+    //     "metadataDetails",
+    //     HUB_MUMBAI,
+    //     MODULE_MUMBAI,
+    //     "0xBaF0E255da704bcB3fC1ACFbA0094d60A37c099d",
+    //     "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
+    //     "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+    //     "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
+    //     "0x3Aa7e5402400A8e040B87B5BFd8d7361561a095a",
+    //     "0x34DBdb22FAC996d3c96ba8a0bBDE02cbE3F097E4",
+    //   ],
+    // });
   } catch (err: any) {
     console.error(err.message);
   }

@@ -11,7 +11,7 @@ contract LegendData {
     string public symbol;
     string public name;
     address public legendMilestone;
-    uint256 public _periodClaim;
+    uint256 private _periodClaim;
     uint256 private _grantSupply;
     uint256 private _orderSupply;
 
