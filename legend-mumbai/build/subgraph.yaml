@@ -25,6 +25,8 @@ dataSources:
           file: LegendData/abis/LegendData.json
         - name: PrintDesignData
           file: LegendData/abis/PrintDesignData.json
+        - name: PrintSplits
+          file: LegendData/abis/PrintSplits.json
       eventHandlers:
         - event: AllClaimedMilestone(uint256,uint8)
           handler: handleAllClaimedMilestone
@@ -82,6 +84,44 @@ dataSources:
         - event: TokensMinted(indexed uint256,uint256)
           handler: handleTokensMinted
       file: PrintDesignData/PrintDesignData.wasm
+  - kind: ethereum
+    name: PrintSplits
+    network: mumbai
+    source:
+      address: "0xa6466180387940CAc6467CCc0242D4B19A24e6BE"
+      abi: PrintSplits
+      startBlock: 42968241
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - CurrencyAdded
+        - CurrencyRemoved
+        - DesignerSplitSet
+        - FulfillerBaseSet
+        - FulfillerSplitSet
+        - OracleUpdated
+        - TreasurySplitSet
+      abis:
+        - name: PrintSplits
+          file: PrintSplits/abis/PrintSplits.json
+      eventHandlers:
+        - event: CurrencyAdded(indexed address)
+          handler: handleCurrencyAdded
+        - event: CurrencyRemoved(indexed address)
+          handler: handleCurrencyRemoved
+        - event: DesignerSplitSet(address,uint8,uint256)
+          handler: handleDesignerSplitSet
+        - event: FulfillerBaseSet(address,uint8,uint256)
+          handler: handleFulfillerBaseSet
+        - event: FulfillerSplitSet(address,uint8,uint256)
+          handler: handleFulfillerSplitSet
+        - event: OracleUpdated(indexed address,uint256)
+          handler: handleOracleUpdated
+        - event: TreasurySplitSet(address,uint8,uint256)
+          handler: handleTreasurySplitSet
+      file: PrintSplits/PrintSplits.wasm
 templates:
   - name: GrantMetadata
     kind: file/ipfs

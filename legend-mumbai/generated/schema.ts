@@ -309,6 +309,23 @@ export class GrantCreated extends Entity {
   set hoodie(value: boolean) {
     this.set("hoodie", Value.fromBoolean(value));
   }
+
+  get funders(): Array<string> | null {
+    let value = this.get("funders");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set funders(value: Array<string> | null) {
+    if (!value) {
+      this.unset("funders");
+    } else {
+      this.set("funders", Value.fromStringArray(<Array<string>>value));
+    }
+  }
 }
 
 export class GrantDeleted extends Entity {
@@ -554,6 +571,15 @@ export class Collection extends Entity {
 
   set uri(value: string) {
     this.set("uri", Value.fromString(value));
+  }
+
+  get printType(): string {
+    let value = this.get("printType");
+    return value!.toString();
+  }
+
+  set printType(value: string) {
+    this.set("printType", Value.fromString(value));
   }
 
   get collectionMetadata(): string | null {
@@ -2430,6 +2456,627 @@ export class TokensMinted extends Entity {
 
   set collectionId(value: BigInt) {
     this.set("collectionId", Value.fromBigInt(value));
+  }
+
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
+    return value!.toBigInt();
+  }
+
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
+  }
+
+  get blockTimestamp(): BigInt {
+    let value = this.get("blockTimestamp");
+    return value!.toBigInt();
+  }
+
+  set blockTimestamp(value: BigInt) {
+    this.set("blockTimestamp", Value.fromBigInt(value));
+  }
+
+  get transactionHash(): Bytes {
+    let value = this.get("transactionHash");
+    return value!.toBytes();
+  }
+
+  set transactionHash(value: Bytes) {
+    this.set("transactionHash", Value.fromBytes(value));
+  }
+}
+
+export class Funder extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Funder entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Funder must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("Funder", id.toString(), this);
+    }
+  }
+
+  static load(id: string): Funder | null {
+    return changetype<Funder | null>(store.get("Funder", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get address(): Bytes {
+    let value = this.get("address");
+    return value!.toBytes();
+  }
+
+  set address(value: Bytes) {
+    this.set("address", Value.fromBytes(value));
+  }
+
+  get usdAmount(): BigInt {
+    let value = this.get("usdAmount");
+    return value!.toBigInt();
+  }
+
+  set usdAmount(value: BigInt) {
+    this.set("usdAmount", Value.fromBigInt(value));
+  }
+}
+
+export class CurrencyAdded extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save CurrencyAdded entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type CurrencyAdded must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("CurrencyAdded", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static load(id: Bytes): CurrencyAdded | null {
+    return changetype<CurrencyAdded | null>(
+      store.get("CurrencyAdded", id.toHexString())
+    );
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    return value!.toBytes();
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get currency(): Bytes {
+    let value = this.get("currency");
+    return value!.toBytes();
+  }
+
+  set currency(value: Bytes) {
+    this.set("currency", Value.fromBytes(value));
+  }
+
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
+    return value!.toBigInt();
+  }
+
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
+  }
+
+  get blockTimestamp(): BigInt {
+    let value = this.get("blockTimestamp");
+    return value!.toBigInt();
+  }
+
+  set blockTimestamp(value: BigInt) {
+    this.set("blockTimestamp", Value.fromBigInt(value));
+  }
+
+  get transactionHash(): Bytes {
+    let value = this.get("transactionHash");
+    return value!.toBytes();
+  }
+
+  set transactionHash(value: Bytes) {
+    this.set("transactionHash", Value.fromBytes(value));
+  }
+}
+
+export class CurrencyRemoved extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save CurrencyRemoved entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type CurrencyRemoved must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("CurrencyRemoved", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static load(id: Bytes): CurrencyRemoved | null {
+    return changetype<CurrencyRemoved | null>(
+      store.get("CurrencyRemoved", id.toHexString())
+    );
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    return value!.toBytes();
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get currency(): Bytes {
+    let value = this.get("currency");
+    return value!.toBytes();
+  }
+
+  set currency(value: Bytes) {
+    this.set("currency", Value.fromBytes(value));
+  }
+
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
+    return value!.toBigInt();
+  }
+
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
+  }
+
+  get blockTimestamp(): BigInt {
+    let value = this.get("blockTimestamp");
+    return value!.toBigInt();
+  }
+
+  set blockTimestamp(value: BigInt) {
+    this.set("blockTimestamp", Value.fromBigInt(value));
+  }
+
+  get transactionHash(): Bytes {
+    let value = this.get("transactionHash");
+    return value!.toBytes();
+  }
+
+  set transactionHash(value: Bytes) {
+    this.set("transactionHash", Value.fromBytes(value));
+  }
+}
+
+export class DesignerSplitSet extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save DesignerSplitSet entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type DesignerSplitSet must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("DesignerSplitSet", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static load(id: Bytes): DesignerSplitSet | null {
+    return changetype<DesignerSplitSet | null>(
+      store.get("DesignerSplitSet", id.toHexString())
+    );
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    return value!.toBytes();
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get designer(): Bytes {
+    let value = this.get("designer");
+    return value!.toBytes();
+  }
+
+  set designer(value: Bytes) {
+    this.set("designer", Value.fromBytes(value));
+  }
+
+  get printType(): i32 {
+    let value = this.get("printType");
+    return value!.toI32();
+  }
+
+  set printType(value: i32) {
+    this.set("printType", Value.fromI32(value));
+  }
+
+  get split(): BigInt {
+    let value = this.get("split");
+    return value!.toBigInt();
+  }
+
+  set split(value: BigInt) {
+    this.set("split", Value.fromBigInt(value));
+  }
+
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
+    return value!.toBigInt();
+  }
+
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
+  }
+
+  get blockTimestamp(): BigInt {
+    let value = this.get("blockTimestamp");
+    return value!.toBigInt();
+  }
+
+  set blockTimestamp(value: BigInt) {
+    this.set("blockTimestamp", Value.fromBigInt(value));
+  }
+
+  get transactionHash(): Bytes {
+    let value = this.get("transactionHash");
+    return value!.toBytes();
+  }
+
+  set transactionHash(value: Bytes) {
+    this.set("transactionHash", Value.fromBytes(value));
+  }
+}
+
+export class FulfillerBaseSet extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save FulfillerBaseSet entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type FulfillerBaseSet must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("FulfillerBaseSet", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static load(id: Bytes): FulfillerBaseSet | null {
+    return changetype<FulfillerBaseSet | null>(
+      store.get("FulfillerBaseSet", id.toHexString())
+    );
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    return value!.toBytes();
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get fulfiller(): Bytes {
+    let value = this.get("fulfiller");
+    return value!.toBytes();
+  }
+
+  set fulfiller(value: Bytes) {
+    this.set("fulfiller", Value.fromBytes(value));
+  }
+
+  get printType(): i32 {
+    let value = this.get("printType");
+    return value!.toI32();
+  }
+
+  set printType(value: i32) {
+    this.set("printType", Value.fromI32(value));
+  }
+
+  get split(): BigInt {
+    let value = this.get("split");
+    return value!.toBigInt();
+  }
+
+  set split(value: BigInt) {
+    this.set("split", Value.fromBigInt(value));
+  }
+
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
+    return value!.toBigInt();
+  }
+
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
+  }
+
+  get blockTimestamp(): BigInt {
+    let value = this.get("blockTimestamp");
+    return value!.toBigInt();
+  }
+
+  set blockTimestamp(value: BigInt) {
+    this.set("blockTimestamp", Value.fromBigInt(value));
+  }
+
+  get transactionHash(): Bytes {
+    let value = this.get("transactionHash");
+    return value!.toBytes();
+  }
+
+  set transactionHash(value: Bytes) {
+    this.set("transactionHash", Value.fromBytes(value));
+  }
+}
+
+export class FulfillerSplitSet extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save FulfillerSplitSet entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type FulfillerSplitSet must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("FulfillerSplitSet", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static load(id: Bytes): FulfillerSplitSet | null {
+    return changetype<FulfillerSplitSet | null>(
+      store.get("FulfillerSplitSet", id.toHexString())
+    );
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    return value!.toBytes();
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get fulfiller(): Bytes {
+    let value = this.get("fulfiller");
+    return value!.toBytes();
+  }
+
+  set fulfiller(value: Bytes) {
+    this.set("fulfiller", Value.fromBytes(value));
+  }
+
+  get printType(): i32 {
+    let value = this.get("printType");
+    return value!.toI32();
+  }
+
+  set printType(value: i32) {
+    this.set("printType", Value.fromI32(value));
+  }
+
+  get split(): BigInt {
+    let value = this.get("split");
+    return value!.toBigInt();
+  }
+
+  set split(value: BigInt) {
+    this.set("split", Value.fromBigInt(value));
+  }
+
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
+    return value!.toBigInt();
+  }
+
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
+  }
+
+  get blockTimestamp(): BigInt {
+    let value = this.get("blockTimestamp");
+    return value!.toBigInt();
+  }
+
+  set blockTimestamp(value: BigInt) {
+    this.set("blockTimestamp", Value.fromBigInt(value));
+  }
+
+  get transactionHash(): Bytes {
+    let value = this.get("transactionHash");
+    return value!.toBytes();
+  }
+
+  set transactionHash(value: Bytes) {
+    this.set("transactionHash", Value.fromBytes(value));
+  }
+}
+
+export class OracleUpdated extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save OracleUpdated entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type OracleUpdated must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("OracleUpdated", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static load(id: Bytes): OracleUpdated | null {
+    return changetype<OracleUpdated | null>(
+      store.get("OracleUpdated", id.toHexString())
+    );
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    return value!.toBytes();
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get currency(): Bytes {
+    let value = this.get("currency");
+    return value!.toBytes();
+  }
+
+  set currency(value: Bytes) {
+    this.set("currency", Value.fromBytes(value));
+  }
+
+  get rate(): BigInt {
+    let value = this.get("rate");
+    return value!.toBigInt();
+  }
+
+  set rate(value: BigInt) {
+    this.set("rate", Value.fromBigInt(value));
+  }
+
+  get blockNumber(): BigInt {
+    let value = this.get("blockNumber");
+    return value!.toBigInt();
+  }
+
+  set blockNumber(value: BigInt) {
+    this.set("blockNumber", Value.fromBigInt(value));
+  }
+
+  get blockTimestamp(): BigInt {
+    let value = this.get("blockTimestamp");
+    return value!.toBigInt();
+  }
+
+  set blockTimestamp(value: BigInt) {
+    this.set("blockTimestamp", Value.fromBigInt(value));
+  }
+
+  get transactionHash(): Bytes {
+    let value = this.get("transactionHash");
+    return value!.toBytes();
+  }
+
+  set transactionHash(value: Bytes) {
+    this.set("transactionHash", Value.fromBytes(value));
+  }
+}
+
+export class TreasurySplitSet extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save TreasurySplitSet entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type TreasurySplitSet must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("TreasurySplitSet", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static load(id: Bytes): TreasurySplitSet | null {
+    return changetype<TreasurySplitSet | null>(
+      store.get("TreasurySplitSet", id.toHexString())
+    );
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    return value!.toBytes();
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get treasury(): Bytes {
+    let value = this.get("treasury");
+    return value!.toBytes();
+  }
+
+  set treasury(value: Bytes) {
+    this.set("treasury", Value.fromBytes(value));
+  }
+
+  get printType(): i32 {
+    let value = this.get("printType");
+    return value!.toI32();
+  }
+
+  set printType(value: i32) {
+    this.set("printType", Value.fromI32(value));
+  }
+
+  get split(): BigInt {
+    let value = this.get("split");
+    return value!.toBigInt();
+  }
+
+  set split(value: BigInt) {
+    this.set("split", Value.fromBigInt(value));
   }
 
   get blockNumber(): BigInt {

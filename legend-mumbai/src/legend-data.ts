@@ -21,6 +21,7 @@ import {
   CollectionGrantId,
   CurrencyGoal,
   Funded,
+  Funder,
   GrantCreated,
   GrantDeleted,
   GrantFunded,
@@ -35,6 +36,7 @@ import {
   CollectionMetadata as CollectionMetadataTemplate,
 } from "../generated/templates";
 import { PrintDesignData } from "../generated/PrintDesignData/PrintDesignData";
+import { PrintSplits } from "../generated/PrintSplits/PrintSplits";
 
 export function handleAllClaimedMilestone(
   event: AllClaimedMilestoneEvent
@@ -310,6 +312,34 @@ export function handleGrantFunded(event: GrantFundedEvent): void {
   );
 
   if (grantEntity !== null) {
+    let funders = grantEntity.funders;
+
+    if (funders == null) {
+      funders = [];
+    }
+
+    let funderId = entity.funder.toString() + entity.grantId.toString();
+    let currentFunder = Funder.load(funderId);
+
+    let splits = PrintSplits.bind(
+      Address.fromString("0xa6466180387940CAc6467CCc0242D4B19A24e6BE")
+    );
+    const wei = splits.getWeiByCurrency(Address.fromBytes(entity.currency));
+    const rate = splits.getRateByCurrency(Address.fromBytes(entity.currency));
+
+    let currentAmount = entity.amount.times(rate).div(wei);
+
+    if (currentFunder !== null) {
+      currentFunder.usdAmount = currentFunder.usdAmount.plus(currentAmount);
+    } else {
+      currentFunder = new Funder(funderId);
+      currentFunder.usdAmount = currentAmount;
+      currentFunder.address = entity.funder;
+      funders.push(funderId);
+    }
+
+    currentFunder.save();
+
     let fundedId = entity.grantId.toString() + entity.currency.toString();
 
     let funded = Funded.load(fundedId);
@@ -332,6 +362,8 @@ export function handleGrantFunded(event: GrantFundedEvent): void {
 
       grantEntity.fundedAmount = fundedAmounts;
     }
+
+    grantEntity.funders = funders;
 
     grantEntity.save();
   }
@@ -423,6 +455,9 @@ export function handleGrantOrder(event: GrantOrderEvent): void {
             collection.uri = uri;
             collection.collectionId = collectionIds[k];
             collection.prices = printData.getCollectionPrices(collectionIds[k]);
+            collection.printType = printData
+              .getCollectionPrintType(collectionIds[k])
+              .toString();
 
             if (uri) {
               let ipfsHash = uri.split("/").pop();

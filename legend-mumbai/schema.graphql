@@ -28,6 +28,7 @@ type GrantCreated @entity(immutable: false) {
   poster: Boolean!
   shirt: Boolean!
   hoodie: Boolean!
+  funders: [Funder!]
 }
 
 type GrantDeleted @entity(immutable: false) {
@@ -56,6 +57,7 @@ type Collection @entity(immutable: false) {
   collectionId: BigInt!
   prices: [BigInt!]!
   uri: String!
+  printType: String!
   collectionMetadata: CollectionMetadata
 }
 
@@ -237,6 +239,76 @@ type TokensMinted @entity(immutable: true) {
   id: Bytes!
   tokenId: BigInt! # uint256
   collectionId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Funder @entity(immutable: false) {
+  id: String!
+  address: Bytes!
+  usdAmount: BigInt!
+}
+type CurrencyAdded @entity(immutable: true) {
+  id: Bytes!
+  currency: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type CurrencyRemoved @entity(immutable: true) {
+  id: Bytes!
+  currency: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DesignerSplitSet @entity(immutable: true) {
+  id: Bytes!
+  designer: Bytes! # address
+  printType: Int! # uint8
+  split: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type FulfillerBaseSet @entity(immutable: true) {
+  id: Bytes!
+  fulfiller: Bytes! # address
+  printType: Int! # uint8
+  split: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type FulfillerSplitSet @entity(immutable: true) {
+  id: Bytes!
+  fulfiller: Bytes! # address
+  printType: Int! # uint8
+  split: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type OracleUpdated @entity(immutable: true) {
+  id: Bytes!
+  currency: Bytes! # address
+  rate: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TreasurySplitSet @entity(immutable: true) {
+  id: Bytes!
+  treasury: Bytes! # address
+  printType: Int! # uint8
+  split: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
