@@ -51,6 +51,25 @@ export function handleAllClaimedMilestone(
   entity.blockTimestamp = event.block.timestamp;
   entity.transactionHash = event.transaction.hash;
 
+  let grantEntity = GrantCreated.load(
+    Bytes.fromByteArray(ByteArray.fromBigInt(event.params.grantId))
+  );
+
+  if (grantEntity !== null) {
+    let milestoneId =
+      grantEntity.grantId.toString() +
+      grantEntity.uri.split("/").pop() +
+      entity.milestone.toString();
+
+    let milestone = Milestone.load(milestoneId);
+
+    if (milestone !== null) {
+      milestone.allClaimed = true;
+
+      milestone.save();
+    }
+  }
+
   entity.save();
 }
 
@@ -327,7 +346,10 @@ export function handleGrantFunded(event: GrantFundedEvent): void {
     const wei = splits.getWeiByCurrency(Address.fromBytes(entity.currency));
     const rate = splits.getRateByCurrency(Address.fromBytes(entity.currency));
 
-    let currentAmount = entity.amount.times(rate).div(wei);
+    let currentAmount = entity.amount
+      .times(wei)
+      .times(rate)
+      .div(wei);
 
     if (currentFunder !== null) {
       currentFunder.usdAmount = currentFunder.usdAmount.plus(currentAmount);
@@ -494,6 +516,46 @@ export function handleMilestoneClaimed(event: MilestoneClaimedEvent): void {
   entity.blockNumber = event.block.number;
   entity.blockTimestamp = event.block.timestamp;
   entity.transactionHash = event.transaction.hash;
+
+  let grantEntity = GrantCreated.load(
+    Bytes.fromByteArray(ByteArray.fromBigInt(event.params.grantId))
+  );
+
+  if (grantEntity !== null) {
+    let milestoneId =
+      grantEntity.grantId.toString() +
+      grantEntity.uri.split("/").pop() +
+      entity.milestone.toString();
+
+    let milestone = Milestone.load(milestoneId);
+
+    if (milestone !== null) {
+      milestone.allClaimed = true;
+
+      let index: i32 = -1;
+      for (let i = 0; i < grantEntity.granteeAddresses.length; i++)
+        if (grantEntity.granteeAddresses[i] == event.params.claimer) {
+          index = i;
+          break;
+        }
+
+      let claimed = milestone.granteeClaimed;
+
+      if (claimed == null) {
+        claimed = new Array<boolean>(grantEntity.granteeAddresses.length).fill(
+          false
+        );
+      }
+
+      if (index !== -1) {
+        claimed[index] = true;
+      }
+
+      milestone.granteeClaimed = claimed;
+
+      milestone.save();
+    }
+  }
 
   entity.save();
 }
