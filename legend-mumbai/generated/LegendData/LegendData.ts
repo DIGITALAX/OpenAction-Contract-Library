@@ -217,21 +217,6 @@ export class LegendData extends ethereum.SmartContract {
     return new LegendData("LegendData", address);
   }
 
-  _periodClaim(): BigInt {
-    let result = super.call("_periodClaim", "_periodClaim():(uint256)", []);
-
-    return result[0].toBigInt();
-  }
-
-  try__periodClaim(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("_periodClaim", "_periodClaim():(uint256)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
   getAllClaimedMilestone(_grantId: BigInt, _milestone: i32): boolean {
     let result = super.call(
       "getAllClaimedMilestone",
