@@ -20,11 +20,11 @@
     }
   },
   {
-    "legendAccessControl": "0xBaF0E255da704bcB3fC1ACFbA0094d60A37c099d",
-    "legendData": "0x34DBdb22FAC996d3c96ba8a0bBDE02cbE3F097E4",
-    "legendMilestoneEscrow": "0x3Aa7e5402400A8e040B87B5BFd8d7361561a095a",
-    "legendOpenAction": "0xCD03bC8F7F03C75D229a18f7388Eb0355fe646CB",
-    "machineAccessControl": "0xa273843F9Fa6bc8E890E3CD84C9eD20bfD4aE755",
-    "machineCreditSwap": "0xB348b1AFcD537cEcdb7a15A9336f322B8282cDAf"
+    "legendAccessControl": "0x10633a3d3F11961720174c91d1CD486F268a0DA1",
+    "legendData": "0x3e67D114560ef87FBeDf07E631336cd1F3e002fD",
+    "legendMilestoneEscrow": "0xF28DeC032760312A4C998935839b1589437Ab5aB",
+    "legendOpenAction": "0xDa633112663a3639904Cf8629E72b77FDbeFD610",
+    "machineAccessControl": "0x66063E2039582605395af6a0D76B301dfeB7be6E",
+    "machineCreditSwap": "0x48Fd9Ba552B174B1e45e68524631FF63Aa0F13d4"
   }
 ]

@@ -121,7 +121,7 @@ contract LegendData {
 
         emit GrantCreated(
             _grantSupply,
-            msg.sender,
+            _params.granteeAddresses[0],
             _params.pubId,
             _params.profileId
         );

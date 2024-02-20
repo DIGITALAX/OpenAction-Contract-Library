@@ -67,7 +67,7 @@ export function handleGrantCreated(event: GrantCreatedEvent): void {
   entity.transactionHash = event.transaction.hash;
 
   let data = LegendData.bind(
-    Address.fromString("0x34DBdb22FAC996d3c96ba8a0bBDE02cbE3F097E4")
+    Address.fromString("0x3e67D114560ef87FBeDf07E631336cd1F3e002fD")
   );
 
   let ipfsHash = data.getGrantURI(entity.grantId);
@@ -391,57 +391,59 @@ export function handleGrantOrder(event: GrantOrderEvent): void {
   }
 
   let data = LegendData.bind(
-    Address.fromString("0x34DBdb22FAC996d3c96ba8a0bBDE02cbE3F097E4")
+    Address.fromString("0x3e67D114560ef87FBeDf07E631336cd1F3e002fD")
   );
 
-  let collectionIds = data.getGrantLevelCollectionIds(
-    entity.grantId,
-    entity.level.toI32()
-  );
+  if (entity.level.toI32() > 1) {
+    let collectionIds = data.getGrantLevelCollectionIds(
+      entity.grantId,
+      entity.level.toI32()
+    );
 
-  let collectionOrders: Array<Bytes> = [];
+    let collectionOrders: Array<Bytes> = [];
 
-  if (collectionIds !== null && collectionIds.length > 0) {
-    for (let k = 0; k < collectionIds.length; k++) {
-      if (collectionIds[k] !== null) {
-        let collection = Collection.load(
-          Bytes.fromByteArray(ByteArray.fromBigInt(collectionIds[k]))
-        );
-
-        if (collection == null) {
-          collection = new Collection(
+    if (collectionIds !== null && collectionIds.length > 0) {
+      for (let k = 0; k < collectionIds.length; k++) {
+        if (collectionIds[k] !== null) {
+          let collection = Collection.load(
             Bytes.fromByteArray(ByteArray.fromBigInt(collectionIds[k]))
           );
 
-          let printData = PrintDesignData.bind(
-            Address.fromString("0x597772c9c0EfE354976B0068296dFcb03583C2be")
-          );
+          if (collection == null) {
+            collection = new Collection(
+              Bytes.fromByteArray(ByteArray.fromBigInt(collectionIds[k]))
+            );
 
-          let uri = printData.getCollectionURI(collectionIds[k]);
+            let printData = PrintDesignData.bind(
+              Address.fromString("0x597772c9c0EfE354976B0068296dFcb03583C2be")
+            );
 
-          collection.uri = uri;
-          collection.collectionId = collectionIds[k];
-          collection.prices = printData.getCollectionPrices(collectionIds[k]);
+            let uri = printData.getCollectionURI(collectionIds[k]);
 
-          if (uri) {
-            let ipfsHash = uri.split("/").pop();
-            if (ipfsHash != null) {
-              collection.collectionMetadata = ipfsHash;
-              CollectionMetadataTemplate.create(ipfsHash);
+            collection.uri = uri;
+            collection.collectionId = collectionIds[k];
+            collection.prices = printData.getCollectionPrices(collectionIds[k]);
+
+            if (uri) {
+              let ipfsHash = uri.split("/").pop();
+              if (ipfsHash != null) {
+                collection.collectionMetadata = ipfsHash;
+                CollectionMetadataTemplate.create(ipfsHash);
+              }
             }
+
+            collection.save();
           }
 
-          collection.save();
+          collectionOrders.push(
+            Bytes.fromByteArray(ByteArray.fromBigInt(collectionIds[k]))
+          );
         }
-
-        collectionOrders.push(
-          Bytes.fromByteArray(ByteArray.fromBigInt(collectionIds[k]))
-        );
       }
     }
-  }
 
-  entity.orderCollections = collectionOrders;
+    entity.orderCollections = collectionOrders;
+  }
 
   entity.save();
 }

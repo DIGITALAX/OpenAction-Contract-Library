@@ -6,7 +6,7 @@ dataSources:
     name: LegendData
     network: mumbai
     source:
-      address: "0x34DBdb22FAC996d3c96ba8a0bBDE02cbE3F097E4"
+      address: "0x3e67D114560ef87FBeDf07E631336cd1F3e002fD"
       abi: LegendData
       startBlock: 45088402
     mapping:
