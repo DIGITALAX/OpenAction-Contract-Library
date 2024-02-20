@@ -238,7 +238,10 @@ contract LegendOpenAction is
                 revert LegendErrors.CurrencyNotWhitelisted();
             }
 
-            LegendLibrary.SenderInfo memory _info = _getSenderInfo(
+            address _fulfiller = printDesignData.getCollectionFulfiller(
+                _collectionIds[i]
+            );
+            uint256 _printType = printDesignData.getCollectionPrintType(
                 _collectionIds[i]
             );
 
@@ -247,11 +250,18 @@ contract LegendOpenAction is
                     collectionId: _collectionIds[i],
                     chosenIndex: _chosenIndexes[i],
                     chosenAmount: _chosenAmounts[i],
-                    designerSplit: _info.designerSplit,
-                    fulfillerSplit: _info.fulfillerSplit,
-                    fulfillerBase: _info.fulfillerBase,
-                    fulfiller: _info.fulfiller,
-                    designer: _info.designer,
+                    fulfillerSplit: printSplitsData.getFulfillerSplit(
+                        _fulfiller,
+                        _printType
+                    ),
+                    fulfillerBase: printSplitsData.getFulfillerBase(
+                        _fulfiller,
+                        _printType
+                    ),
+                    fulfiller: _fulfiller,
+                    designer: printDesignData.getCollectionCreator(
+                        _collectionIds[i]
+                    ),
                     chosenCurrency: _currency,
                     buyer: _buyer
                 })
@@ -288,51 +298,22 @@ contract LegendOpenAction is
             );
         }
 
-        uint256 _designerAmount = ((_calculatedPrice - _fulfillerAmount) * 30) /
-            100;
+        uint256 _finalAmount = _calculatedPrice - _fulfillerAmount;
 
         if ((_calculatedPrice - _fulfillerAmount) > 0) {
+            uint256 _designerAmount = ((_calculatedPrice - _fulfillerAmount) *
+                30) / 100;
+
             IERC20(_params.chosenCurrency).transferFrom(
                 _params.buyer,
                 _params.designer,
                 _designerAmount
             );
+
+            _finalAmount = _finalAmount - _designerAmount;
         }
-        return _calculatedPrice - _fulfillerAmount - _designerAmount;
-    }
 
-    function _getSenderInfo(
-        uint256 _collectionId
-    ) internal view returns (LegendLibrary.SenderInfo memory) {
-        address _fulfiller = printDesignData.getCollectionFulfiller(
-            _collectionId
-        );
-        address _designer = printDesignData.getCollectionCreator(_collectionId);
-        uint256 _printType = printDesignData.getCollectionPrintType(
-            _collectionId
-        );
-        uint256 _fulfillerBase = printSplitsData.getFulfillerBase(
-            _fulfiller,
-            _printType
-        );
-        uint256 _fulfillerSplit = printSplitsData.getFulfillerSplit(
-            _fulfiller,
-            _printType
-        );
-        uint256 _designerSplit = printSplitsData.getDesignerSplit(
-            _fulfiller,
-            _printType
-        );
-
-        return (
-            LegendLibrary.SenderInfo({
-                fulfiller: _fulfiller,
-                designer: _designer,
-                fulfillerBase: _fulfillerBase,
-                fulfillerSplit: _fulfillerSplit,
-                designerSplit: _designerSplit
-            })
-        );
+        return _finalAmount;
     }
 
     function setPrintSplitsDataAddress(
