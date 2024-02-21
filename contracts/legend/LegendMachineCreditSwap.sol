@@ -17,6 +17,7 @@ contract LegendMachineCreditSwap {
 
     error InvalidAddress();
 
+    event SwapCredits(address currency, uint256 amount);
     event CreditsSwapped(
         address fromCurrency,
         address caller,
@@ -58,7 +59,11 @@ contract LegendMachineCreditSwap {
     ) external onlyLegendEscrow {
         IERC20(_currency).transferFrom(legendEscrow, address(this), _amount);
 
-        uint256 _amountOut = _swapCreditsToMona(_currency, _amount);
+        uint256 _amountOut = _amount;
+
+        if (_currency != monaAddress) {
+            _amountOut = _swapCreditsToMona(_currency, _amount);
+        }
 
         emit CreditsSwapped(_currency, legendEscrow, _amount, _amountOut);
     }
