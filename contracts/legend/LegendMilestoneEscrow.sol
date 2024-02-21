@@ -63,6 +63,8 @@ contract LegendMilestoneEscrow {
             _amount
         );
 
+        // does idle amount exceed amount held by the contract here ?? i think so ??
+
         uint256 _idleAmount = 0;
 
         if (
@@ -73,26 +75,32 @@ contract LegendMilestoneEscrow {
             _idleAmount = _amount;
         }
 
-        uint256 _totalFunded = legendData.getGrantAmountFundedByCurrency(
-            _currency,
-            _grantId
-        ) + _amount;
-        uint256 _goal = 0;
-        for (uint8 i = 0; i < 3; i++) {
-            _goal += legendData.getMilestoneGoalToCurrency(
+        if (_idleAmount == 0) {
+            uint256 _totalFunded = legendData.getGrantAmountFundedByCurrency(
                 _currency,
-                _grantId,
-                i + 1
-            );
-        }
+                _grantId
+            ) + _amount;
 
-        if (_totalFunded > _goal) {
-            _idleAmount += _totalFunded - _goal;
-        }
-        if (_idleAmount > 0) {
-            IERC20(_currency).approve(address(machineCreditSwap), _idleAmount);
+            uint256 _goal = 0;
+            for (uint8 i = 0; i < 3; i++) {
+                _goal += legendData.getMilestoneGoalToCurrency(
+                    _currency,
+                    _grantId,
+                    i + 1
+                );
+            }
 
-            machineCreditSwap.receiveAndSwapCredits(_currency, _idleAmount);
+            if (_totalFunded > _goal) {
+                _idleAmount += _totalFunded - _goal;
+            }
+            if (_idleAmount > 0) {
+                IERC20(_currency).approve(
+                    address(machineCreditSwap),
+                    _idleAmount
+                );
+
+                machineCreditSwap.receiveAndSwapCredits(_currency, _idleAmount);
+            }
         }
     }
 
