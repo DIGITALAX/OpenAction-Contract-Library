@@ -346,10 +346,7 @@ export function handleGrantFunded(event: GrantFundedEvent): void {
     const wei = splits.getWeiByCurrency(Address.fromBytes(entity.currency));
     const rate = splits.getRateByCurrency(Address.fromBytes(entity.currency));
 
-    let currentAmount = entity.amount
-      .times(wei)
-      .times(rate)
-      .div(wei);
+    let currentAmount = entity.amount.times(rate).div(wei);
 
     if (currentFunder !== null) {
       currentFunder.usdAmount = currentFunder.usdAmount.plus(currentAmount);
