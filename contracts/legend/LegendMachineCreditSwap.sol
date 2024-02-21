@@ -4,7 +4,6 @@ pragma solidity ^0.8.19;
 
 import "./../MachineAccessControl.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
-import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract LegendMachineCreditSwap {
@@ -61,7 +60,7 @@ contract LegendMachineCreditSwap {
 
         uint256 _amountOut = _swapCreditsToMona(_currency, _amount);
 
-        emit CreditsSwapped(_currency, msg.sender, _amount, _amountOut);
+        emit CreditsSwapped(_currency, legendEscrow, _amount, _amountOut);
     }
 
     function moveCredits(
@@ -77,14 +76,7 @@ contract LegendMachineCreditSwap {
         address _currency,
         uint256 _amount
     ) private returns (uint256) {
-        TransferHelper.safeTransferFrom(
-            _currency,
-            msg.sender,
-            address(this),
-            _amount
-        );
-
-        TransferHelper.safeApprove(_currency, address(swapRouter), _amount);
+        IERC20(_currency).approve(address(swapRouter), _amount);
 
         ISwapRouter.ExactInputSingleParams memory params = ISwapRouter
             .ExactInputSingleParams({

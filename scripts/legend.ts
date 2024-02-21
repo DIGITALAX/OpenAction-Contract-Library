@@ -14,20 +14,20 @@ const main = async () => {
     // const MachineAccessControl = await ethers.getContractFactory(
     //   "MachineAccessControl"
     // );
-    // const LegendMachineCreditSwap = await ethers.getContractFactory(
-    //   "LegendMachineCreditSwap"
-    // );
+    const LegendMachineCreditSwap = await ethers.getContractFactory(
+      "LegendMachineCreditSwap"
+    );
     // const LegendMilestoneEscrow = await ethers.getContractFactory(
     //   "LegendMilestoneEscrow"
     // );
     // const LegendData = await ethers.getContractFactory("LegendData");
-    const LegendOpenAction = await ethers.getContractFactory(
-      "LegendOpenAction"
-    );
+    // const LegendOpenAction = await ethers.getContractFactory(
+    //   "LegendOpenAction"
+    // );
 
     // const machineAccessControl = await MachineAccessControl.deploy();
     // const legendMachineCreditSwap = await LegendMachineCreditSwap.deploy(
-    //   machineAccessControl.address,
+    //   "0x66063E2039582605395af6a0D76B301dfeB7be6E",
     //   ROUTER_MUMBAI
     // );
     // const legendAccessControl = await LegendAccessControl.deploy();
@@ -85,35 +85,35 @@ const main = async () => {
     //   address: "0x66063E2039582605395af6a0D76B301dfeB7be6E",
     //   constructorArguments: [],
     // });
-    // await run(`verify:verify`, {
-    //   address: "0x48Fd9Ba552B174B1e45e68524631FF63Aa0F13d4",
-    //   constructorArguments: [
-    //     "0x66063E2039582605395af6a0D76B301dfeB7be6E",
-    //     ROUTER_MUMBAI,
-    //   ],
-    // });
+    await run(`verify:verify`, {
+      address: "0x3620615BC68104a10be709CE48fA1F490885b3e2",
+      constructorArguments: [
+        "0x66063E2039582605395af6a0D76B301dfeB7be6E",
+        ROUTER_MUMBAI,
+      ],
+    });
     // await run(`verify:verify`, {
     //   address: "0xF28DeC032760312A4C998935839b1589437Ab5aB",
     //   constructorArguments: [
     //     "0x3e67D114560ef87FBeDf07E631336cd1F3e002fD",
     //     "0x10633a3d3F11961720174c91d1CD486F268a0DA1",
-    //     "0x48Fd9Ba552B174B1e45e68524631FF63Aa0F13d4",
+    //     "0x3620615BC68104a10be709CE48fA1F490885b3e2",
     //   ],
     // });
-    await run(`verify:verify`, {
-      address: "0xDa633112663a3639904Cf8629E72b77FDbeFD610",
-      constructorArguments: [
-        "metadataDetails",
-        HUB_MUMBAI,
-        MODULE_MUMBAI,
-        "0x10633a3d3F11961720174c91d1CD486F268a0DA1",
-        "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
-        "0x597772c9c0EfE354976B0068296dFcb03583C2be",
-        "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
-        "0xF28DeC032760312A4C998935839b1589437Ab5aB",
-        "0x3e67D114560ef87FBeDf07E631336cd1F3e002fD"
-      ],
-    });
+    // await run(`verify:verify`, {
+    //   address: "0xDa633112663a3639904Cf8629E72b77FDbeFD610",
+    //   constructorArguments: [
+    //     "metadataDetails",
+    //     HUB_MUMBAI,
+    //     MODULE_MUMBAI,
+    //     "0x10633a3d3F11961720174c91d1CD486F268a0DA1",
+    //     "0xa6466180387940CAc6467CCc0242D4B19A24e6BE",
+    //     "0x597772c9c0EfE354976B0068296dFcb03583C2be",
+    //     "0x2aFf9F385Fb865a8cd8fdE810d43a0dB8f3cD699",
+    //     "0xF28DeC032760312A4C998935839b1589437Ab5aB",
+    //     "0x3e67D114560ef87FBeDf07E631336cd1F3e002fD"
+    //   ],
+    // });
   } catch (err: any) {
     console.error(err.message);
   }
