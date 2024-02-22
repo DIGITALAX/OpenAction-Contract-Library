@@ -28,5 +28,13 @@
     "chromadinOpenAction": "0x9A94C316F644D10641A528904e4a030a77498160",
     "f3mOpenAction": "0xba6a85811336781Bad55E624C40Dc1D5615243C7",
     "coinOpOpenAction": "0x3710f718f9E78a58FEcfF5Cd9cc41a4b7466BB14"
+  },
+  {
+    "legendAccessControl": "0x5663f8021E84059B54ae5579bb72dFD36B14231E",
+    "legendData": "0xC685EC7Cf754592F34d66C459ad5F794AED8c5A5",
+    "legendMilestoneEscrow": "0x8B47314AEa356050c78A5f2400723315Fca24F93",
+    "legendOpenAction": "0x632940ECecacb413371163a208Fc4926BD566352",
+    "machineAccessControl": "0x37Ee8f4276B2927d003569C739825dd7bB7393C8",
+    "machineCreditSwap": "0xA5BD34FA61E929a63Be55C959da3b69378c885fb"
   }
 ]
