@@ -63,8 +63,6 @@ contract LegendMilestoneEscrow {
             _amount
         );
 
-        // does idle amount exceed amount held by the contract here ?? i think so ??
-
         uint256 _idleAmount = 0;
 
         if (

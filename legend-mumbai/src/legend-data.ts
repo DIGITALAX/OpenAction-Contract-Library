@@ -155,7 +155,6 @@ export function handleGrantCreated(event: GrantCreatedEvent): void {
     }
 
     milestone.currencyGoal = currencyGoals;
-    milestone.allClaimed = data.getAllClaimedMilestone(entity.grantId, i + 1);
     milestone.submitBy = data.getMilestoneSubmitBy(entity.grantId, i + 1);
     milestone.status = BigInt.fromI32(
       data.getMilestoneStatus(entity.grantId, i + 1)
@@ -527,8 +526,6 @@ export function handleMilestoneClaimed(event: MilestoneClaimedEvent): void {
     let milestone = Milestone.load(milestoneId);
 
     if (milestone !== null) {
-      milestone.allClaimed = true;
-
       let index: i32 = -1;
       for (let i = 0; i < grantEntity.granteeAddresses.length; i++)
         if (grantEntity.granteeAddresses[i] == event.params.claimer) {

@@ -128,7 +128,7 @@ type Milestone @entity(immutable: false) {
   granteeClaimed: [Boolean!]
   submitBy: BigInt!
   status: BigInt!
-  allClaimed: Boolean!
+  allClaimed: Boolean
 }
 
 type LevelInfo @entity(immutable: false) {
